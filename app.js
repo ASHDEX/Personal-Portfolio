@@ -7,18 +7,22 @@ const Parser = require("rss-parser");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// Ensure DB folder exists
 const dbDir = path.join(__dirname, "db");
 if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true });
 
+// Use DB_PATH from env if provided (Hostinger), else local
 const dbPath = process.env.DB_PATH || path.join(dbDir, "data.db");
 const db = new sqlite3.Database(dbPath);
 
+// Init DB
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS feeds (
@@ -31,7 +35,7 @@ db.serialize(() => {
   `);
 });
 
-const parser = new Parser();
+// RSS sources
 const RSS_FEEDS = [
   { name: "Cisco", url: "https://blog.talosintelligence.com/rss/" },
   { name: "Microsoft", url: "https://www.microsoft.com/security/blog/feed/" },
@@ -39,13 +43,16 @@ const RSS_FEEDS = [
   { name: "Palo Alto", url: "https://www.paloaltonetworks.com/blog/feed/" }
 ];
 
+const parser = new Parser();
+
 async function fetchFeeds() {
   for (const f of RSS_FEEDS) {
     try {
       const feed = await parser.parseURL(f.url);
-      feed.items.slice(0, 10).forEach(item => {
+      feed.items.slice(0, 15).forEach(item => {
         db.run(
-          `INSERT OR IGNORE INTO feeds (title, link, vendor, published) VALUES (?, ?, ?, ?)`,
+          `INSERT OR IGNORE INTO feeds (title, link, vendor, published)
+           VALUES (?, ?, ?, ?)`,
           [item.title, item.link, f.name, item.pubDate || ""]
         );
       });
@@ -55,16 +62,14 @@ async function fetchFeeds() {
   }
 }
 
+// Initial fetch
 fetchFeeds();
 
-app.get("/debug/fetch", async (req, res) => {
-  await fetchFeeds();
-  res.send("Fetched feeds. Refresh homepage in 10 seconds.");
-});
+// Routes
 
 // Homepage
 app.get("/", (req, res) => {
-  db.all(`SELECT * FROM feeds ORDER BY published DESC LIMIT 30`, [], (err, feeds) => {
+  db.all(`SELECT * FROM feeds ORDER BY published DESC LIMIT 50`, [], (err, feeds) => {
     if (err) return res.status(500).send("DB error");
 
     const vendors = [...new Set(feeds.map(f => f.vendor))];
@@ -77,20 +82,45 @@ app.get("/", (req, res) => {
 app.get("/vendor/:name", (req, res) => {
   const vendor = decodeURIComponent(req.params.name);
 
-  db.all(`SELECT * FROM feeds WHERE vendor = ? ORDER BY published DESC LIMIT 50`, [vendor], (err, feeds) => {
-    if (err) return res.status(500).send("DB error");
-    res.render("vendor", { vendor, feeds });
-  });
+  db.all(
+    `SELECT * FROM feeds WHERE vendor = ? ORDER BY published DESC LIMIT 50`,
+    [vendor],
+    (err, feeds) => {
+      if (err) return res.status(500).send("DB error");
+      res.render("vendor", { vendor, feeds });
+    }
+  );
 });
 
-// Search
+// 🔎 Fixed Search (title + vendor)
 app.get("/search", (req, res) => {
-  const q = `%${req.query.q || ""}%`;
+  const q = (req.query.q || "").trim();
 
-  db.all(`SELECT * FROM feeds WHERE title LIKE ? ORDER BY published DESC LIMIT 50`, [q], (err, feeds) => {
-    if (err) return res.status(500).send("DB error");
-    res.render("search", { feeds });
-  });
+  if (!q) {
+    return res.render("search", { feeds: [] });
+  }
+
+  const like = `%${q}%`;
+
+  db.all(
+    `
+    SELECT * FROM feeds 
+    WHERE title LIKE ? OR vendor LIKE ?
+    ORDER BY published DESC 
+    LIMIT 100
+    `,
+    [like, like],
+    (err, feeds) => {
+      if (err) {
+        console.error("Search DB error:", err);
+        return res.status(500).send("DB error");
+      }
+
+      res.render("search", { feeds });
+    }
+  );
 });
 
-app.listen(PORT, () => console.log("Server running"));
+app.listen(PORT, () => {
+  console.log(`FreeIntel Hub running on port ${PORT}`);
+});
