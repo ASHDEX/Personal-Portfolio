@@ -1,84 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <title>Free Intel Hub</title>
-  <link rel="stylesheet" href="/style.css"/>
+  <title>FreeIntel Hub</title>
 </head>
 <body>
+  <h1>Your daily dose of cyber 🛡️</h1>
 
-<%- include("partials/navbar") %>
-
-<section class="hero">
-  <h1>Your daily dose of cyber</h1>
-  <form class="search-modern" action="/search">
-    <input name="q" placeholder="Search CVEs, vendors, breaches, advisories..." />
-    <button>Search</button>
+  <form action="/search">
+    <input name="q" placeholder="Search threats..." />
+    <button type="submit">Search</button>
   </form>
-</section>
 
-<div class="container">
+  <h3>Vendors</h3>
+  <ul>
+    <li><a href="/vendor/Cisco">Cisco</a></li>
+    <li><a href="/vendor/Microsoft">Microsoft</a></li>
+    <li><a href="/vendor/CrowdStrike">CrowdStrike</a></li>
+    <li><a href="/vendor/Palo Alto">Palo Alto</a></li>
+  </ul>
 
-  <!-- Trending CVEs -->
-  <div class="section-title">🔥 Trending CVEs</div>
-  <div class="grid">
-    <% trending.forEach(r => { %>
-      <article class="card">
-        <h4>
-          <a href="<%= r.link %>" target="_blank" rel="noopener noreferrer">
-            <%= r.title %>
-          </a>
-        </h4>
-        <div class="badges">
-          <span class="badge"><%= r.category %></span>
-          <a class="badge" href="/vendor/<%= r.vendor %>"><%= r.vendor %></a>
-          <a class="badge" href="/source/<%= encodeURIComponent(r.source) %>"><%= r.source %></a>
-        </div>
-        <div class="meta">
-          <%= new Date(r.published_at).toLocaleString() %>
-        </div>
-      </article>
-    <% }) %>
-  </div>
-
-  <!-- Latest News -->
-  <div class="section-title">🆕 Latest News</div>
-  <div class="grid">
-    <% rows.forEach(r => { %>
-      <article class="card">
-        <h4>
-          <a href="<%= r.link %>" target="_blank" rel="noopener noreferrer">
-            <%= r.title %>
-          </a>
-        </h4>
-        <% if (r.summary) { %>
-          <p><%= r.summary %></p>
-        <% } %>
-        <div class="badges">
-          <span class="badge"><%= r.category %></span>
-          <a class="badge" href="/vendor/<%= r.vendor %>"><%= r.vendor %></a>
-          <a class="badge" href="/source/<%= encodeURIComponent(r.source) %>"><%= r.source %></a>
-        </div>
-        <div class="meta">
-          <%= new Date(r.published_at).toLocaleString() %>
-        </div>
-      </article>
-    <% }) %>
-  </div>
-
-  <!-- Pagination -->
-  <div class="pagination">
-    <% if (page > 1) { %>
-      <a href="/?page=<%= page - 1 %>">← Prev</a>
-    <% } %>
-
-    <span>Page <%= page %> of <%= totalPages %></span>
-
-    <% if (page < totalPages) { %>
-      <a href="/?page=<%= page + 1 %>">Next →</a>
-    <% } %>
-  </div>
-
-</div>
-
-<%- include("partials/footer") %>
+  <form action="/subscribe" method="POST">
+    <input name="email" placeholder="Email" required />
+    <input name="topic" placeholder="Vendor or keyword" />
+    <button type="submit">Subscribe</button>
+  </form>
+</body>
+</html>
