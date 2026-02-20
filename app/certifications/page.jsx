@@ -142,6 +142,7 @@ const FALLBACK_CERTS = [
 
 
 const CREDLY_PROFILE_URL = 'https://www.credly.com/users/jayesh-chaudhary.3248ecac';
+const BADGE_PATTERN = /href="(\/badges\/[0-9a-f-]+)"[^>]*>.*?<img src="([^"]+)" alt="([^"]+)"/gs;
 
 function decodeHtmlEntities(value) {
   return value
@@ -158,11 +159,10 @@ async function fetchCredlyCerts() {
     if (!res.ok) return [];
     const html = await res.text();
 
-    const pattern = /href="(\/badges\/[0-9a-f-]+)"[^>]*>.*?<img src="([^"]+)" alt="([^"]+)"/gs;
     const certs = [];
     const seen = new Set();
 
-    for (const match of html.matchAll(pattern)) {
+    for (const match of html.matchAll(BADGE_PATTERN)) {
       const verifyUrl = `https://www.credly.com${match[1]}`;
       if (seen.has(verifyUrl)) continue;
       seen.add(verifyUrl);
