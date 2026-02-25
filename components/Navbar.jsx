@@ -12,17 +12,17 @@ const pages = [
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-cyan-400/20 bg-surface-950/80 backdrop-blur-xl">
       <div className="page-shell flex flex-wrap items-center justify-between gap-4 py-4">
-        <Link href="/" className="text-lg font-bold tracking-tight text-teal-700">
-          Ashdex
+        <Link href="/" className="text-lg font-black tracking-tight text-cyan-200">
+          ASHDEX<span className="text-accent-glow">.SEC</span>
         </Link>
         <nav className="flex flex-wrap items-center gap-2 text-sm font-medium">
           {pages.map((page) => (
             <Link
               key={page.href}
               href={page.href}
-              className="rounded-full px-3 py-1.5 text-slate-700 transition hover:bg-teal-100 hover:text-teal-800"
+              className="rounded-full border border-transparent px-3 py-1.5 text-slate-300 transition hover:border-cyan-300/40 hover:bg-cyan-400/10 hover:text-cyan-200"
             >
               {page.label}
             </Link>
