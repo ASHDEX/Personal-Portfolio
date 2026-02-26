@@ -1,11 +1,25 @@
-﻿import Link from "next/link";
+﻿import Image from "next/image";
+import Link from "next/link";
+
+export const metadata = {
+  title: "Home | ASHDEX Cybersecurity",
+  description:
+    "Detection engineering, threat intel automation, SOC automation, and cloud incident response for modern security teams.",
+  openGraph: {
+    title: "ASHDEX | Detection Engineering & CTI Automation",
+    description:
+      "Engineering-first cybersecurity portfolio with measurable outcomes across SOC automation, detection coverage, and IR readiness.",
+    url: "https://ashdex.me",
+    type: "website",
+  },
+};
 
 export default function HomePage() {
   const valueProps = [
-    "Built end-to-end threat intelligence automation aggregating 50+ RSS/API sources with enrichment and scoring",
-    "Developed high-fidelity SIEM detections mapped to MITRE ATT&CK and threat hunting queries",
-    "Automated SOC workflows (Teams → Azure Logic Apps → SharePoint) to remove manual reporting",
-    "Led cloud incident response and security architecture engagements for fintech environments",
+    { metric: "70–80%", label: "reduction in manual SOC triage effort" },
+    { metric: "~30%", label: "improvement in ATT&CK-aligned detection coverage" },
+    { metric: "~35%", label: "faster MTTC during incident response engagements" },
+    { metric: "50+", label: "threat feeds normalized and enriched via CTI automation" },
   ];
 
   const services = [
@@ -36,29 +50,44 @@ export default function HomePage() {
   return (
     <div className="space-y-10">
       <section className="section-card border-cyan-300/40 bg-gradient-to-br from-cyan-400/15 via-surface-900/80 to-violet-400/15">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Cybersecurity Engineering Portfolio</p>
-        <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
-          Threat Intelligence Automation, Detection Engineering &amp; Security Architecture
-        </h1>
-        <p className="mt-4 max-w-3xl text-base text-slate-200 sm:text-lg">
-          I build security systems that turn noisy threat data into high-fidelity detections and automated incident response workflows.
-        </p>
-        <div className="mt-7 flex flex-wrap gap-3">
-          <Link href="/projects" className="rounded-full border border-cyan-300/60 bg-cyan-300/15 px-5 py-2.5 text-sm font-semibold text-cyan-100 hover:bg-cyan-300/25">
-            View Projects
-          </Link>
-          <Link href="/contact" className="rounded-full border border-violet-300/50 bg-violet-400/10 px-5 py-2.5 text-sm font-semibold text-violet-100 hover:bg-violet-400/20">
-            Contact Me
-          </Link>
+        <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Cybersecurity Engineering Portfolio</p>
+            <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Threat Intelligence Automation, Detection Engineering &amp; Security Architecture
+            </h1>
+            <p className="mt-4 max-w-3xl text-base text-slate-200 sm:text-lg">
+              I build security systems that turn noisy threat data into high-fidelity detections and automated incident response workflows.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link href="/projects" className="rounded-full border border-cyan-300/60 bg-cyan-300/15 px-5 py-2.5 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/25">
+                View Projects
+              </Link>
+              <Link href="/contact" className="rounded-full border border-violet-300/50 bg-violet-400/10 px-5 py-2.5 text-sm font-semibold text-violet-100 transition hover:bg-violet-400/20">
+                Contact Me
+              </Link>
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-cyan-300/25 bg-surface-900/70">
+            <Image
+              src="/cyber-ops.svg"
+              alt="Cybersecurity operations dashboard preview"
+              width={800}
+              height={560}
+              className="h-auto w-full"
+              priority
+            />
+          </div>
         </div>
       </section>
 
       <section className="section-card">
-        <h2 className="text-2xl font-bold text-cyan-100">Value Proposition</h2>
+        <h2 className="text-2xl font-bold text-cyan-100">Impact Snapshot</h2>
         <ul className="mt-4 grid gap-3 text-sm text-slate-200 md:grid-cols-2">
           {valueProps.map((item) => (
-            <li key={item} className="rounded-xl border border-cyan-400/20 bg-surface-800/60 p-4">
-              {item}
+            <li key={item.label} className="rounded-xl border border-cyan-400/20 bg-surface-800/60 p-4">
+              <p className="text-2xl font-black text-cyan-200">{item.metric}</p>
+              <p className="mt-1 text-sm text-slate-300">{item.label}</p>
             </li>
           ))}
         </ul>

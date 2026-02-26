@@ -1,5 +1,18 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "Services | ASHDEX Cybersecurity",
+  description:
+    "Productized cybersecurity consulting services across detection engineering, DFIR readiness, CTI automation, and security architecture.",
+  openGraph: {
+    title: "Services | ASHDEX",
+    description:
+      "Engineering-first services for SOC modernization, detection coverage, incident response readiness, and automation outcomes.",
+    url: "https://ashdex.me/services",
+    type: "website",
+  },
+};
+
 const services = [
   {
     name: "Detection Engineering Sprint (2–4 Weeks)",

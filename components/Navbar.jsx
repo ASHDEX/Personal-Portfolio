@@ -1,4 +1,7 @@
-﻿import Link from "next/link";
+﻿"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const pages = [
   { href: "/", label: "Home" },
@@ -11,6 +14,13 @@ const pages = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+
+  const isActive = (href) => {
+    if (href === "/") return pathname === "/";
+    return pathname?.startsWith(href);
+  };
+
   return (
     <header className="sticky top-0 z-20 border-b border-cyan-400/20 bg-surface-950/80 backdrop-blur-xl">
       <div className="page-shell flex flex-wrap items-center justify-between gap-4 py-4">
@@ -22,7 +32,12 @@ export default function Navbar() {
             <Link
               key={page.href}
               href={page.href}
-              className="rounded-full border border-transparent px-3 py-1.5 text-slate-300 transition hover:border-cyan-300/40 hover:bg-cyan-400/10 hover:text-cyan-200"
+              className={`rounded-full border px-3 py-1.5 text-slate-300 transition ${
+                isActive(page.href)
+                  ? "border-cyan-300/60 bg-cyan-300/15 text-cyan-100"
+                  : "border-transparent hover:border-cyan-300/40 hover:bg-cyan-400/10 hover:text-cyan-200"
+              }`}
+              aria-current={isActive(page.href) ? "page" : undefined}
             >
               {page.label}
             </Link>
