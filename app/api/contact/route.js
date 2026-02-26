@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 
+export const dynamic = "force-dynamic";
+
 const WINDOW_MS = 60 * 1000;
 const LIMIT_PER_WINDOW = 5;
 const rateLimitStore = globalThis.__contactRateLimitStore ?? new Map();
@@ -97,6 +99,7 @@ async function sendToNotion(payload) {
 
   await fetch("https://api.notion.com/v1/pages", {
     method: "POST",
+    cache: "no-store",
     headers: {
       Authorization: `Bearer ${NOTION_API_KEY}`,
       "Content-Type": "application/json",
@@ -133,6 +136,7 @@ async function sendToAirtable(payload) {
 
   await fetch(endpoint, {
     method: "POST",
+    cache: "no-store",
     headers: {
       Authorization: `Bearer ${AIRTABLE_API_KEY}`,
       "Content-Type": "application/json",
@@ -161,6 +165,7 @@ async function sendSlack(payload) {
 
   await fetch(SLACK_WEBHOOK_URL, {
     method: "POST",
+    cache: "no-store",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       text: [
@@ -177,18 +182,21 @@ async function sendSlack(payload) {
 export async function POST(request) {
   const ip = getClientIp(request);
   if (isRateLimited(ip)) {
-    return Response.json({ success: false, error: "Too many requests. Try again shortly." }, { status: 429 });
+    return Response.json(
+      { success: false, error: "Too many requests. Try again shortly." },
+      { status: 429, headers: { "Cache-Control": "no-store" } },
+    );
   }
 
   const payload = await request.json();
 
   if (payload?.company_website) {
-    return Response.json({ success: true });
+    return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
   }
 
   const error = validatePayload(payload);
   if (error) {
-    return Response.json({ success: false, error }, { status: 400 });
+    return Response.json({ success: false, error }, { status: 400, headers: { "Cache-Control": "no-store" } });
   }
 
   try {
@@ -199,9 +207,12 @@ export async function POST(request) {
       sendSlack(payload),
     ]);
 
-    return Response.json({ success: true });
+    return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
   } catch {
-    return Response.json({ success: false, error: "Failed to submit form" }, { status: 500 });
+    return Response.json(
+      { success: false, error: "Failed to submit form" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
   }
 }
 
