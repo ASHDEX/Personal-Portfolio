@@ -8,24 +8,24 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: "#334155",
-          glow: "#475569",
+          DEFAULT: "#22d3ee",
+          glow: "#67e8f9",
         },
         accent: {
-          DEFAULT: "#64748b",
-          glow: "#94a3b8",
+          DEFAULT: "#a78bfa",
+          glow: "#c4b5fd",
         },
         surface: {
-          950: "#f8fafc",
-          900: "#ffffff",
-          800: "#f1f5f9",
+          950: "#050816",
+          900: "#0a1024",
+          800: "#111a35",
         },
       },
       boxShadow: {
-        neon: "0 1px 2px rgba(15, 23, 42, 0.08), 0 12px 32px rgba(15, 23, 42, 0.08)",
+        neon: "0 0 0 1px rgba(34, 211, 238, 0.25), 0 12px 30px rgba(7, 22, 58, 0.45)",
       },
       backgroundImage: {
-        grid: "radial-gradient(rgba(148,163,184,0.2) 1px, transparent 1px)",
+        grid: "radial-gradient(rgba(103,232,249,0.12) 1px, transparent 1px)",
       },
     },
   },
