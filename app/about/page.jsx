@@ -1,7 +1,7 @@
 ﻿export const metadata = {
   title: "About | ASHDEX Cybersecurity",
   description:
-    "Detection-first security engineer focused on automation, threat intelligence pipelines, and resilient security architecture.",
+    "Architecture-first security engineer focused on systems design, detection engineering, and resilient SOC operations.",
   openGraph: {
     title: "About | ASHDEX",
     description:
@@ -26,20 +26,20 @@ export default function AboutPage() {
       <article className="section-card space-y-4 text-sm muted">
         <h2 className="text-xl font-bold text-cyan-100">Mission</h2>
         <p>
-          I build cybersecurity systems that transform fragmented telemetry into reliable detections, fast triage,
-          and measurable response outcomes.
+          I design security architectures that connect identity, telemetry, detection logic, and response workflows into
+          resilient systems with measurable operational impact.
         </p>
       </article>
 
       <article className="section-card space-y-4 text-sm muted">
         <h2 className="text-xl font-bold text-cyan-100">Engineering Philosophy</h2>
         <p>
-          I design and build practical cybersecurity systems that close the gap between raw telemetry and analyst action.
-          My focus is turning fragmented security signals into reliable, automated detection and response workflows.
+          I approach security as a systems engineering problem. Architecture decisions should define where trust boundaries
+          exist, how telemetry is generated, and how detections flow into repeatable response outcomes.
         </p>
         <p>
-          I work across engineering and security domains: from ingest pipelines and enrichment automation to detection-as-code,
-          hardening patterns, and architecture decisions that scale with organizational risk.
+          My work spans security architecture, detection-as-code, automation pipelines, and incident response engineering—
+          always grounded in clear design principles and practical SOC execution.
         </p>
       </article>
 
@@ -55,9 +55,9 @@ export default function AboutPage() {
       <article className="section-card space-y-3 text-sm muted">
         <h2 className="text-xl font-bold text-cyan-100">Professional Bio</h2>
         <p>
-          Security engineer specializing in threat intelligence automation, detection engineering, cloud incident response,
-          and security architecture. I work with engineering and security teams to build detection pipelines and operating
-          models that improve analyst efficiency and reduce response friction.
+          Security engineer specializing in architecture-first security programs, detection engineering, and automation-led
+          SOC operations. I help teams design and implement scalable security systems that improve coverage, reduce operational
+          friction, and increase response consistency.
         </p>
       </article>
     </section>
