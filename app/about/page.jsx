@@ -18,6 +18,14 @@ const workingPrinciples = [
   "Operational clarity: ship playbooks and runbooks with every technical implementation.",
 ];
 
+const architecturePhilosophy = [
+  "Risk-aligned architecture",
+  "Defense-in-depth design",
+  "Detection-driven engineering",
+  "Cloud-native security principles",
+  "Control maturity alignment",
+];
+
 export default function AboutPage() {
   return (
     <section className="space-y-6">
@@ -59,6 +67,18 @@ export default function AboutPage() {
           SOC operations. I help teams design and implement scalable security systems that improve coverage, reduce operational
           friction, and increase response consistency.
         </p>
+      </article>
+
+      <article className="section-card space-y-4 text-sm muted">
+        <h2 className="text-2xl font-black text-cyan-100">Security Architecture Philosophy</h2>
+        <p className="text-base font-semibold text-cyan-200">Security should be built, not just audited.</p>
+        <ul className="grid gap-2 md:grid-cols-2">
+          {architecturePhilosophy.map((item) => (
+            <li key={item} className="rounded-lg border border-cyan-300/20 bg-surface-800/60 px-3 py-2 text-sm text-slate-200">
+              {item}
+            </li>
+          ))}
+        </ul>
       </article>
     </section>
   );
