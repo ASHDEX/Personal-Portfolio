@@ -16,6 +16,32 @@ const filterTags = [
 
 const projects = [
   {
+    id: "enterprise-security-architecture-design",
+    name: "Enterprise Security Architecture Design",
+    category: "Cloud Security",
+    tags: ["Security Architecture", "Zero Trust", "SIEM", "IAM", "Network Segmentation"],
+    problem:
+      "Security controls were deployed in silos, creating visibility gaps, inconsistent response paths, and duplicated tooling costs.",
+    outcome:
+      "Delivered a unified architecture with clear control ownership, improved detection depth, and faster incident coordination.",
+    details: {
+      problemStatement:
+        "The organization lacked a cohesive target-state architecture connecting identity, telemetry, network boundaries, and SOC workflows.",
+      architecture:
+        "Identity & Access Layer → Segmented Network Zones → Telemetry Fabric → Detection Engineering Layer → SOAR/Case Management",
+      built: [
+        "Reference architecture for SIEM, EDR, CTI, and automation integration",
+        "Control matrix mapping ATT&CK tactics to preventive/detective controls",
+        "Implementation roadmap with phased migration and risk-priority sequencing",
+      ],
+      approach:
+        "Architecture-first engineering: define trust boundaries, instrument high-value telemetry, and operationalize detections with measurable service-level outcomes.",
+      impact:
+        "~30% improvement in detection coverage, ~25% faster triage handoffs, and reduced overlap in security tooling spend.",
+      github: "#",
+    },
+  },
+  {
     id: "detection-framework",
     name: "Detection Engineering Framework (MITRE ATT&CK–Mapped Rules)",
     category: "Detection Engineering",

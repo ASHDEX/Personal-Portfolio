@@ -15,6 +15,16 @@ export const metadata = {
 
 const services = [
   {
+    name: "Security Architecture & Tooling Design",
+    audience: "Startups or teams building security from scratch",
+    includes: [
+      "Security stack design (SIEM/EDR/CTI/SOAR-lite)",
+      "Tool PoCs & integration plan",
+      "Architecture diagrams + runbooks",
+    ],
+    outcomes: ["Cohesive security architecture", "Faster implementation"],
+  },
+  {
     name: "Detection Engineering Sprint (2–4 Weeks)",
     audience: "SOC teams with logs but weak detections",
     includes: [
@@ -55,16 +65,6 @@ const services = [
       "Export to SIEM/Slack/Excel",
     ],
     outcomes: ["Actionable CTI", "Less noise, more signal"],
-  },
-  {
-    name: "Security Architecture & Tooling Design",
-    audience: "Startups or teams building security from scratch",
-    includes: [
-      "Security stack design (SIEM/EDR/CTI/SOAR-lite)",
-      "Tool PoCs & integration plan",
-      "Architecture diagrams + runbooks",
-    ],
-    outcomes: ["Cohesive security architecture", "Faster implementation"],
   },
 ];
 
