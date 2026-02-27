@@ -16,18 +16,18 @@ export const metadata = {
 
 export default function HomePage() {
   const valueProps = [
-    { metric: "70–80%", label: "reduction in manual SOC triage effort" },
-    { metric: "~30%", label: "improvement in ATT&CK-aligned detection coverage" },
-    { metric: "~35%", label: "faster MTTC during incident response engagements" },
-    { metric: "50+", label: "threat feeds normalized and enriched via CTI automation" },
+    { metric: "70–80%", label: "reduction in manual SOC triage" },
+    { metric: "30%", label: "improvement in MITRE ATT&CK detection coverage" },
+    { metric: "35%", label: "reduction in MTTC" },
+    { metric: "95%", label: "endpoint compliance" },
   ];
 
-  const services = [
+  const systems = [
     "Security Architecture & Engineering",
-    "Threat Intel Automation",
-    "Detection Engineering & Threat Hunting",
-    "Security Tooling & Automation",
-    "Cloud Security & Incident Response",
+    "Detection Engineering",
+    "Incident Response Engineering",
+    "SOC Automation",
+    "Threat Intelligence Automation",
   ];
 
   const projects = [
@@ -58,7 +58,7 @@ export default function HomePage() {
               Security Architecture, Detection Engineering &amp; SOC Automation
             </h1>
             <p className="mt-4 max-w-3xl text-base text-slate-200 sm:text-lg">
-              I design secure systems from first principles, then translate architecture into operational detection and automation pipelines that reduce risk with measurable outcomes.
+              I design resilient security architectures, build high-fidelity detection systems, and automate incident response workflows with measurable impact.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link href="/projects" className="rounded-full border border-cyan-300/60 bg-cyan-300/15 px-5 py-2.5 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/25">
@@ -95,9 +95,9 @@ export default function HomePage() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-bold text-cyan-100">What I Build</h2>
+        <h2 className="text-2xl font-bold text-cyan-100">Security Systems I Design</h2>
         <div className="grid gap-4 md:grid-cols-2">
-          {services.map((service) => (
+          {systems.map((service) => (
             <Link
               key={service}
               href="/services"

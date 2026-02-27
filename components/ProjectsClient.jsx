@@ -5,6 +5,7 @@ import Link from "next/link";
 
 const filterTags = [
   "All",
+  "Security Architecture",
   "Detection Engineering",
   "Threat Hunting",
   "Incident Response (DFIR)",
@@ -18,26 +19,25 @@ const projects = [
   {
     id: "enterprise-security-architecture-design",
     name: "Enterprise Security Architecture Design",
-    category: "Cloud Security",
+    category: "Security Architecture",
     tags: ["Security Architecture", "Zero Trust", "SIEM", "IAM", "Network Segmentation"],
-    problem:
-      "Security controls were deployed in silos, creating visibility gaps, inconsistent response paths, and duplicated tooling costs.",
+    problem: "Fragmented security stack, inconsistent IR process, limited detection coverage.",
     outcome:
       "Delivered a unified architecture with clear control ownership, improved detection depth, and faster incident coordination.",
     details: {
-      problemStatement:
-        "The organization lacked a cohesive target-state architecture connecting identity, telemetry, network boundaries, and SOC workflows.",
+      problemStatement: "Fragmented security stack, inconsistent IR process, limited detection coverage.",
       architecture:
-        "Identity & Access Layer → Segmented Network Zones → Telemetry Fabric → Detection Engineering Layer → SOAR/Case Management",
+        "Endpoints → Defender → SIEM → Enrichment → Automation → Case Management\nCloud Logs → Normalization → Detection → Escalation → IR Workflow",
       built: [
-        "Reference architecture for SIEM, EDR, CTI, and automation integration",
-        "Control matrix mapping ATT&CK tactics to preventive/detective controls",
-        "Implementation roadmap with phased migration and risk-priority sequencing",
+        "Centralized SIEM + EDR integration",
+        "30+ ATT&CK-mapped detections",
+        "IR severity model & escalation matrix",
+        "SOC automation pipelines",
       ],
       approach:
         "Architecture-first engineering: define trust boundaries, instrument high-value telemetry, and operationalize detections with measurable service-level outcomes.",
       impact:
-        "~30% improvement in detection coverage, ~25% faster triage handoffs, and reduced overlap in security tooling spend.",
+        "95% endpoint compliance, 30% detection coverage improvement, 35% MTTC reduction.",
       github: "#",
     },
   },

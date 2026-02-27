@@ -15,14 +15,22 @@ export const metadata = {
 
 const services = [
   {
-    name: "Security Architecture & Tooling Design",
-    audience: "Startups or teams building security from scratch",
+    name: "Security Architecture Design & Modernization",
+    audience: "Organizations building or restructuring their security stack.",
     includes: [
-      "Security stack design (SIEM/EDR/CTI/SOAR-lite)",
-      "Tool PoCs & integration plan",
-      "Architecture diagrams + runbooks",
+      "Architecture blueprint (SIEM, EDR, CTI, SOAR-lite)",
+      "Detection coverage mapping",
+      "IR severity & escalation model",
+      "Tool integration strategy",
+      "Architecture diagrams",
+      "Runbooks",
     ],
-    outcomes: ["Cohesive security architecture", "Faster implementation"],
+    outcomes: [
+      "Cohesive security ecosystem",
+      "Reduced blind spots",
+      "Faster containment",
+      "Audit-ready governance",
+    ],
   },
   {
     name: "Detection Engineering Sprint (2–4 Weeks)",
@@ -36,8 +44,8 @@ const services = [
     outcomes: ["Higher-fidelity alerts", "Improved ATT&CK coverage"],
   },
   {
-    name: "Incident Response Readiness & DFIR Toolkit",
-    audience: "Teams unprepared for breaches",
+    name: "Incident Response Engineering",
+    audience: "Teams improving readiness and containment consistency",
     includes: [
       "IR playbooks & severity models",
       "DFIR tooling setup",
@@ -47,7 +55,7 @@ const services = [
     outcomes: ["Faster MTTC", "Consistent response processes"],
   },
   {
-    name: "SOC Automation (SOAR-lite) Buildout",
+    name: "SOC Automation",
     audience: "Teams drowning in manual triage",
     includes: [
       "IOC enrichment automation",
@@ -57,7 +65,7 @@ const services = [
     outcomes: ["Reduced manual work", "Faster investigations"],
   },
   {
-    name: "Threat Intelligence Automation Setup",
+    name: "Threat Intelligence Automation",
     audience: "Teams overwhelmed by feeds",
     includes: [
       "CTI feed ingestion (RSS/APIs)",
@@ -85,9 +93,14 @@ const process = [
       "Implement detections, automations, IR workflows, and integrations with iterative tuning and stakeholder alignment.",
   },
   {
-    step: "Handover",
+    step: "Operationalize",
     description:
-      "Deliver runbooks, documentation, and enablement guidance so your team can operate and scale confidently.",
+      "Deploy workflows into day-to-day SOC operations with tuning loops, ownership models, and measurable KPIs.",
+  },
+  {
+    step: "Knowledge Transfer",
+    description:
+      "Provide runbooks, architecture context, and team enablement sessions to ensure long-term operational continuity.",
   },
 ];
 

@@ -1,14 +1,8 @@
-export default function sitemap() {
+import type { MetadataRoute } from "next";
+
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://ashdex.me";
-  const routes = [
-    "",
-    "/about",
-    "/projects",
-    "/services",
-    "/experience",
-    "/certifications",
-    "/contact",
-  ];
+  const routes = ["", "/about", "/projects", "/services", "/experience", "/certifications", "/contact"];
 
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,

@@ -9,6 +9,13 @@ const recruiterRoles = [
     period: "2024 - Present",
     groups: [
       {
+        title: "Scale & Environment",
+        points: [
+          "Delivered controls and detections across 400+ endpoints in enterprise and fintech environments",
+          "Standardized telemetry and response workflows for high-velocity SOC operations",
+        ],
+      },
+      {
         title: "Threat Intelligence Automation & CTI Engineering",
         points: [
           "Built end-to-end CTI automation aggregating 50+ RSS/API sources with enrichment and scoring",
@@ -47,7 +54,10 @@ const recruiterRoles = [
       },
       {
         title: "Governance & Stakeholder Management",
-        points: ["Delivered audit-ready IR/DLP artifacts enabling 100% audit closure"],
+        points: [
+          "Delivered audit-ready IR/DLP artifacts enabling 100% audit closure",
+          "Drove cross-functional collaboration with Risk, Compliance, and Audit teams for control validation and evidence readiness",
+        ],
       },
     ],
   },
@@ -115,6 +125,8 @@ const clientView = [
       "Designed ATT&CK-aligned detections, long-duration correlation logic, and reusable threat hunting query packs.",
     outcome:
       "Higher detection precision, lower false positives, and faster identification of abuse, lateral movement, and persistence.",
+    engagementModel:
+      "Architecture-led detection sprint with iterative tuning, SOC analyst feedback loops, and stakeholder reporting checkpoints.",
   },
   {
     title: "Threat Intel Automation & SOC Enablement",
@@ -122,12 +134,16 @@ const clientView = [
     solution:
       "Built CTI pipelines for ingestion, normalization, enrichment, scoring, and SOC delivery using OTX/VirusTotal and APIs.",
     outcome: "Improved signal-to-noise and materially reduced analyst fatigue during investigations.",
+    engagementModel:
+      "Pipeline design and implementation engagement covering feed strategy, enrichment logic, and operational handover.",
   },
   {
     title: "DFIR Tooling & Incident Response Programs",
     problem: "Evidence collection and response coordination were inconsistent across incidents.",
     solution: "Delivered DFIR automation for domain intelligence, snapshot evidence capture, and structured IR playbooks.",
     outcome: "Reduced MTTC, improved containment consistency, and stronger case documentation quality.",
+    engagementModel:
+      "IR engineering engagement with playbook design, severity matrix alignment, and tabletop-ready workflow documentation.",
   },
   {
     title: "Cloud, Endpoint Security & DLP",
@@ -135,12 +151,16 @@ const clientView = [
     solution:
       "Implemented Purview DLP, endpoint controls (Defender/Intune/Wazuh), and tuned policy architecture across data sources.",
     outcome: "Higher endpoint compliance, better policy accuracy, and lower violation rates.",
+    engagementModel:
+      "Cross-functional deployment model with platform teams, Risk, and Compliance to align security controls with business operations.",
   },
   {
     title: "Governance, Risk & Audit Readiness",
     problem: "Security controls existed but were not consistently translated into auditable artifacts.",
     solution: "Produced severity models, escalation matrices, SOPs, and audit-ready IR/DLP evidence sets.",
     outcome: "Stronger governance posture and successful audit closure outcomes.",
+    engagementModel:
+      "Governance-focused advisory with evidence workflows, control ownership mapping, and audit stakeholder readiness sessions.",
   },
 ];
 
@@ -225,6 +245,9 @@ export default function ExperienceClient() {
               </p>
               <p className="mt-2 text-sm text-slate-200">
                 <span className="font-semibold text-cyan-300">Security Outcome:</span> {item.outcome}
+              </p>
+              <p className="mt-2 text-sm text-slate-200">
+                <span className="font-semibold text-cyan-300">Engagement Model:</span> {item.engagementModel}
               </p>
             </article>
           ))}
