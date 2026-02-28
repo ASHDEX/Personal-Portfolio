@@ -175,6 +175,14 @@ const techStack = [
 export default function ExperienceClient() {
   const [activeView, setActiveView] = useState("Recruiters");
 
+  const recruiterHighlights = [
+    { label: "Scope", value: "Security Architecture, Detection Engineering, IR, and SOC Automation" },
+    { label: "Scale", value: "400+ endpoints in regulated enterprise and fintech environments" },
+    { label: "Cross-functional", value: "Delivered with Risk, Compliance, and Audit stakeholders" },
+    { label: "Audit Closure", value: "100% closure with audit-ready artifacts and controls evidence" },
+    { label: "Operational Impact", value: "70–80% triage reduction, 30% coverage uplift, 35% MTTC improvement" },
+  ];
+
   return (
     <section className="space-y-6">
       <header className="section-card">
@@ -204,6 +212,18 @@ export default function ExperienceClient() {
 
       {activeView === "Recruiters" ? (
         <div className="space-y-4">
+          <section className="section-card">
+            <h2 className="text-xl font-bold text-cyan-100">Recruiter Snapshot</h2>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {recruiterHighlights.map((item) => (
+                <article key={item.label} className="rounded-xl border border-cyan-300/20 bg-surface-800/60 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-cyan-300">{item.label}</p>
+                  <p className="mt-1 text-sm text-slate-200">{item.value}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
           {recruiterRoles.map((role) => (
             <article
               key={`${role.role}-${role.period}`}

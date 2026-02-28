@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
         <div className="relative min-h-screen overflow-hidden">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(167,139,250,0.15),transparent_40%)]" />
           <Navbar />
-          <main className="page-shell relative z-10 py-10">{children}</main>
+          <main className="page-shell relative z-10 py-20">{children}</main>
           <Footer />
         </div>
         {gaId ? (
