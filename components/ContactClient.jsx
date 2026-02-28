@@ -86,7 +86,7 @@ export default function ContactClient() {
       <header className="section-card">
         <h1 className="section-title">Contact</h1>
         <p className="mt-3 text-sm text-slate-300 sm:text-base">
-          Let’s talk detection engineering, incident response, and security automation.
+          Connect for consulting engagements or senior Security Architect opportunities.
         </p>
       </header>
 
@@ -117,18 +117,18 @@ export default function ContactClient() {
             <article className="rounded-2xl border border-cyan-300/25 bg-surface-900/70 p-6">
               <h3 className="text-xl font-bold text-cyan-100">For Recruiters</h3>
               <p className="mt-3 text-sm text-slate-300">
-                Hiring for detection engineering, cloud IR, or security automation roles? Reach out directly.
+                Hiring for remote senior Security Architect, Detection Engineering, or SOC modernization roles? Reach out directly.
               </p>
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <a
-                  href="mailto:your.email@example.com"
+                  href="mailto:hello@ashdex.me"
                   className="rounded-full border border-cyan-300/60 bg-cyan-300/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/25"
                 >
                   Email Me
                 </a>
                 <a
-                  href="https://linkedin.com/in/your-profile"
+                  href="https://linkedin.com"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full border border-violet-300/60 bg-violet-300/10 px-4 py-2 text-sm font-semibold text-violet-100 transition hover:bg-violet-300/20"
@@ -143,7 +143,7 @@ export default function ContactClient() {
             <article className="rounded-2xl border border-cyan-300/25 bg-surface-900/70 p-6">
               <h3 className="text-xl font-bold text-cyan-100">For Clients</h3>
               <p className="mt-2 text-sm text-slate-300">
-                Share a quick brief and I’ll respond with a practical path forward.
+                Share your current challenge and target outcomes. You will receive a practical architecture-first engagement path.
               </p>
 
               {submitted ? (
@@ -272,8 +272,8 @@ export default function ContactClient() {
             <span className="font-semibold text-cyan-300">Typical response time:</span> 24–48 hours.
           </p>
           <p>
-            <span className="font-semibold text-cyan-300">Preferred engagements:</span> short sprints, PoCs, and
-            security automation builds.
+            <span className="font-semibold text-cyan-300">Preferred engagements:</span> architecture modernization,
+            detection uplift, and SOC automation initiatives.
           </p>
         </div>
       </section>

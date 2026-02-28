@@ -3,11 +3,11 @@ import Link from "next/link";
 export const metadata = {
   title: "Services | ASHDEX Cybersecurity",
   description:
-    "Productized cybersecurity consulting services across detection engineering, DFIR readiness, CTI automation, and security architecture.",
+    "Enterprise security consulting services for architecture modernization, detection uplift, incident readiness, and SOC automation outcomes.",
   openGraph: {
     title: "Services | ASHDEX",
     description:
-      "Engineering-first services for SOC modernization, detection coverage, incident response readiness, and automation outcomes.",
+      "Architecture-first security services designed for measurable SOC modernization outcomes.",
     url: "https://ashdex.me/services",
     type: "website",
   },
@@ -16,63 +16,65 @@ export const metadata = {
 const services = [
   {
     name: "Security Architecture Design & Modernization",
-    audience: "Organizations building or restructuring their security stack.",
+    audience: "Security leaders modernizing fragmented security ecosystems in regulated or high-growth environments.",
     includes: [
-      "Architecture blueprint (SIEM, EDR, CTI, SOAR-lite)",
-      "Detection coverage mapping",
-      "IR severity & escalation model",
-      "Tool integration strategy",
-      "Architecture diagrams",
-      "Runbooks",
+      "Current-state security architecture assessment",
+      "Target-state reference architecture (SIEM, EDR, identity, CTI, automation)",
+      "Control-to-detection traceability mapping",
+      "Integration design and telemetry strategy",
     ],
     outcomes: [
-      "Cohesive security ecosystem",
-      "Reduced blind spots",
-      "Faster containment",
-      "Audit-ready governance",
+      "Reduced architecture blind spots",
+      "Clear modernization roadmap",
+      "Audit-ready governance and ownership clarity",
     ],
+    model: "Modernization initiative",
   },
   {
-    name: "Detection Engineering Sprint (2–4 Weeks)",
-    audience: "SOC teams with logs but weak detections",
+    name: "Detection Engineering Uplift",
+    audience: "SOC teams with telemetry but low-fidelity detections and tuning debt.",
     includes: [
-      "Log source review",
-      "MITRE ATT&CK–mapped detection rules (Sigma/SIEM)",
-      "Threat hunting queries",
-      "False-positive tuning",
+      "Detection maturity assessment",
+      "ATT&CK-aligned rule design and coverage uplift",
+      "Rule tuning and false-positive reduction workflows",
+      "Detection QA and lifecycle governance",
     ],
-    outcomes: ["Higher-fidelity alerts", "Improved ATT&CK coverage"],
+    outcomes: ["Higher-fidelity alerts", "Improved ATT&CK coverage", "Faster analyst triage"],
+    model: "Sprint or modernization initiative",
   },
   {
-    name: "Incident Response Engineering",
-    audience: "Teams improving readiness and containment consistency",
+    name: "Incident Response Readiness Program",
+    audience: "Organizations needing repeatable incident handling and stronger containment readiness.",
     includes: [
-      "IR playbooks & severity models",
-      "DFIR tooling setup",
-      "Evidence collection workflows",
-      "Tabletop exercise (optional)",
+      "IR playbooks, severity matrix, and escalation design",
+      "Evidence collection and case-handling standards",
+      "Runbook operationalization for SOC and cross-functional teams",
+      "Tabletop exercise support",
     ],
-    outcomes: ["Faster MTTC", "Consistent response processes"],
+    outcomes: ["Reduced Mean Time to Contain", "Consistent response execution", "Improved audit defensibility"],
+    model: "Sprint or modernization initiative",
   },
   {
-    name: "SOC Automation",
-    audience: "Teams drowning in manual triage",
+    name: "SOC Automation Buildout",
+    audience: "Security operations teams constrained by repetitive triage and manual workflow handoffs.",
     includes: [
-      "IOC enrichment automation",
-      "Alert triage workflows",
-      "Reporting automation (e.g., Teams → Azure Logic Apps → SharePoint)",
+      "Alert enrichment and triage automation design",
+      "Case routing and response workflow orchestration",
+      "Operational reporting automation",
     ],
-    outcomes: ["Reduced manual work", "Faster investigations"],
+    outcomes: ["Reduced manual SOC effort", "Faster investigations", "Higher operational consistency"],
+    model: "Sprint or modernization initiative",
   },
   {
     name: "Threat Intelligence Automation",
-    audience: "Teams overwhelmed by feeds",
+    audience: "Security teams overwhelmed by fragmented intel feeds and inconsistent enrichment quality.",
     includes: [
-      "CTI feed ingestion (RSS/APIs)",
-      "Deduplication, enrichment, scoring",
-      "Export to SIEM/Slack/Excel",
+      "Feed ingestion and normalization architecture",
+      "Deduplication, enrichment, and confidence scoring",
+      "SOC integration paths for action-ready CTI",
     ],
-    outcomes: ["Actionable CTI", "Less noise, more signal"],
+    outcomes: ["Actionable CTI", "Lower analyst noise", "Faster detection prioritization"],
+    model: "Sprint or modernization initiative",
   },
 ];
 
@@ -117,7 +119,7 @@ export default function ServicesPage() {
       <header className="section-card">
         <h1 className="section-title">Services</h1>
         <p className="mt-3 text-sm text-slate-300 sm:text-base">
-          Engineering-first security services for detection, IR, and automation.
+          Architecture-first security services for enterprise teams modernizing detection, response, and SOC operations.
         </p>
       </header>
 
@@ -129,7 +131,7 @@ export default function ServicesPage() {
           >
             <h2 className="text-lg font-bold text-cyan-100">{service.name}</h2>
             <p className="mt-2 text-sm text-slate-300">
-              <span className="font-semibold text-cyan-300">For:</span> {service.audience}
+              <span className="font-semibold text-cyan-300">Who it’s for:</span> {service.audience}
             </p>
 
             <div className="mt-4">
@@ -150,18 +152,22 @@ export default function ServicesPage() {
               </ul>
             </div>
 
+            <p className="mt-4 text-sm text-slate-200">
+              <span className="font-semibold text-cyan-300">Engagement model:</span> {service.model}
+            </p>
+
             <Link
-              href="/contact"
+              href="/consulting"
               className="mt-5 inline-flex w-fit rounded-full border border-cyan-300/60 bg-cyan-300/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/25"
             >
-              Contact Me
+              Discuss Engagement
             </Link>
           </article>
         ))}
       </section>
 
       <section className="section-card">
-        <h2 className="text-2xl font-bold text-cyan-100">How Engagements Work</h2>
+        <h2 className="text-2xl font-bold text-cyan-100">Engagement Model</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {process.map((item) => (
             <article key={item.step} className="rounded-xl border border-cyan-300/20 bg-surface-800/60 p-4">
@@ -187,13 +193,13 @@ export default function ServicesPage() {
       </section>
 
       <section className="section-card border-violet-300/35 bg-gradient-to-r from-violet-400/15 via-surface-900/80 to-cyan-400/15">
-        <h2 className="text-2xl font-bold text-white">Want to improve detections or automate your SOC?</h2>
+        <h2 className="text-2xl font-bold text-white">Need an architecture-first security modernization partner?</h2>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
-            href="/contact"
+            href="/consulting"
             className="rounded-full border border-cyan-300/60 bg-cyan-300/15 px-5 py-2.5 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/25"
           >
-            Contact Me
+            Discuss an Engagement
           </Link>
           <Link
             href="/projects"

@@ -3,39 +3,40 @@ import Link from "next/link";
 export const metadata = {
   title: "Consulting | Security Architecture & Detection Engineering",
   description:
-    "High-conversion consulting page for security architecture modernization, detection engineering uplift, and SOC automation outcomes.",
+    "Enterprise consulting for security architecture modernization, detection engineering uplift, and SOC automation outcomes.",
   openGraph: {
     title: "Security Architecture & Detection Engineering Modernization",
     description:
-      "Architecture-first consulting to improve detection quality, reduce triage load, and accelerate incident response.",
+      "Architecture-first consulting to improve detection quality, reduce triage load, and modernize incident response operations.",
     url: "https://ashdex.me/consulting",
     type: "website",
   },
 };
 
-const problems = [
+const challenges = [
   "Alert fatigue",
+  "Tool sprawl",
   "Low detection quality",
   "Manual SOC processes",
-  "Slow containment",
-  "Fragmented tooling",
+  "Audit pressure",
 ];
 
-const solutions = [
-  "Security stack design",
-  "Detection uplift",
-  "IR program design",
-  "SOC automation",
+const approach = [
+  "Architecture-first",
+  "Detection-driven",
+  "Automation-enabled",
+  "Risk-aligned",
 ];
 
 const services = [
-  "Security Architecture Modernization",
-  "Detection Engineering Sprint",
-  "IR Readiness Program",
+  "Security Architecture Design & Modernization",
+  "Detection Engineering Uplift",
+  "Incident Response Readiness Program",
   "SOC Automation Buildout",
+  "Threat Intelligence Automation",
 ];
 
-const engagementModel = ["Discover", "Design", "Build", "Operationalize", "Transfer"];
+const engagementModel = ["Discover", "Design", "Build", "Operationalize", "Knowledge Transfer"];
 
 export default function ConsultingPage() {
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/your-calendly-link";
@@ -68,9 +69,9 @@ export default function ConsultingPage() {
       </header>
 
       <section className="section-card">
-        <h2 className="text-2xl font-bold text-cyan-100">Core Problems We Solve</h2>
+        <h2 className="text-2xl font-bold text-cyan-100">The Challenge</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {problems.map((item) => (
+          {challenges.map((item) => (
             <article key={item} className="rounded-xl border border-cyan-300/20 bg-surface-800/60 p-4 text-sm text-slate-200">
               {item}
             </article>
@@ -79,9 +80,9 @@ export default function ConsultingPage() {
       </section>
 
       <section className="section-card">
-        <h2 className="text-2xl font-bold text-cyan-100">Architecture-First Solution</h2>
+        <h2 className="text-2xl font-bold text-cyan-100">My Approach</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          {solutions.map((item) => (
+          {approach.map((item) => (
             <article key={item} className="rounded-xl border border-cyan-300/20 bg-surface-800/60 p-4">
               <p className="text-sm font-semibold text-cyan-200">{item}</p>
             </article>
@@ -90,8 +91,10 @@ export default function ConsultingPage() {
       </section>
 
       <section className="section-card border-violet-300/30 bg-gradient-to-r from-violet-400/10 via-surface-900/80 to-cyan-400/10">
-        <h2 className="text-2xl font-bold text-cyan-100">Case Study: Fintech Security Modernization</h2>
-        <p className="mt-3 text-sm text-slate-300">Architecture redesign + detection uplift + SOC automation delivery.</p>
+        <h2 className="text-2xl font-bold text-cyan-100">Case Study: FinTech Security Modernization</h2>
+        <p className="mt-3 text-sm text-slate-300">
+          Architecture redesign, detection uplift, and SOC automation delivery for a regulated environment.
+        </p>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           <article className="rounded-xl border border-cyan-300/20 bg-surface-800/60 p-4">
             <p className="text-2xl font-black text-cyan-200">70–80%</p>
