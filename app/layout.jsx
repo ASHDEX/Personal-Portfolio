@@ -1,7 +1,20 @@
-﻿import Script from "next/script";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space",
+  weight: ["400", "500", "600", "700"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "500", "700"],
+});
 
 export const metadata = {
   title: "ASHDEX | Cybersecurity Portfolio",
@@ -27,9 +40,18 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className="min-h-screen bg-surface-950 bg-grid [background-size:20px_20px]">
+      <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} min-h-screen`}>
         <div className="relative min-h-screen overflow-hidden">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(167,139,250,0.15),transparent_40%)]" />
+          {/* Atmospheric light sources */}
+          <div className="pointer-events-none absolute inset-0 z-0"
+            style={{
+              background: `
+                radial-gradient(ellipse 55% 38% at 8% -4%, rgba(38,217,184,0.13) 0%, transparent 52%),
+                radial-gradient(ellipse 55% 38% at 92% -4%, rgba(124,139,255,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse 40% 28% at 50% 108%, rgba(7,8,15,0.85) 0%, transparent 55%)
+              `,
+            }}
+          />
           <Navbar />
           <main className="page-shell relative z-10 py-20">{children}</main>
           <Footer />
