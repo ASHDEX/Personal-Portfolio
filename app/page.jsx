@@ -15,6 +15,15 @@ export const metadata = {
 
 const certs = ["CISSP", "CISM", "CISA", "CASP+", "SC-100", "AZ-500"];
 
+const stats = [
+  { value: "7+", label: "Years in Security" },
+  { value: "6", label: "Enterprise Roles" },
+  { value: "15", label: "Certifications" },
+  { value: "30+", label: "ATT&CK Detections" },
+  { value: "400+", label: "Endpoints Secured" },
+  { value: "100%", label: "Audit Closure Rate" },
+];
+
 const valueProps = [
   { metric: "70–80%", label: "reduction in manual SOC triage" },
   { metric: "30%", label: "improvement in MITRE ATT&CK detection coverage" },
@@ -242,6 +251,22 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS BAR ── */}
+      <section className="section-block !pt-0">
+        <div className="section-card">
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-2xl font-black" style={{ color: "var(--accent-warm)", fontVariantNumeric: "tabular-nums" }}>
+                  {stat.value}
+                </p>
+                <p className="mt-0.5 text-xs" style={{ color: "var(--ink-muted)" }}>{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

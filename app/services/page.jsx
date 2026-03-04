@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Services | ASHDEX Cybersecurity",
+  title: "Services | Jayesh Chaudhary — Security Architecture & Detection Engineering",
   description:
     "Enterprise security consulting services for architecture modernization, detection uplift, incident readiness, and SOC automation outcomes.",
   openGraph: {
-    title: "Services | ASHDEX",
+    title: "Services | Jayesh Chaudhary",
     description:
       "Architecture-first security services designed for measurable SOC modernization outcomes.",
     url: "https://ashdex.me/services",

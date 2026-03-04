@@ -1,9 +1,9 @@
 export const metadata = {
-  title: "Experience | ASHDEX Cybersecurity",
+  title: "Experience | Jayesh Chaudhary — Lead Security Engineer",
   description:
-    "Security Architecture, Detection Engineering, Cloud Incident Response, and Threat Intelligence Automation delivery across enterprise environments.",
+    "7 years of security engineering across Detection Engineering, Cloud Incident Response, Insider Threat, DLP, and Security Architecture at Payatu, Coralogix, and Bank of America.",
   openGraph: {
-    title: "Experience | ASHDEX",
+    title: "Experience | Jayesh Chaudhary",
     description:
       "Timeline of architecture-first security outcomes across incident response, detection engineering, DLP, and SOC modernization.",
     url: "https://ashdex.me/experience",
@@ -21,25 +21,26 @@ const roles = [
       "Automated IOC enrichment (IPs, domains, hashes) using AlienVault OTX and VirusTotal with concurrent scoring for faster SOC/IR investigations.",
       "Developed bulk domain intelligence tooling and large-scale website snapshot → PDF reporting for DFIR evidence documentation.",
       "Implemented Microsoft Teams → Azure Logic Apps → SharePoint workflows enabling near real-time advisory reporting.",
-      "Led fintech security engagements spanning data protection, detection engineering, IR, and SOC enablement.",
+      "Led multiple fintech security engagements spanning data protection, detection engineering, IR, and SOC enablement.",
+      "Developed MSRPC-specific alerts to identify unauthorized access attempts, reducing missed detections by 20%.",
       "Delivered Microsoft Purview DLP across ~400 endpoints and 15+ data sources with 10+ custom SITs and 25+ DLP policies, improving classification accuracy by ~40% and reducing business-impacting violations by ~30%.",
       "Deployed Defender, Intune, and Wazuh with 30+ security/compliance policies achieving 95% endpoint compliance.",
       "Built 30+ MITRE ATT&CK-mapped Sentinel queries improving detection coverage by ~30%.",
       "Led active breach response reducing MTTC by ~35%.",
       "Designed full incident management program including severity models, escalation matrices, and playbooks (~40% SOC readiness improvement).",
-      "Delivered audit-ready artifacts enabling 100% closure of audit observations.",
+      "Delivered audit-ready artifacts enabling 100% closure of data protection and incident response audit observations.",
     ],
     stack: ["Microsoft Sentinel", "Defender", "Intune", "Purview", "Wazuh", "Azure", "Python", "KQL", "OTX", "VirusTotal"],
   },
   {
-    title: "Cloud Incident Response",
+    title: "Cloud Incident Response Engineer",
     company: "Coralogix — Gurugram, HR",
     period: "Sep 2024 – May 2025",
     focus: ["Cloud Detection Engineering", "IAM Security", "Automated Containment", "Cloud IR"],
     bullets: [
       "Reduced MTTD by 40% by engineering detections across CloudTrail, IAM, and VPC telemetry.",
       "Decreased MTTR by 35% via automated containment playbooks isolating compromised IAM identities.",
-      "Led response for high-severity IAM compromise and storage exposure incidents.",
+      "Led end-to-end response for high-severity IAM compromise and storage exposure incidents.",
       "Enforced least-privilege IAM guardrails improving cloud posture by 25%.",
       "Built 30+ MITRE ATT&CK (Cloud) use cases reducing false positives by 30%.",
     ],
@@ -67,7 +68,7 @@ const roles = [
     bullets: [
       "Monitored malicious activity and blocked high-risk IPs/domains.",
       "Prevented data exfiltration by banning access for 7,000+ users.",
-      "Proactively blocked high-risk domains.",
+      "Proactively blocked high-risk domains with high data exfiltration risk.",
     ],
   },
   {
@@ -75,9 +76,9 @@ const roles = [
     company: "CRMNext — Mumbai, MH",
     period: "April 2021 – Aug 2021",
     bullets: [
-      "Managed CRM systems improving data accuracy.",
-      "Improved email campaign engagement by 20%.",
-      "Led CRM migrations with minimal disruption.",
+      "Managed CRM systems improving data accuracy, leading to 15% increase in customer satisfaction.",
+      "Designed email campaigns achieving 20% increase in open rates.",
+      "Led CRM migrations with minimal business disruption.",
     ],
   },
   {
@@ -85,9 +86,9 @@ const roles = [
     company: "",
     period: "April 2019 – Mar 2021",
     bullets: [
-      "Designed and tuned EDM/regex-based DLP policies.",
-      "Reduced false positives and improved triage efficiency.",
-      "Conducted DLP reviews and policy improvements.",
+      "Designed and tuned EDM/regex-based DLP detection policies.",
+      "Reduced false positives and improved analyst triage efficiency.",
+      "Conducted periodic DLP policy reviews and user guidance.",
     ],
   },
 ];
@@ -95,36 +96,52 @@ const roles = [
 export default function ExperiencePage() {
   return (
     <section className="space-y-10 py-24">
-      <header className="section-card border-slate-700/70 bg-surface-900/80">
+      <header className="section-card">
         <h1 className="section-title">Experience</h1>
-        <p className="mt-4 text-sm text-slate-300 sm:text-base">
+        <p className="mt-4 text-sm sm:text-base" style={{ color: "var(--ink-muted)" }}>
           Security Architecture · Detection Engineering · Cloud Incident Response · Threat Intelligence Automation
         </p>
       </header>
 
-      <div className="relative space-y-8 before:absolute before:bottom-0 before:left-5 before:top-0 before:w-px before:bg-slate-700/80 md:before:left-1/2 md:before:-translate-x-1/2">
+      <div className="relative space-y-8">
+        {/* Teal vertical connector */}
+        <div
+          className="absolute bottom-0 left-5 top-0 w-px md:left-1/2 md:-translate-x-px"
+          style={{ background: "rgba(38,217,184,0.2)" }}
+        />
+
         {roles.map((role) => (
           <article key={`${role.title}-${role.period}`} className="relative grid gap-5 md:grid-cols-2 md:gap-8">
+            {/* Left — role info */}
             <div className="md:pr-10 md:text-right">
-              <div className="rounded-2xl border border-slate-700/80 bg-surface-900/85 p-6">
-                <h2 className="text-2xl font-bold text-slate-100">{role.title}</h2>
-                {role.company ? <p className="mt-2 text-sm text-slate-300">{role.company}</p> : null}
-                <p className="mt-2 text-sm font-semibold text-cyan-200">{role.period}</p>
-
-                {role.focus?.length ? (
-                  <div className="mt-4 flex flex-wrap gap-2 md:justify-end">
-                    {role.focus.map((item) => (
-                      <span key={item} className="rounded-full border border-slate-600 bg-surface-800/80 px-3 py-1 text-xs font-medium text-slate-300">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
+              <div
+                className="rounded-xl p-6 backdrop-blur-sm"
+                style={{ border: "1px solid var(--line-soft)", background: "var(--panel)" }}
+              >
+                <h2 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
+                  {role.title}
+                </h2>
+                {role.company ? (
+                  <p className="mt-1.5 text-sm" style={{ color: "var(--ink-muted)" }}>
+                    {role.company}
+                  </p>
                 ) : null}
+                <p className="mt-1.5 font-mono text-sm font-semibold" style={{ color: "var(--accent)" }}>
+                  {role.period}
+                </p>
 
-                {role.stack?.length ? (
-                  <div className="mt-4 flex flex-wrap gap-2 md:justify-end">
-                    {role.stack.map((item) => (
-                      <span key={item} className="rounded-full border border-slate-600 bg-surface-800/80 px-3 py-1 text-xs font-medium text-slate-300">
+                {(role.focus ?? role.stack)?.length ? (
+                  <div className="mt-4 flex flex-wrap gap-1.5 md:justify-end">
+                    {(role.focus ?? role.stack).map((item) => (
+                      <span
+                        key={item}
+                        className="rounded px-2 py-1 font-mono text-xs"
+                        style={{
+                          border: "1px solid var(--line-soft)",
+                          background: "rgba(13,17,32,0.7)",
+                          color: "var(--ink-muted)",
+                        }}
+                      >
                         {item}
                       </span>
                     ))}
@@ -133,33 +150,45 @@ export default function ExperiencePage() {
               </div>
             </div>
 
+            {/* Right — bullets */}
             <div className="md:pl-10">
-              <div className="rounded-2xl border border-slate-700/80 bg-surface-900/85 p-6">
-                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed text-slate-200 sm:text-base">
-                  {role.bullets.map((point) => (
-                    <li key={point}>
-                      {point
-                        .replace(/70–80%|95%|30\+|\~40%|\~30%|\~35%|100%|40%|35%|25%|15%|20%|7,000\+/g, (metric) => `[[${metric}]]`)
-                        .split(/(\[\[[^\]]+\]\])/g)
-                        .filter(Boolean)
-                        .map((chunk) => {
-                          if (chunk.startsWith("[[") && chunk.endsWith("]]")) {
-                            const value = chunk.slice(2, -2);
-                            return (
-                              <strong key={`${point}-${value}`} className="font-semibold text-cyan-200">
-                                {value}
+              <div
+                className="rounded-xl p-6 backdrop-blur-sm"
+                style={{ border: "1px solid var(--line-soft)", background: "var(--panel)" }}
+              >
+                <ul className="space-y-2.5 text-sm leading-relaxed" style={{ color: "var(--ink-muted)" }}>
+                  {role.bullets.map((point, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span style={{ color: "var(--accent)", flexShrink: 0, marginTop: "2px" }}>›</span>
+                      <span>
+                        {point
+                          .replace(/70–80%|~?40%|~?30%|~?35%|~?20%|95%|100%|25%|15%|30\+|7,000\+|50\+|400/g, (m) => `[[${m}]]`)
+                          .split(/(\[\[[^\]]+\]\])/g)
+                          .filter(Boolean)
+                          .map((chunk, j) =>
+                            chunk.startsWith("[[") ? (
+                              <strong key={j} style={{ color: "var(--accent-warm)", fontWeight: 700 }}>
+                                {chunk.slice(2, -2)}
                               </strong>
-                            );
-                          }
-                          return <span key={`${point}-${chunk}`}>{chunk}</span>;
-                        })}
+                            ) : (
+                              <span key={j}>{chunk}</span>
+                            )
+                          )}
+                      </span>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
 
-            <span className="absolute left-5 top-8 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-slate-900 bg-cyan-300 md:left-1/2" />
+            {/* Teal timeline dot */}
+            <span
+              className="absolute left-5 top-8 h-3 w-3 -translate-x-1/2 rounded-full md:left-1/2"
+              style={{
+                background: "var(--accent)",
+                boxShadow: "0 0 0 3px #07080f, 0 0 0 5px rgba(38,217,184,0.35)",
+              }}
+            />
           </article>
         ))}
       </div>
