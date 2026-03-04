@@ -44,33 +44,7 @@ export default function Navbar() {
             <Link
               key={page.href}
               href={page.href}
-              className="rounded-lg px-3 py-1.5 transition"
-              style={
-                isActive(page.href)
-                  ? {
-                      border: "1px solid rgba(38, 217, 184, 0.45)",
-                      background: "rgba(38, 217, 184, 0.08)",
-                      color: "var(--accent)",
-                    }
-                  : {
-                      border: "1px solid transparent",
-                      color: "var(--ink-muted)",
-                    }
-              }
-              onMouseEnter={(e) => {
-                if (!isActive(page.href)) {
-                  e.currentTarget.style.borderColor = "rgba(38, 217, 184, 0.3)";
-                  e.currentTarget.style.background = "rgba(38, 217, 184, 0.05)";
-                  e.currentTarget.style.color = "var(--ink)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive(page.href)) {
-                  e.currentTarget.style.borderColor = "transparent";
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = "var(--ink-muted)";
-                }
-              }}
+              className={`rounded-lg px-3 py-1.5 ${isActive(page.href) ? "nav-link-active" : "nav-link"}`}
               aria-current={isActive(page.href) ? "page" : undefined}
             >
               {page.label}
