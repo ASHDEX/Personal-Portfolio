@@ -16,10 +16,8 @@ export default function Footer() {
             href="https://linkedin.com/in/jayesh"
             target="_blank"
             rel="noreferrer"
-            className="transition hover:-translate-y-0.5"
+            className="transition hover:-translate-y-0.5 hover:text-accent-glow"
             style={{ color: "var(--ink-muted)" }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = "var(--accent-2)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ink-muted)"; }}
           >
             LinkedIn
           </a>
@@ -27,10 +25,8 @@ export default function Footer() {
             href="https://github.com/Ashdex"
             target="_blank"
             rel="noreferrer"
-            className="transition hover:-translate-y-0.5"
+            className="transition hover:-translate-y-0.5 hover:text-white"
             style={{ color: "var(--ink-muted)" }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ink)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ink-muted)"; }}
           >
             GitHub
           </a>
