@@ -12,7 +12,7 @@ const helpOptions = [
 ];
 
 export default function ContactClient() {
-  const [activePath, setActivePath] = useState("clients");
+  const [activePath, setActivePath] = useState("recruiters");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -62,7 +62,6 @@ export default function ContactClient() {
         if (!res.ok || !data.success) {
           throw new Error(data.error || "Failed to submit form");
         }
-
         setSubmitted(true);
         setFormData({
           name: "",
@@ -81,31 +80,36 @@ export default function ContactClient() {
       });
   };
 
+  const tabStyle = (path) =>
+    activePath === path
+      ? {
+          border: "1px solid rgba(38,217,184,0.4)",
+          background: "rgba(38,217,184,0.1)",
+          color: "var(--accent)",
+        }
+      : {
+          border: "1px solid transparent",
+          color: "var(--ink-muted)",
+        };
+
   return (
     <section className="space-y-6">
       <header className="section-card">
         <h1 className="section-title">Contact</h1>
-        <p className="mt-3 text-sm text-slate-300 sm:text-base">
-          Connect for consulting engagements or senior Security Architect opportunities.
+        <p className="mt-3 text-sm" style={{ color: "var(--ink-muted)" }}>
+          Connect for consulting engagements or senior Security Architect / Detection Engineering opportunities.
         </p>
       </header>
 
       <section className="section-card">
-        <h2 className="text-lg font-bold text-cyan-100">Choose your path</h2>
-        <div className="mt-4 inline-flex rounded-xl border border-cyan-300/30 bg-surface-800/60 p-1">
+        <div className="inline-flex gap-1 rounded-xl p-1" style={{ background: "rgba(13,17,32,0.8)", border: "1px solid rgba(38,217,184,0.12)" }}>
           {["recruiters", "clients"].map((path) => (
             <button
               key={path}
               type="button"
-              onClick={() => {
-                setActivePath(path);
-                setSubmitted(false);
-              }}
-              className={`rounded-lg px-4 py-2 text-sm font-semibold capitalize transition ${
-                activePath === path
-                  ? "bg-cyan-300/20 text-cyan-100"
-                  : "text-slate-300 hover:bg-cyan-300/10 hover:text-cyan-200"
-              }`}
+              onClick={() => { setActivePath(path); setSubmitted(false); }}
+              className="rounded-lg px-4 py-2 text-sm font-semibold capitalize transition"
+              style={tabStyle(path)}
             >
               For {path}
             </button>
@@ -114,40 +118,124 @@ export default function ContactClient() {
 
         <div className="mt-5">
           {activePath === "recruiters" ? (
-            <article className="rounded-2xl border border-cyan-300/25 bg-surface-900/70 p-6">
-              <h3 className="text-xl font-bold text-cyan-100">For Recruiters</h3>
-              <p className="mt-3 text-sm text-slate-300">
-                Hiring for remote senior Security Architect, Detection Engineering, or SOC modernization roles? Reach out directly.
+            <article
+              className="rounded-xl p-6"
+              style={{
+                border: "1px solid rgba(38,217,184,0.2)",
+                background: "rgba(38,217,184,0.04)",
+              }}
+            >
+              <h3 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
+                For Recruiters
+              </h3>
+              <p className="mt-2 text-sm" style={{ color: "var(--ink-muted)" }}>
+                Hiring for remote senior Security Architect, Detection Engineering Lead, or SOC modernisation roles?
+                Reach out directly — I respond within 24–48 hours.
               </p>
+
+              {/* Quick contact info */}
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <div
+                  className="rounded-lg px-3 py-2.5"
+                  style={{ border: "1px solid rgba(255,255,255,0.06)", background: "rgba(13,17,32,0.6)" }}
+                >
+                  <p className="font-mono text-xs uppercase tracking-wider" style={{ color: "var(--accent)" }}>Email</p>
+                  <a href="mailto:hello@ashdex.me" className="mt-1 block text-sm text-cyan-200 hover:underline">
+                    hello@ashdex.me
+                  </a>
+                </div>
+                <div
+                  className="rounded-lg px-3 py-2.5"
+                  style={{ border: "1px solid rgba(255,255,255,0.06)", background: "rgba(13,17,32,0.6)" }}
+                >
+                  <p className="font-mono text-xs uppercase tracking-wider" style={{ color: "var(--accent)" }}>Location</p>
+                  <p className="mt-1 text-sm" style={{ color: "var(--ink-muted)" }}>Gurugram, India · Remote OK</p>
+                </div>
+              </div>
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <a
                   href="mailto:hello@ashdex.me"
-                  className="rounded-full border border-cyan-300/60 bg-cyan-300/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/25"
+                  className="rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5"
+                  style={{
+                    border: "1px solid rgba(38,217,184,0.55)",
+                    background: "rgba(38,217,184,0.1)",
+                    color: "var(--accent)",
+                  }}
                 >
                   Email Me
                 </a>
                 <a
-                  href="https://linkedin.com"
+                  href="https://linkedin.com/in/jayesh"
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full border border-violet-300/60 bg-violet-300/10 px-4 py-2 text-sm font-semibold text-violet-100 transition hover:bg-violet-300/20"
+                  className="rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5"
+                  style={{
+                    border: "1px solid rgba(124,139,255,0.45)",
+                    background: "rgba(124,139,255,0.08)",
+                    color: "#a5b0ff",
+                  }}
                 >
                   LinkedIn
                 </a>
+                <a
+                  href="https://github.com/Ashdex"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5"
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    background: "rgba(255,255,255,0.04)",
+                    color: "var(--ink-muted)",
+                  }}
+                >
+                  GitHub
+                </a>
+                {/* Place resume PDF at /public/resume.pdf */}
+                <a
+                  href="/resume.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5"
+                  style={{
+                    border: "1px solid rgba(251,191,36,0.4)",
+                    background: "rgba(251,191,36,0.07)",
+                    color: "#fbbf24",
+                  }}
+                >
+                  Download Resume
+                </a>
               </div>
 
-              <p className="mt-4 text-xs text-slate-400">Resume available on request.</p>
+              <p className="mt-4 font-mono text-xs" style={{ color: "var(--ink-muted)" }}>
+                Current role: Lead Security Engineer · Payatu · Gurugram · May 2025 – Present
+              </p>
             </article>
           ) : (
-            <article className="rounded-2xl border border-cyan-300/25 bg-surface-900/70 p-6">
-              <h3 className="text-xl font-bold text-cyan-100">For Clients</h3>
-              <p className="mt-2 text-sm text-slate-300">
-                Share your current challenge and target outcomes. You will receive a practical architecture-first engagement path.
+            <article
+              className="rounded-xl p-6"
+              style={{
+                border: "1px solid rgba(124,139,255,0.2)",
+                background: "rgba(124,139,255,0.04)",
+              }}
+            >
+              <h3 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
+                For Clients
+              </h3>
+              <p className="mt-2 text-sm" style={{ color: "var(--ink-muted)" }}>
+                Share your current challenge and target outcomes. You will receive a practical architecture-first
+                engagement path.
               </p>
 
               {submitted ? (
-                <div className="mt-5 rounded-xl border border-emerald-300/30 bg-emerald-300/10 p-4 text-sm text-emerald-200">
+                <div
+                  className="mt-5 rounded-xl p-4 text-sm"
+                  style={{
+                    border: "1px solid rgba(74,222,128,0.3)",
+                    background: "rgba(74,222,128,0.08)",
+                    color: "#86efac",
+                  }}
+                >
                   Thanks — your request has been received. I will get back to you within 24–48 hours.
                 </div>
               ) : (
@@ -165,25 +253,35 @@ export default function ContactClient() {
 
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="space-y-2 text-sm">
-                      <span className="font-medium text-slate-200">Name</span>
+                      <span className="font-medium" style={{ color: "var(--ink)" }}>Name</span>
                       <input
                         required
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full rounded-xl border border-cyan-300/25 bg-surface-800/70 px-3 py-2 text-slate-100 outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/25"
+                        className="w-full rounded-xl px-3 py-2 outline-none transition"
+                        style={{
+                          border: "1px solid rgba(38,217,184,0.2)",
+                          background: "rgba(13,17,32,0.8)",
+                          color: "var(--ink)",
+                        }}
                         placeholder="Your name"
                       />
                     </label>
 
                     <label className="space-y-2 text-sm">
-                      <span className="font-medium text-slate-200">Company</span>
+                      <span className="font-medium" style={{ color: "var(--ink)" }}>Company</span>
                       <input
                         required
                         name="company"
                         value={formData.company}
                         onChange={handleChange}
-                        className="w-full rounded-xl border border-cyan-300/25 bg-surface-800/70 px-3 py-2 text-slate-100 outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/25"
+                        className="w-full rounded-xl px-3 py-2 outline-none transition"
+                        style={{
+                          border: "1px solid rgba(38,217,184,0.2)",
+                          background: "rgba(13,17,32,0.8)",
+                          color: "var(--ink)",
+                        }}
                         placeholder="Company name"
                       />
                     </label>
@@ -191,26 +289,36 @@ export default function ContactClient() {
 
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="space-y-2 text-sm">
-                      <span className="font-medium text-slate-200">Email</span>
+                      <span className="font-medium" style={{ color: "var(--ink)" }}>Email</span>
                       <input
                         required
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full rounded-xl border border-cyan-300/25 bg-surface-800/70 px-3 py-2 text-slate-100 outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/25"
+                        className="w-full rounded-xl px-3 py-2 outline-none transition"
+                        style={{
+                          border: "1px solid rgba(38,217,184,0.2)",
+                          background: "rgba(13,17,32,0.8)",
+                          color: "var(--ink)",
+                        }}
                         placeholder="you@company.com"
                       />
                     </label>
 
                     <label className="space-y-2 text-sm">
-                      <span className="font-medium text-slate-200">What you need help with</span>
+                      <span className="font-medium" style={{ color: "var(--ink)" }}>What you need help with</span>
                       <select
                         required
                         name="need"
                         value={formData.need}
                         onChange={handleChange}
-                        className="w-full rounded-xl border border-cyan-300/25 bg-surface-800/70 px-3 py-2 text-slate-100 outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/25"
+                        className="w-full rounded-xl px-3 py-2 outline-none transition"
+                        style={{
+                          border: "1px solid rgba(38,217,184,0.2)",
+                          background: "rgba(13,17,32,0.8)",
+                          color: "var(--ink)",
+                        }}
                       >
                         {helpOptions.map((option) => (
                           <option key={option} value={option}>
@@ -222,26 +330,45 @@ export default function ContactClient() {
                   </div>
 
                   <label className="space-y-2 text-sm">
-                    <span className="font-medium text-slate-200">Short description of problem</span>
+                    <span className="font-medium" style={{ color: "var(--ink)" }}>Short description of problem</span>
                     <textarea
                       required
                       name="description"
                       value={formData.description}
                       onChange={handleChange}
                       rows={5}
-                      className="w-full rounded-xl border border-cyan-300/25 bg-surface-800/70 px-3 py-2 text-slate-100 outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/25"
+                      className="w-full rounded-xl px-3 py-2 outline-none transition"
+                      style={{
+                        border: "1px solid rgba(38,217,184,0.2)",
+                        background: "rgba(13,17,32,0.8)",
+                        color: "var(--ink)",
+                      }}
                       placeholder="Describe your current challenge and goals"
                     />
                   </label>
 
                   {error ? (
-                    <p className="rounded-xl border border-rose-300/35 bg-rose-300/10 p-3 text-sm text-rose-200">{error}</p>
+                    <p
+                      className="rounded-xl p-3 text-sm"
+                      style={{
+                        border: "1px solid rgba(248,113,113,0.3)",
+                        background: "rgba(248,113,113,0.08)",
+                        color: "#fca5a5",
+                      }}
+                    >
+                      {error}
+                    </p>
                   ) : null}
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-fit rounded-full border border-cyan-300/60 bg-cyan-300/15 px-5 py-2.5 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/25"
+                    className="w-fit rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
+                    style={{
+                      border: "1px solid rgba(38,217,184,0.55)",
+                      background: "rgba(38,217,184,0.1)",
+                      color: "var(--accent)",
+                    }}
                   >
                     {loading ? "Submitting..." : "Submit"}
                   </button>
@@ -253,9 +380,12 @@ export default function ContactClient() {
       </section>
 
       <section className="section-card">
-        <h2 className="text-xl font-bold text-cyan-100">Book a Call</h2>
-        <p className="mt-2 text-sm text-slate-300">Prefer scheduling directly? Use Calendly below.</p>
-        <div className="mt-4 overflow-hidden rounded-2xl border border-cyan-300/25 bg-surface-900/70">
+        <h2 className="text-xl font-bold" style={{ color: "var(--ink)" }}>Book a Call</h2>
+        <p className="mt-2 text-sm" style={{ color: "var(--ink-muted)" }}>Prefer scheduling directly? Use Calendly below.</p>
+        <div
+          className="mt-4 overflow-hidden rounded-xl"
+          style={{ border: "1px solid rgba(38,217,184,0.15)" }}
+        >
           <iframe
             title="Calendly scheduling"
             src={calendlyUrl}
@@ -266,30 +396,51 @@ export default function ContactClient() {
       </section>
 
       <section className="section-card">
-        <h2 className="text-xl font-bold text-cyan-100">Availability & Expectations</h2>
-        <div className="mt-3 space-y-2 text-sm text-slate-300">
+        <h2 className="text-xl font-bold" style={{ color: "var(--ink)" }}>Availability & Expectations</h2>
+        <div className="mt-3 space-y-2 text-sm" style={{ color: "var(--ink-muted)" }}>
           <p>
             <span className="font-semibold text-cyan-300">Typical response time:</span> 24–48 hours.
           </p>
           <p>
-            <span className="font-semibold text-cyan-300">Preferred engagements:</span> architecture modernization,
-            detection uplift, and SOC automation initiatives.
+            <span className="font-semibold text-cyan-300">Preferred engagements:</span> architecture
+            modernisation, detection uplift, and SOC automation initiatives.
+          </p>
+          <p>
+            <span className="font-semibold text-cyan-300">Open to:</span> remote senior Security Architect,
+            Detection Engineering Lead, and SOC Modernisation roles.
           </p>
         </div>
       </section>
 
-      <section className="section-card border-violet-300/35 bg-gradient-to-r from-violet-400/15 via-surface-900/80 to-cyan-400/15">
+      <section
+        className="section-card"
+        style={{
+          borderColor: "rgba(124,139,255,0.25)",
+          background:
+            "linear-gradient(135deg, rgba(124,139,255,0.07) 0%, rgba(13,17,32,0.85) 60%, rgba(38,217,184,0.07) 100%)",
+        }}
+      >
         <h2 className="text-2xl font-bold text-white">Not sure what you need yet?</h2>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
             href="/services"
-            className="rounded-full border border-cyan-300/60 bg-cyan-300/15 px-5 py-2.5 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/25"
+            className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
+            style={{
+              border: "1px solid rgba(38,217,184,0.55)",
+              background: "rgba(38,217,184,0.1)",
+              color: "var(--accent)",
+            }}
           >
             Explore Services
           </Link>
           <Link
             href="/projects"
-            className="rounded-full border border-violet-300/55 bg-violet-300/10 px-5 py-2.5 text-sm font-semibold text-violet-100 transition hover:bg-violet-300/20"
+            className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
+            style={{
+              border: "1px solid rgba(124,139,255,0.45)",
+              background: "rgba(124,139,255,0.08)",
+              color: "#a5b0ff",
+            }}
           >
             View Projects
           </Link>
@@ -298,4 +449,3 @@ export default function ContactClient() {
     </section>
   );
 }
-

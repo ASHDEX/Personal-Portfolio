@@ -17,14 +17,14 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "ASHDEX | Cybersecurity Portfolio",
+  title: "Jayesh Chaudhary | Security Architect & Engineer",
   description:
-    "Cybersecurity portfolio focused on Threat Intel Automation, Detection Engineering, Security Tooling, and Security Architecture.",
+    "Jayesh Chaudhary — CISSP, CISM, CISA. Lead Security Engineer specialising in Detection Engineering, Threat Intelligence Automation, SOC Modernisation, and Security Architecture.",
   metadataBase: new URL("https://ashdex.me"),
   openGraph: {
-    title: "ASHDEX | Cybersecurity Portfolio",
+    title: "Jayesh Chaudhary | Security Architect & Engineer",
     description:
-      "Threat intelligence automation, detection engineering, DFIR tooling, and security architecture case studies.",
+      "Detection Engineering, Threat Intelligence Automation, DFIR tooling, and Security Architecture. CISSP · CISM · CISA.",
     url: "https://ashdex.me",
     siteName: "ASHDEX",
     type: "website",
