@@ -198,7 +198,7 @@ export default function HomePage() {
                 </a>
                 {/* Resume — place your PDF at /public/resume.pdf to activate */}
                 <a
-                  href="/resume.pdf"
+                  href="/Resume.pdf"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"

@@ -193,7 +193,7 @@ export default function ContactClient() {
                 </a>
                 {/* Place resume PDF at /public/resume.pdf */}
                 <a
-                  href="/resume.pdf"
+                  href="/Resume.pdf"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5"
