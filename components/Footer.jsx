@@ -7,16 +7,40 @@ export default function Footer() {
         background: "rgba(7, 8, 15, 0.7)",
       }}
     >
-      <div className="page-shell flex flex-wrap items-center justify-between gap-3 py-6 text-sm">
+      <div className="page-shell flex flex-wrap items-center justify-between gap-4 py-6 text-sm">
         <p style={{ color: "var(--ink-muted)" }}>
-          © {new Date().getFullYear()} ASHDEX. Built with Next.js App Router + Tailwind CSS.
+          © {new Date().getFullYear()} Jayesh Chaudhary. Built with Next.js App Router + Tailwind CSS.
         </p>
-        <span
-          className="font-mono text-xs"
-          style={{ color: "rgba(38, 217, 184, 0.45)" }}
-        >
-          ashdex.me
-        </span>
+        <div className="flex items-center gap-4">
+          <a
+            href="https://linkedin.com/in/jayesh"
+            target="_blank"
+            rel="noreferrer"
+            className="transition hover:-translate-y-0.5"
+            style={{ color: "var(--ink-muted)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "var(--accent-2)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ink-muted)"; }}
+          >
+            LinkedIn
+          </a>
+          <a
+            href="https://github.com/Ashdex"
+            target="_blank"
+            rel="noreferrer"
+            className="transition hover:-translate-y-0.5"
+            style={{ color: "var(--ink-muted)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ink)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ink-muted)"; }}
+          >
+            GitHub
+          </a>
+          <span
+            className="font-mono text-xs"
+            style={{ color: "rgba(38, 217, 184, 0.4)" }}
+          >
+            ashdex.me
+          </span>
+        </div>
       </div>
     </footer>
   );
