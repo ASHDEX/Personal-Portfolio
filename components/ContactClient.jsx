@@ -391,6 +391,7 @@ export default function ContactClient() {
             src={calendlyUrl}
             className="h-[700px] w-full"
             loading="lazy"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
           />
         </div>
       </section>
