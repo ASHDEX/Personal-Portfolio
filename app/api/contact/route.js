@@ -2,6 +2,9 @@ import nodemailer from "nodemailer";
 
 export const dynamic = "force-dynamic";
 
+// ---------------------------------------------------------------------------
+// Rate limiting
+// ---------------------------------------------------------------------------
 const WINDOW_MS = 60 * 1000;
 const LIMIT_PER_WINDOW = 5;
 const rateLimitStore = globalThis.__contactRateLimitStore ?? new Map();
@@ -11,54 +14,111 @@ if (!globalThis.__contactRateLimitStore) {
 }
 
 function getClientIp(request) {
+  // Prefer X-Real-IP (set by most reverse proxies as a single, trusted value)
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+
   const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  if (forwardedFor) {
+    // Use the rightmost IP (appended by the proxy, not the client)
+    const ips = forwardedFor.split(",").map((ip) => ip.trim()).filter(Boolean);
+    return ips[ips.length - 1] ?? "unknown";
+  }
   return "unknown";
 }
 
 function isRateLimited(ip) {
   const now = Date.now();
+
+  // Clean up expired entries to prevent unbounded memory growth
+  for (const [key, val] of rateLimitStore.entries()) {
+    if (now > val.resetAt) rateLimitStore.delete(key);
+  }
+
   const current = rateLimitStore.get(ip) ?? { count: 0, resetAt: now + WINDOW_MS };
 
   if (now > current.resetAt) {
-    const fresh = { count: 1, resetAt: now + WINDOW_MS };
-    rateLimitStore.set(ip, fresh);
+    rateLimitStore.set(ip, { count: 1, resetAt: now + WINDOW_MS });
     return false;
   }
 
-  if (current.count >= LIMIT_PER_WINDOW) {
-    return true;
-  }
+  if (current.count >= LIMIT_PER_WINDOW) return true;
 
   current.count += 1;
   rateLimitStore.set(ip, current);
   return false;
 }
 
+// ---------------------------------------------------------------------------
+// Input sanitisation helpers
+// ---------------------------------------------------------------------------
+
+/** Escape HTML entities to prevent injection in email templates. */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** Escape Slack mrkdwn special characters. */
+function escapeSlack(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+// ---------------------------------------------------------------------------
+// Validation
+// ---------------------------------------------------------------------------
+
+const ALLOWED_SERVICES = [
+  "Detection Engineering",
+  "IR/DFIR",
+  "SOC Automation",
+  "CTI Automation",
+  "Architecture",
+];
+
+const FIELD_LIMITS = {
+  name: 200,
+  company: 200,
+  email: 320,
+  service: 100,
+  message: 5000,
+};
+
 function validatePayload(payload) {
   const required = ["name", "company", "email", "service", "message"];
   for (const key of required) {
-    if (!payload?.[key] || String(payload[key]).trim().length === 0) {
-      return `${key} is required`;
-    }
+    const val = String(payload?.[key] ?? "").trim();
+    if (!val) return `${key} is required`;
+    if (val.length > FIELD_LIMITS[key]) return `${key} exceeds maximum length`;
   }
 
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email);
+  // RFC 5321 compliant email format check
+  const emailOk =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(
+      payload.email,
+    );
   if (!emailOk) return "Invalid email";
+
+  // Whitelist service to prevent injection via this field
+  if (!ALLOWED_SERVICES.includes(payload.service)) return "Invalid service selected";
 
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// Delivery integrations
+// ---------------------------------------------------------------------------
+
 async function sendSmtpEmail(payload) {
-  const {
-    SMTP_HOST,
-    SMTP_PORT,
-    SMTP_USER,
-    SMTP_PASS,
-    SMTP_FROM,
-    CONTACT_TO_EMAIL,
-    SMTP_SECURE,
-  } = process.env;
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, CONTACT_TO_EMAIL, SMTP_SECURE } =
+    process.env;
 
   if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS || !SMTP_FROM || !CONTACT_TO_EMAIL) {
     return;
@@ -68,19 +128,23 @@ async function sendSmtpEmail(payload) {
     host: SMTP_HOST,
     port: Number(SMTP_PORT),
     secure: String(SMTP_SECURE).toLowerCase() === "true",
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS,
-    },
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
   });
+
+  // Escape all user-supplied values before embedding in HTML
+  const safeName = escapeHtml(payload.name);
+  const safeCompany = escapeHtml(payload.company);
+  const safeEmail = escapeHtml(payload.email);
+  const safeService = escapeHtml(payload.service);
+  const safeMessage = escapeHtml(payload.message).replace(/\n/g, "<br/>");
 
   const html = `
     <h2>New Contact Submission</h2>
-    <p><strong>Name:</strong> ${payload.name}</p>
-    <p><strong>Company:</strong> ${payload.company}</p>
-    <p><strong>Email:</strong> ${payload.email}</p>
-    <p><strong>Service:</strong> ${payload.service}</p>
-    <p><strong>Message:</strong><br/>${payload.message.replace(/\n/g, "<br/>")}</p>
+    <p><strong>Name:</strong> ${safeName}</p>
+    <p><strong>Company:</strong> ${safeCompany}</p>
+    <p><strong>Email:</strong> ${safeEmail}</p>
+    <p><strong>Service:</strong> ${safeService}</p>
+    <p><strong>Message:</strong><br/>${safeMessage}</p>
   `;
 
   await transporter.sendMail({
@@ -108,21 +172,11 @@ async function sendToNotion(payload) {
     body: JSON.stringify({
       parent: { database_id: NOTION_DATABASE_ID },
       properties: {
-        Name: {
-          title: [{ text: { content: payload.name } }],
-        },
-        Company: {
-          rich_text: [{ text: { content: payload.company } }],
-        },
-        Email: {
-          email: payload.email,
-        },
-        Service: {
-          rich_text: [{ text: { content: payload.service } }],
-        },
-        Message: {
-          rich_text: [{ text: { content: payload.message.slice(0, 1900) } }],
-        },
+        Name: { title: [{ text: { content: payload.name } }] },
+        Company: { rich_text: [{ text: { content: payload.company } }] },
+        Email: { email: payload.email },
+        Service: { rich_text: [{ text: { content: payload.service } }] },
+        Message: { rich_text: [{ text: { content: payload.message.slice(0, 1900) } }] },
       },
     }),
   });
@@ -170,14 +224,18 @@ async function sendSlack(payload) {
     body: JSON.stringify({
       text: [
         "📥 New portfolio contact submission",
-        `*Name:* ${payload.name}`,
-        `*Email:* ${payload.email}`,
-        `*Service:* ${payload.service}`,
-        `*Message:* ${preview}`,
+        `*Name:* ${escapeSlack(payload.name)}`,
+        `*Email:* ${escapeSlack(payload.email)}`,
+        `*Service:* ${escapeSlack(payload.service)}`,
+        `*Message:* ${escapeSlack(preview)}`,
       ].join("\n"),
     }),
   });
 }
+
+// ---------------------------------------------------------------------------
+// Route handler
+// ---------------------------------------------------------------------------
 
 export async function POST(request) {
   const ip = getClientIp(request);
@@ -215,4 +273,3 @@ export async function POST(request) {
     );
   }
 }
-

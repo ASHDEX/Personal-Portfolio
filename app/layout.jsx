@@ -36,7 +36,9 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const rawGaId = process.env.NEXT_PUBLIC_GA_ID;
+  // Validate format before use to prevent script injection if env var is misconfigured
+  const gaId = rawGaId && /^G-[A-Z0-9]{4,}$/.test(rawGaId) ? rawGaId : null;
 
   return (
     <html lang="en">
