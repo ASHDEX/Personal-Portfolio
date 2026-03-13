@@ -39,7 +39,7 @@ const services = [
 const engagementModel = ["Discover", "Design", "Build", "Operationalize", "Knowledge Transfer"];
 
 export default function ConsultingPage() {
-  const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/your-calendly-link";
+  const calUrl = process.env.NEXT_PUBLIC_CAL_URL || "https://cal.com/your-cal-link";
 
   return (
     <section className="space-y-10">
@@ -144,7 +144,7 @@ export default function ConsultingPage() {
           </Link>
         </div>
         <div className="mt-6 overflow-hidden rounded-2xl border border-cyan-300/25 bg-surface-900/70">
-          <iframe title="Calendly scheduling" src={calendlyUrl} className="h-[700px] w-full" loading="lazy" />
+          <iframe title="Cal.com scheduling" src={calUrl} className="h-[700px] w-full" loading="lazy" />
         </div>
       </section>
     </section>
