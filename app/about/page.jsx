@@ -31,7 +31,7 @@ const quickFacts = [
   { label: "Location", value: "Gurugram, Haryana, India" },
   { label: "Experience", value: "7 years in security engineering & operations" },
   { label: "Top Certs", value: "CISSP · CISM · CISA · CASP+ · SC-100" },
-  { label: "Email", value: "hello@ashdex.me" },
+  { label: "Email", value: "kh4r4nshu@gmail.com" },
   { label: "Side Project", value: "FreeIntelhub — open threat intelligence platform" },
 ];
 

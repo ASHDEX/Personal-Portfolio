@@ -25,7 +25,7 @@ export default function ContactClient() {
     company_website: "",
   });
 
-  const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/your-calendly-link";
+  const calUrl = process.env.NEXT_PUBLIC_CAL_URL || "https://cal.com/your-cal-link";
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -140,8 +140,8 @@ export default function ContactClient() {
                   style={{ border: "1px solid rgba(255,255,255,0.06)", background: "rgba(13,17,32,0.6)" }}
                 >
                   <p className="font-mono text-xs uppercase tracking-wider" style={{ color: "var(--accent)" }}>Email</p>
-                  <a href="mailto:hello@ashdex.me" className="mt-1 block text-sm text-cyan-200 hover:underline">
-                    hello@ashdex.me
+                  <a href="mailto:kh4r4nshu@gmail.com" className="mt-1 block text-sm text-cyan-200 hover:underline">
+                    kh4r4nshu@gmail.com
                   </a>
                 </div>
                 <div
@@ -155,7 +155,7 @@ export default function ContactClient() {
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <a
-                  href="mailto:hello@ashdex.me"
+                  href="mailto:kh4r4nshu@gmail.com"
                   className="rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5"
                   style={{
                     border: "1px solid rgba(38,217,184,0.55)",
@@ -381,14 +381,14 @@ export default function ContactClient() {
 
       <section className="section-card">
         <h2 className="text-xl font-bold" style={{ color: "var(--ink)" }}>Book a Call</h2>
-        <p className="mt-2 text-sm" style={{ color: "var(--ink-muted)" }}>Prefer scheduling directly? Use Calendly below.</p>
+        <p className="mt-2 text-sm" style={{ color: "var(--ink-muted)" }}>Prefer scheduling directly? Book a slot below.</p>
         <div
           className="mt-4 overflow-hidden rounded-xl"
           style={{ border: "1px solid rgba(38,217,184,0.15)" }}
         >
           <iframe
-            title="Calendly scheduling"
-            src={calendlyUrl}
+            title="Cal.com scheduling"
+            src={calUrl}
             className="h-[700px] w-full"
             loading="lazy"
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"

@@ -33,7 +33,7 @@ const nextConfig = {
               "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https://images.credly.com",
-              "frame-src https://calendly.com",
+              "frame-src https://cal.com",
               "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
               "font-src 'self'",
               "object-src 'none'",
