@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -151,3 +151,4 @@ main {
   background: rgba(38, 217, 184, 0.08);
   color: var(--accent);
 }
+ 

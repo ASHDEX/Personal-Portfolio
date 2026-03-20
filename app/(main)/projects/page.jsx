@@ -1,4 +1,4 @@
-import ProjectsClient from "../../components/ProjectsClient";
+import ProjectsClient from "../../../components/ProjectsClient";
 
 export const metadata = {
   title: "Projects | ASHDEX Cybersecurity",

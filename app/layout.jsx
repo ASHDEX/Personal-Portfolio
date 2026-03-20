@@ -1,8 +1,6 @@
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -54,9 +52,7 @@ export default function RootLayout({ children }) {
               `,
             }}
           />
-          <Navbar />
-          <main className="page-shell relative z-10 py-20">{children}</main>
-          <Footer />
+          {children}
         </div>
         {gaId ? (
           <>
