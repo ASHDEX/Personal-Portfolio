@@ -13,7 +13,7 @@ export default function Footer() {
         </p>
         <div className="flex items-center gap-4">
           <a
-            href="https://linkedin.com/in/jayesh"
+            href="https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/"
             target="_blank"
             rel="noreferrer"
             className="transition hover:-translate-y-0.5 hover:text-accent-glow"

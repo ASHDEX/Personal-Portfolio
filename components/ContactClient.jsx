@@ -166,7 +166,7 @@ export default function ContactClient() {
                   Email Me
                 </a>
                 <a
-                  href="https://linkedin.com/in/jayesh"
+                  href="https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5"

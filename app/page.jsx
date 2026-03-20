@@ -180,7 +180,7 @@ export default function HomePage() {
                   Discuss an Engagement
                 </Link>
                 <a
-                  href="https://linkedin.com/in/jayesh"
+                  href="https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
