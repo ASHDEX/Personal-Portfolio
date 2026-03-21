@@ -349,6 +349,8 @@ export default function ContactClient() {
 
                   {error ? (
                     <p
+                      role="alert"
+                      aria-live="polite"
                       className="rounded-xl p-3 text-sm"
                       style={{
                         border: "1px solid rgba(248,113,113,0.3)",
