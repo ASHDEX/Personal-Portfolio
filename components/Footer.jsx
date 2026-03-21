@@ -16,7 +16,7 @@ export default function Footer() {
             href="https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/"
             target="_blank"
             rel="noreferrer"
-            className="transition hover:-translate-y-0.5 hover:text-accent-glow"
+            className="transition hover:-translate-y-0.5 hover:text-white"
             style={{ color: "var(--ink-muted)" }}
           >
             LinkedIn

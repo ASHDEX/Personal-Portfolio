@@ -39,7 +39,7 @@ const socials = [
 
 export default function LandingPage() {
   return (
-    <div
+    <main
       className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4"
       style={{ background: "#07080f" }}
     >
@@ -97,7 +97,7 @@ export default function LandingPage() {
           >
             Security Architect &amp; Detection Engineer
           </p>
-          <p className="mt-2 text-sm" style={{ color: "rgba(180,190,220,0.6)" }}>
+          <p className="mt-2 text-sm" style={{ color: "rgba(180,190,220,0.75)" }}>
             CISSP · CISM · CISA · CASP+ · SC-100
           </p>
         </div>
@@ -119,9 +119,9 @@ export default function LandingPage() {
               background: "rgba(7,8,15,0.8)",
             }}
           >
-            <span className="h-3 w-3 rounded-full" style={{ background: "#ff5f57" }} />
-            <span className="h-3 w-3 rounded-full" style={{ background: "#febc2e" }} />
-            <span className="h-3 w-3 rounded-full" style={{ background: "#28c840" }} />
+            <span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ background: "#ff5f57" }} />
+            <span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ background: "#febc2e" }} />
+            <span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ background: "#28c840" }} />
             <div
               className="mx-auto flex items-center gap-2 rounded-md px-3 py-1 text-xs font-mono"
               style={{
@@ -155,7 +155,7 @@ export default function LandingPage() {
             </h2>
             <p
               className="mt-3 text-sm leading-relaxed"
-              style={{ color: "rgba(180,190,220,0.55)" }}
+              style={{ color: "rgba(180,190,220,0.75)" }}
             >
               7+ years engineering detection, threat intel automation,<br />
               and SOC operations for enterprise environments.
@@ -193,7 +193,7 @@ export default function LandingPage() {
           </Link>
           <a
             href="mailto:kh4r4nshu@gmail.com"
-            className="rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
+            className="cursor-pointer rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
             style={{
               border: "1px solid rgba(38,217,184,0.35)",
               color: "rgba(240,244,255,0.85)",
@@ -210,10 +210,10 @@ export default function LandingPage() {
               key={label}
               href={href}
               target={href.startsWith("http") ? "_blank" : undefined}
-              rel={href.startsWith("http") ? "noreferrer" : undefined}
+              rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
               aria-label={label}
               className="flex items-center gap-1.5 text-xs transition-colors duration-150 hover:text-white"
-              style={{ color: "rgba(180,190,220,0.45)" }}
+              style={{ color: "rgba(180,190,220,0.65)" }}
             >
               {icon}
               <span className="font-mono">{label}</span>
@@ -221,6 +221,6 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

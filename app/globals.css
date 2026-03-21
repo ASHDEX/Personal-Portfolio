@@ -126,6 +126,21 @@ main {
   animation: pageIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  main {
+    animation: none;
+  }
+  .animate-pulse {
+    animation: none;
+  }
+  .interactive-card {
+    transition: none;
+  }
+  a {
+    transition: none;
+  }
+}
+
 /* Metric values */
 .metric-value {
   color: var(--accent-warm);

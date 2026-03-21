@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const pages = [
-  { href: "/", label: "Home" },
+  { href: "/home", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/consulting", label: "Consulting" },
   { href: "/services", label: "Services" },
@@ -18,8 +18,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const isActive = (href) => {
-    if (href === "/") return pathname === "/";
-    return pathname?.startsWith(href);
+    return pathname === href || (href !== "/home" && pathname?.startsWith(href));
   };
 
   return (
@@ -39,7 +38,7 @@ export default function Navbar() {
           ASHDEX
           <span style={{ color: "var(--accent-2)", opacity: 0.85 }}>.SEC</span>
         </Link>
-        <nav className="flex flex-wrap items-center gap-1.5 text-sm font-medium">
+        <nav aria-label="Main navigation" className="flex flex-wrap items-center gap-1.5 text-sm font-medium">
           {pages.map((page) => (
             <Link
               key={page.href}
