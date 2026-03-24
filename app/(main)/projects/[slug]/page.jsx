@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import ProjectCaseStudyClient from "../../../components/ProjectCaseStudyClient";
-import { getProjectBySlug, projectSlugs } from "../../../data/projectsData";
+import ProjectCaseStudyClient from "../../../../components/ProjectCaseStudyClient";
+import { getProjectBySlug, projectSlugs } from "../../../../data/projectsData";
 
 export function generateStaticParams() {
   return projectSlugs.map((slug) => ({ slug }));

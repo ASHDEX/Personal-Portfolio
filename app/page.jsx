@@ -1,447 +1,226 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Jayesh Chaudhary | Lead Security Engineer — CISSP, CISM, CISA",
+  title: "Jayesh Chaudhary — Security Architect",
   description:
-    "Jayesh Chaudhary — Lead Security Engineer at Payatu. CISSP, CISM, CISA. Security Architecture, Detection Engineering, Threat Intelligence Automation, and SOC Modernisation for enterprise teams.",
-  openGraph: {
-    title: "Jayesh Chaudhary | Security Architect & Engineer",
-    description:
-      "Architecture-first cybersecurity delivery — Detection Engineering, SOC Automation, Threat Intelligence, and Security Architecture.",
-    url: "https://ashdex.me",
-    type: "website",
-  },
+    "CISSP · CISM · CISA. Security Architecture, Detection Engineering, SOC Automation, and Threat Intelligence.",
 };
 
-const certs = ["CISSP", "CISM", "CISA", "CASP+", "SC-100", "AZ-500"];
-
-const stats = [
-  { value: "7+", label: "Years in Security" },
-  { value: "6", label: "Enterprise Roles" },
-  { value: "15", label: "Certifications" },
-  { value: "30+", label: "ATT&CK Detections" },
-  { value: "400+", label: "Endpoints Secured" },
-  { value: "100%", label: "Audit Closure Rate" },
-];
-
-const valueProps = [
-  { metric: "70–80%", label: "reduction in manual SOC triage" },
-  { metric: "30%", label: "improvement in MITRE ATT&CK detection coverage" },
-  { metric: "35%", label: "reduction in Mean Time to Contain" },
-  { metric: "95%", label: "endpoint compliance in regulated environments" },
-];
-
-const skillGroups = [
+const socials = [
   {
-    label: "Detection & SIEM",
-    skills: ["Microsoft Sentinel", "Splunk", "ArcSight", "CrowdStrike", "Wazuh", "Security Onion"],
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+      </svg>
+    ),
   },
   {
-    label: "Threat Intelligence",
-    skills: ["OTX / VirusTotal", "MISP", "OpenCTI", "STIX / TAXII", "Maltego", "FreeIntelhub"],
+    label: "Email",
+    href: "mailto:kh4r4nshu@gmail.com",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+        <polyline points="22,6 12,13 2,6" />
+      </svg>
+    ),
   },
   {
-    label: "Cloud Security",
-    skills: ["Azure", "AWS", "GCP", "CloudTrail / IAM", "Logic Apps", "Defender for Cloud"],
-  },
-  {
-    label: "Endpoint & DLP",
-    skills: ["Microsoft Purview", "Intune", "Defender", "Trellix EPO", "Symantec", "Proofpoint"],
-  },
-  {
-    label: "Frameworks",
-    skills: ["MITRE ATT&CK", "MITRE D3FEND", "NIST CSF", "ISO 27001", "CMMI", "MITRE CAR"],
-  },
-  {
-    label: "Languages & Automation",
-    skills: ["Python", "KQL", "Docker", "TheHive", "Elastic", "JIRA / ServiceNow"],
+    label: "GitHub",
+    href: "https://github.com/ASHDEX",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+        <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+      </svg>
+    ),
   },
 ];
 
-const systems = [
-  "Security Architecture Design",
-  "Detection Engineering",
-  "Incident Response Engineering",
-  "SOC Automation",
-  "Threat Intelligence Automation",
-];
-
-const whoIWorkWith = [
-  "FinTech & regulated environments",
-  "Security teams modernising Microsoft security stacks",
-  "Organisations preparing for audit & compliance reviews",
-  "Teams scaling from reactive SOC to engineered detection",
-];
-
-const projects = [
-  {
-    title: "Security Architecture Design",
-    stack: "Architecture Modernisation",
-    summary: "Designed a layered SOC architecture integrating SIEM, EDR, identity telemetry, and response workflows.",
-  },
-  {
-    title: "Detection Engineering Framework",
-    stack: "Detection Uplift",
-    summary: "Implemented ATT&CK-aligned detection lifecycle standards with measurable quality and tuning controls.",
-  },
-  {
-    title: "SOC Automation Pipeline",
-    stack: "Automation Buildout",
-    summary: "Automated enrichment, triage, and case routing to reduce analyst workload and improve response speed.",
-  },
-];
-
-export default function HomePage() {
+export default function LandingPage() {
   return (
-    <div>
-      {/* ── HERO ── */}
-      <section className="section-block">
+    <main
+      className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4"
+      style={{ background: "#07080f" }}
+    >
+      {/* Dot grid */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: "radial-gradient(circle, rgba(38,217,184,0.18) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)",
+        }}
+      />
+
+      {/* Atmospheric glows */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(ellipse 60% 40% at 15% 0%, rgba(38,217,184,0.10) 0%, transparent 55%),
+            radial-gradient(ellipse 60% 40% at 85% 0%, rgba(124,139,255,0.09) 0%, transparent 55%)
+          `,
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center gap-8 text-center">
+        {/* Badge */}
         <div
-          className="section-card"
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-mono font-medium tracking-widest uppercase"
           style={{
-            background:
-              "linear-gradient(135deg, rgba(38,217,184,0.07) 0%, rgba(13,17,32,0.85) 50%, rgba(124,139,255,0.07) 100%)",
-            borderColor: "rgba(38,217,184,0.22)",
+            border: "1px solid rgba(38,217,184,0.3)",
+            background: "rgba(38,217,184,0.06)",
+            color: "var(--accent, #26d9b8)",
           }}
         >
-          <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-start">
-            <div>
-              {/* Availability badge */}
-              <div className="mb-5 flex items-center gap-2.5">
-                <span
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{ background: "#4ade80", boxShadow: "0 0 6px #4ade80" }}
-                />
-                <span
-                  className="font-mono text-xs font-semibold uppercase tracking-widest"
-                  style={{ color: "var(--accent)" }}
-                >
-                  Open to Senior Security Roles
-                </span>
-              </div>
+          <span
+            className="h-1.5 w-1.5 rounded-full animate-pulse"
+            style={{ background: "var(--accent, #26d9b8)" }}
+          />
+          Available for engagements
+        </div>
 
-              {/* Identity */}
-              <p className="text-xs font-semibold uppercase tracking-[0.26em] text-cyan-300">
-                Lead Security Engineer · Payatu
-              </p>
-              <h1
-                className="mt-2 text-4xl font-black sm:text-5xl lg:text-6xl"
-                style={{ color: "var(--ink)", letterSpacing: "-0.04em", lineHeight: 1.05 }}
-              >
-                Jayesh
-                <br />
-                Chaudhary
-              </h1>
+        {/* Name */}
+        <div>
+          <h1
+            className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl"
+            style={{ color: "#f0f4ff", fontFamily: "var(--font-space)" }}
+          >
+            Jayesh Chaudhary
+          </h1>
+          <p
+            className="mt-3 font-mono text-base sm:text-lg"
+            style={{ color: "var(--accent, #26d9b8)" }}
+          >
+            Security Architect &amp; Detection Engineer
+          </p>
+          <p className="mt-2 text-sm" style={{ color: "rgba(180,190,220,0.75)" }}>
+            CISSP · CISM · CISA · CASP+ · SC-100
+          </p>
+        </div>
 
-              {/* Cert badges */}
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {certs.map((c) => (
-                  <span
-                    key={c}
-                    className="rounded px-2 py-0.5 font-mono text-xs font-semibold"
-                    style={{
-                      border: "1px solid rgba(38,217,184,0.28)",
-                      color: "var(--accent)",
-                      background: "rgba(38,217,184,0.06)",
-                    }}
-                  >
-                    {c}
-                  </span>
-                ))}
-              </div>
-
-              <p className="mt-5 max-w-xl text-base leading-relaxed" style={{ color: "var(--ink-muted)" }}>
-                I help security teams design resilient architectures, improve detection coverage, and automate
-                incident response workflows — with measurable operational impact.
-              </p>
-
-              {/* CTAs */}
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link
-                  href="/projects"
-                  className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
-                  style={{
-                    border: "1px solid rgba(38,217,184,0.55)",
-                    background: "rgba(38,217,184,0.1)",
-                    color: "var(--accent)",
-                  }}
-                >
-                  View Case Studies
-                </Link>
-                <Link
-                  href="/consulting"
-                  className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
-                  style={{
-                    border: "1px solid rgba(124,139,255,0.45)",
-                    background: "rgba(124,139,255,0.08)",
-                    color: "#a5b0ff",
-                  }}
-                >
-                  Discuss an Engagement
-                </Link>
-                <a
-                  href="https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
-                  style={{
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    background: "rgba(255,255,255,0.04)",
-                    color: "var(--ink-muted)",
-                  }}
-                >
-                  LinkedIn
-                </a>
-                <a
-                  href="https://github.com/Ashdex"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
-                  style={{
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    background: "rgba(255,255,255,0.04)",
-                    color: "var(--ink-muted)",
-                  }}
-                >
-                  GitHub
-                </a>
-                {/* Resume — place your PDF at /public/resume.pdf to activate */}
-                <a
-                  href="/Resume.pdf"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
-                  style={{
-                    border: "1px solid rgba(251,191,36,0.4)",
-                    background: "rgba(251,191,36,0.07)",
-                    color: "#fbbf24",
-                  }}
-                >
-                  Download Resume
-                </a>
-              </div>
+        {/* Browser mockup */}
+        <div
+          className="w-full max-w-2xl overflow-hidden rounded-2xl shadow-2xl"
+          style={{
+            border: "1px solid rgba(38,217,184,0.2)",
+            background: "rgba(13,17,32,0.8)",
+            boxShadow: "0 0 60px rgba(38,217,184,0.08), 0 32px 64px rgba(0,0,0,0.5)",
+          }}
+        >
+          {/* Browser chrome */}
+          <div
+            className="flex items-center gap-2 px-4 py-3"
+            style={{
+              borderBottom: "1px solid rgba(255,255,255,0.06)",
+              background: "rgba(7,8,15,0.8)",
+            }}
+          >
+            <span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ background: "#ff5f57" }} />
+            <span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ background: "#febc2e" }} />
+            <span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ background: "#28c840" }} />
+            <div
+              className="mx-auto flex items-center gap-2 rounded-md px-3 py-1 text-xs font-mono"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                color: "rgba(255,255,255,0.4)",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3">
+                <circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" />
+                <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+              </svg>
+              ashdex.me
             </div>
+          </div>
 
-            {/* Impact snapshot — right column */}
-            <div className="space-y-3">
-              <p
-                className="font-mono text-xs uppercase tracking-widest"
-                style={{ color: "var(--ink-muted)" }}
-              >
-                Impact Snapshot
-              </p>
-              {valueProps.map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-xl p-4"
+          {/* Mockup preview — hero section replica */}
+          <div className="px-8 py-10 text-left">
+            <p
+              className="font-mono text-xs uppercase tracking-widest"
+              style={{ color: "var(--accent, #26d9b8)" }}
+            >
+              Lead Security Engineer · Payatu
+            </p>
+            <h2
+              className="mt-3 text-2xl font-bold leading-snug"
+              style={{ color: "#e8eeff" }}
+            >
+              Building security systems<br />
+              that <span style={{ color: "var(--accent, #26d9b8)" }}>actually work</span>.
+            </h2>
+            <p
+              className="mt-3 text-sm leading-relaxed"
+              style={{ color: "rgba(180,190,220,0.75)" }}
+            >
+              7+ years engineering detection, threat intel automation,<br />
+              and SOC operations for enterprise environments.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {["Detection Engineering", "Threat Intel", "SOC Automation", "Security Architecture"].map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full px-3 py-1 text-xs font-mono"
                   style={{
-                    border: "1px solid rgba(38,217,184,0.12)",
-                    background: "rgba(13,17,32,0.7)",
+                    background: "rgba(38,217,184,0.08)",
+                    border: "1px solid rgba(38,217,184,0.2)",
+                    color: "var(--accent, #26d9b8)",
                   }}
                 >
-                  <p
-                    className="text-2xl font-black"
-                    style={{ color: "var(--accent-warm)", fontVariantNumeric: "tabular-nums" }}
-                  >
-                    {item.metric}
-                  </p>
-                  <p className="mt-0.5 text-xs leading-snug" style={{ color: "var(--ink-muted)" }}>
-                    {item.label}
-                  </p>
-                </div>
+                  {tag}
+                </span>
               ))}
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ── STATS BAR ── */}
-      <section className="section-block !pt-0">
-        <div className="section-card">
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-2xl font-black" style={{ color: "var(--accent-warm)", fontVariantNumeric: "tabular-nums" }}>
-                  {stat.value}
-                </p>
-                <p className="mt-0.5 text-xs" style={{ color: "var(--ink-muted)" }}>{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── SKILLS GRID ── */}
-      <section className="section-block">
-        <div className="section-card">
-          <h2 className="section-subtitle">Technical Skills & Tools</h2>
-          <p className="mt-2 text-sm" style={{ color: "var(--ink-muted)" }}>
-            7 years of hands-on delivery across detection, cloud, endpoint, and intelligence tooling.
-          </p>
-          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {skillGroups.map((group) => (
-              <div
-                key={group.label}
-                className="rounded-xl p-4"
-                style={{ border: "1px solid rgba(38,217,184,0.1)", background: "rgba(13,17,32,0.6)" }}
-              >
-                <p
-                  className="mb-3 font-mono text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {group.label}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {group.skills.map((s) => (
-                    <span
-                      key={s}
-                      className="rounded px-2 py-1 text-xs"
-                      style={{
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        background: "rgba(255,255,255,0.03)",
-                        color: "var(--ink-muted)",
-                      }}
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── SERVICES ── */}
-      <section className="section-block space-y-4">
-        <h2 className="section-subtitle">Security Systems I Design</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {systems.map((service) => (
-            <Link
-              key={service}
-              href="/services"
-              className="section-card interactive-card block"
-              style={{ borderColor: "rgba(38,217,184,0.15)" }}
-            >
-              <p className="font-semibold text-cyan-100">{service}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ── WHO I WORK WITH ── */}
-      <section className="section-block">
-        <div className="section-card">
-          <h2 className="section-subtitle">Who I Work With</h2>
-          <div className="mt-5 grid gap-3 md:grid-cols-2">
-            {whoIWorkWith.map((item) => (
-              <article
-                key={item}
-                className="rounded-xl p-4"
-                style={{ border: "1px solid rgba(38,217,184,0.12)", background: "rgba(13,17,32,0.6)" }}
-              >
-                <p className="text-sm text-slate-200 sm:text-base">{item}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PROJECTS ── */}
-      <section className="section-block space-y-4">
-        <div className="flex items-end justify-between gap-3">
-          <h2 className="section-subtitle">Selected Projects</h2>
-          <Link href="/projects" className="text-sm font-semibold text-cyan-300 hover:underline">
-            See all →
+        {/* CTAs */}
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/home"
+            className="rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+            style={{
+              background: "var(--accent, #26d9b8)",
+              color: "#07080f",
+              boxShadow: "0 0 20px rgba(38,217,184,0.3)",
+            }}
+          >
+            View Full Portfolio →
           </Link>
+          <a
+            href="mailto:kh4r4nshu@gmail.com"
+            className="cursor-pointer rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
+            style={{
+              border: "1px solid rgba(38,217,184,0.35)",
+              color: "rgba(240,244,255,0.85)",
+            }}
+          >
+            Get in Touch
+          </a>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {projects.map((project) => (
-            <Link
-              key={project.title}
-              href="/projects"
-              className="section-card interactive-card block"
-              style={{ borderColor: "rgba(38,217,184,0.15)" }}
+
+        {/* Social links */}
+        <div className="flex items-center gap-5">
+          {socials.map(({ label, href, icon }) => (
+            <a
+              key={label}
+              href={href}
+              target={href.startsWith("http") ? "_blank" : undefined}
+              rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+              aria-label={href.startsWith("http") ? `${label} (opens in new tab)` : label}
+              className="flex items-center gap-1.5 text-xs transition-colors duration-150 hover:text-white"
+              style={{ color: "rgba(180,190,220,0.65)" }}
             >
-              <p className="text-sm font-semibold text-cyan-300">{project.stack}</p>
-              <h3 className="mt-1 text-lg font-bold text-cyan-100">{project.title}</h3>
-              <p className="mt-2 text-sm text-slate-300">{project.summary}</p>
-            </Link>
+              <span aria-hidden="true">{icon}</span>
+              <span className="font-mono">{label}</span>
+            </a>
           ))}
         </div>
-      </section>
-
-      {/* ── CREDIBILITY ── */}
-      <section className="section-block">
-        <div className="section-card">
-          <h2 className="section-subtitle">Credibility</h2>
-          <p className="mt-3 text-sm text-slate-200">
-            <span className="font-semibold text-cyan-300">Elite certifications:</span>{" "}
-            CISSP · CISM · CISA · CASP+ · SC-100 · AZ-500 · SC-200 · CySA+ · PenTest+ and more.
-          </p>
-          <p className="mt-2 text-sm text-slate-300">
-            Cloud security: CSA CCSK V4 & V5 · CompTIA Security+ · CyberSec First Responder CFR-410
-          </p>
-          <p className="mt-3 text-sm text-slate-200">
-            <span className="font-semibold text-cyan-300">Focus areas:</span>{" "}
-            Security Architecture · Detection Engineering · Cloud IR · SOC Automation · Threat Intelligence
-          </p>
-          <div className="mt-4">
-            <Link href="/certifications" className="text-sm font-semibold text-cyan-300 hover:underline">
-              View all 15 certifications →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="section-block">
-        <div
-          className="section-card"
-          style={{
-            borderColor: "rgba(124,139,255,0.28)",
-            background:
-              "linear-gradient(135deg, rgba(124,139,255,0.08) 0%, rgba(13,17,32,0.85) 60%, rgba(38,217,184,0.08) 100%)",
-          }}
-        >
-          <h2 className="text-2xl font-bold text-white">Looking to modernise your security operations?</h2>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link
-              href="/projects"
-              className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
-              style={{
-                border: "1px solid rgba(38,217,184,0.55)",
-                background: "rgba(38,217,184,0.1)",
-                color: "var(--accent)",
-              }}
-            >
-              View Case Studies
-            </Link>
-            <Link
-              href="/consulting"
-              className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
-              style={{
-                border: "1px solid rgba(124,139,255,0.45)",
-                background: "rgba(124,139,255,0.08)",
-                color: "#a5b0ff",
-              }}
-            >
-              Discuss an Engagement
-            </Link>
-            <Link
-              href="/contact"
-              className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
-              style={{
-                border: "1px solid rgba(251,191,36,0.4)",
-                background: "rgba(251,191,36,0.07)",
-                color: "#fbbf24",
-              }}
-            >
-              Contact Me
-            </Link>
-          </div>
-        </div>
-      </section>
-    </div>
+      </div>
+    </main>
   );
 }

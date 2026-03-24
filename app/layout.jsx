@@ -1,8 +1,7 @@
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
+import { headers } from "next/headers";
 import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -35,13 +34,14 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
   const rawGaId = process.env.NEXT_PUBLIC_GA_ID;
   // Validate format before use to prevent script injection if env var is misconfigured
   const gaId = rawGaId && /^G-[A-Z0-9]{4,}$/.test(rawGaId) ? rawGaId : null;
+  const nonce = (await headers()).get("x-nonce") ?? "";
 
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} min-h-screen`}>
         <div className="relative min-h-screen overflow-hidden">
           {/* Atmospheric light sources */}
@@ -54,14 +54,12 @@ export default function RootLayout({ children }) {
               `,
             }}
           />
-          <Navbar />
-          <main className="page-shell relative z-10 py-20">{children}</main>
-          <Footer />
+          {children}
         </div>
         {gaId ? (
           <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" />
-            <Script id="ga-setup" strategy="afterInteractive">
+            <Script nonce={nonce} src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" />
+            <Script nonce={nonce} id="ga-setup" strategy="afterInteractive">
               {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());

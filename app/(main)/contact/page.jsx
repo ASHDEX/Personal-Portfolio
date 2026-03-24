@@ -1,4 +1,4 @@
-import ContactClient from "../../components/ContactClient";
+import ContactClient from "../../../components/ContactClient";
 
 export const metadata = {
   title: "Contact | ASHDEX Cybersecurity",

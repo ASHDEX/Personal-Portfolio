@@ -81,16 +81,6 @@ const roles = [
       "Led CRM migrations with minimal business disruption.",
     ],
   },
-  {
-    title: "Analyst — Detection & Response",
-    company: "",
-    period: "April 2019 – Mar 2021",
-    bullets: [
-      "Designed and tuned EDM/regex-based DLP detection policies.",
-      "Reduced false positives and improved analyst triage efficiency.",
-      "Conducted periodic DLP policy reviews and user guidance.",
-    ],
-  },
 ];
 
 export default function ExperiencePage() {
