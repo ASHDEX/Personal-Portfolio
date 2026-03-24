@@ -41,7 +41,7 @@ export default async function RootLayout({ children }) {
   const nonce = (await headers()).get("x-nonce") ?? "";
 
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} min-h-screen`}>
         <div className="relative min-h-screen overflow-hidden">
           {/* Atmospheric light sources */}
