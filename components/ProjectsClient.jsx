@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { projectCategories, projectsData } from "../data/projectsData";
 
 export default function ProjectsClient() {
   const [activeFilter, setActiveFilter] = useState("All");
+  const shouldReduceMotion = useReducedMotion();
 
   const filteredProjects = useMemo(() => {
     if (activeFilter === "All") return projectsData;
@@ -32,6 +33,7 @@ export default function ProjectsClient() {
               <button
                 key={category}
                 type="button"
+                aria-pressed={isActive}
                 onClick={() => setActiveFilter(category)}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                   isActive
@@ -49,18 +51,18 @@ export default function ProjectsClient() {
       <AnimatePresence mode="wait">
         <motion.section
           key={activeFilter}
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 14 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 8 }}
-          transition={{ duration: 0.28, ease: "easeOut" }}
+          exit={{ opacity: 0, y: shouldReduceMotion ? 0 : 8 }}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.28, ease: "easeOut" }}
           className="grid gap-5 md:grid-cols-2"
         >
           {filteredProjects.map((project, index) => (
             <motion.article
               key={project.slug}
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.24, delay: index * 0.04, ease: "easeOut" }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.24, delay: shouldReduceMotion ? 0 : index * 0.04, ease: "easeOut" }}
               className="section-card border-slate-700/70 bg-surface-900/85 p-7"
             >
               <span className="inline-flex w-fit rounded-full border border-slate-600 bg-surface-800/80 px-3 py-1 text-xs font-semibold text-slate-300">

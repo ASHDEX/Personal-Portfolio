@@ -101,12 +101,16 @@ export default function ContactClient() {
         </p>
       </header>
 
-      <section className="section-card">
-        <div className="inline-flex gap-1 rounded-xl p-1" style={{ background: "rgba(13,17,32,0.8)", border: "1px solid rgba(38,217,184,0.12)" }}>
+      <section className="section-card" aria-label="Contact options">
+        <div role="tablist" aria-label="Contact type" className="inline-flex gap-1 rounded-xl p-1" style={{ background: "rgba(13,17,32,0.8)", border: "1px solid rgba(38,217,184,0.12)" }}>
           {["recruiters", "clients"].map((path) => (
             <button
               key={path}
               type="button"
+              role="tab"
+              aria-selected={activePath === path}
+              aria-controls={`panel-${path}`}
+              id={`tab-${path}`}
               onClick={() => { setActivePath(path); setSubmitted(false); }}
               className="rounded-lg px-4 py-2 text-sm font-semibold capitalize transition"
               style={tabStyle(path)}
@@ -118,16 +122,19 @@ export default function ContactClient() {
 
         <div className="mt-5">
           {activePath === "recruiters" ? (
-            <article
+            <div
+              role="tabpanel"
+              id="panel-recruiters"
+              aria-labelledby="tab-recruiters"
               className="rounded-xl p-6"
               style={{
                 border: "1px solid rgba(38,217,184,0.2)",
                 background: "rgba(38,217,184,0.04)",
               }}
             >
-              <h3 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
+              <h2 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
                 For Recruiters
-              </h3>
+              </h2>
               <p className="mt-2 text-sm" style={{ color: "var(--ink-muted)" }}>
                 Hiring for remote senior Security Architect, Detection Engineering Lead, or SOC modernisation roles?
                 Reach out directly — I respond within 24–48 hours.
@@ -210,18 +217,21 @@ export default function ContactClient() {
               <p className="mt-4 font-mono text-xs" style={{ color: "var(--ink-muted)" }}>
                 Current role: Lead Security Engineer · Payatu · Gurugram · May 2025 – Present
               </p>
-            </article>
+            </div>
           ) : (
-            <article
+            <div
+              role="tabpanel"
+              id="panel-clients"
+              aria-labelledby="tab-clients"
               className="rounded-xl p-6"
               style={{
                 border: "1px solid rgba(124,139,255,0.2)",
                 background: "rgba(124,139,255,0.04)",
               }}
             >
-              <h3 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
+              <h2 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
                 For Clients
-              </h3>
+              </h2>
               <p className="mt-2 text-sm" style={{ color: "var(--ink-muted)" }}>
                 Share your current challenge and target outcomes. You will receive a practical architecture-first
                 engagement path.
@@ -259,7 +269,7 @@ export default function ContactClient() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full rounded-xl px-3 py-2 outline-none transition"
+                        className="w-full rounded-xl px-3 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[#07080f]"
                         style={{
                           border: "1px solid rgba(38,217,184,0.2)",
                           background: "rgba(13,17,32,0.8)",
@@ -276,7 +286,7 @@ export default function ContactClient() {
                         name="company"
                         value={formData.company}
                         onChange={handleChange}
-                        className="w-full rounded-xl px-3 py-2 outline-none transition"
+                        className="w-full rounded-xl px-3 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[#07080f]"
                         style={{
                           border: "1px solid rgba(38,217,184,0.2)",
                           background: "rgba(13,17,32,0.8)",
@@ -296,7 +306,7 @@ export default function ContactClient() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full rounded-xl px-3 py-2 outline-none transition"
+                        className="w-full rounded-xl px-3 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[#07080f]"
                         style={{
                           border: "1px solid rgba(38,217,184,0.2)",
                           background: "rgba(13,17,32,0.8)",
@@ -313,7 +323,7 @@ export default function ContactClient() {
                         name="need"
                         value={formData.need}
                         onChange={handleChange}
-                        className="w-full rounded-xl px-3 py-2 outline-none transition"
+                        className="w-full rounded-xl px-3 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[#07080f]"
                         style={{
                           border: "1px solid rgba(38,217,184,0.2)",
                           background: "rgba(13,17,32,0.8)",
@@ -337,7 +347,7 @@ export default function ContactClient() {
                       value={formData.description}
                       onChange={handleChange}
                       rows={5}
-                      className="w-full rounded-xl px-3 py-2 outline-none transition"
+                      className="w-full rounded-xl px-3 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[#07080f]"
                       style={{
                         border: "1px solid rgba(38,217,184,0.2)",
                         background: "rgba(13,17,32,0.8)",
@@ -365,7 +375,8 @@ export default function ContactClient() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-fit rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5"
+                    aria-busy={loading}
+                    className="w-fit rounded-full px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       border: "1px solid rgba(38,217,184,0.55)",
                       background: "rgba(38,217,184,0.1)",
@@ -376,7 +387,7 @@ export default function ContactClient() {
                   </button>
                 </form>
               )}
-            </article>
+            </div>
           )}
         </div>
       </section>
@@ -394,7 +405,14 @@ export default function ContactClient() {
             className="h-[700px] w-full"
             loading="lazy"
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-          />
+          >
+            <p className="p-4 text-sm" style={{ color: "var(--ink-muted)" }}>
+              Unable to load the scheduling widget.{" "}
+              <a href={calUrl} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--accent)" }}>
+                Book directly on Cal.com
+              </a>
+            </p>
+          </iframe>
         </div>
       </section>
 

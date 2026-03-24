@@ -130,7 +130,7 @@ export default function LandingPage() {
                 border: "1px solid rgba(255,255,255,0.08)",
               }}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3">
                 <circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" />
                 <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
               </svg>
@@ -168,7 +168,7 @@ export default function LandingPage() {
                   style={{
                     background: "rgba(38,217,184,0.08)",
                     border: "1px solid rgba(38,217,184,0.2)",
-                    color: "rgba(38,217,184,0.8)",
+                    color: "var(--accent, #26d9b8)",
                   }}
                 >
                   {tag}
@@ -211,11 +211,11 @@ export default function LandingPage() {
               href={href}
               target={href.startsWith("http") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-              aria-label={label}
+              aria-label={href.startsWith("http") ? `${label} (opens in new tab)` : label}
               className="flex items-center gap-1.5 text-xs transition-colors duration-150 hover:text-white"
               style={{ color: "rgba(180,190,220,0.65)" }}
             >
-              {icon}
+              <span aria-hidden="true">{icon}</span>
               <span className="font-mono">{label}</span>
             </a>
           ))}

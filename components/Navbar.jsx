@@ -32,6 +32,7 @@ export default function Navbar() {
       <div className="page-shell flex flex-wrap items-center justify-between gap-4 py-4">
         <Link
           href="/"
+          aria-label="ASHDEX home"
           className="font-mono text-base font-bold tracking-tight"
           style={{ color: "var(--accent)", letterSpacing: "-0.01em" }}
         >

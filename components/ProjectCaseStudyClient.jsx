@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 
 const sideNavSections = [
@@ -13,15 +13,16 @@ const sideNavSections = [
   { id: "tech-stack", label: "Tech Stack" },
 ];
 
-const sectionMotion = {
-  initial: { opacity: 0, y: 12 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.25 },
-  transition: { duration: 0.28, ease: "easeOut" },
-};
-
 export default function ProjectCaseStudyClient({ project }) {
   const [activeSection, setActiveSection] = useState("overview");
+  const shouldReduceMotion = useReducedMotion();
+
+  const sectionMotion = {
+    initial: { opacity: 0, y: shouldReduceMotion ? 0 : 12 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.25 },
+    transition: { duration: shouldReduceMotion ? 0 : 0.28, ease: "easeOut" },
+  };
 
   const hasArchitecturePdf = project.slug === "security-architecture-design";
 

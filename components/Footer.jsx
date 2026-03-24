@@ -31,6 +31,7 @@ export default function Footer() {
             GitHub
           </a>
           <span
+            aria-hidden="true"
             className="font-mono text-xs"
             style={{ color: "rgba(38, 217, 184, 0.4)" }}
           >
