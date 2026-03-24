@@ -35,7 +35,7 @@ export default function ContactClient() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+    const emailOk = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(formData.email);
     if (!emailOk) {
       setError("Please enter a valid email address.");
       return;

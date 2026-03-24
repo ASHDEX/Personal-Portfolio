@@ -53,6 +53,11 @@ function isRateLimited(ip) {
 // Input sanitisation helpers
 // ---------------------------------------------------------------------------
 
+/** Strip CRLF and null bytes from single-line fields (headers, subject). */
+function stripControlChars(str) {
+  return String(str).replace(/[\r\n\0]/g, "");
+}
+
 /** Escape HTML entities to prevent injection in email templates. */
 function escapeHtml(str) {
   return String(str)
@@ -147,12 +152,17 @@ async function sendSmtpEmail(payload) {
     <p><strong>Message:</strong><br/>${safeMessage}</p>
   `;
 
+  const cleanName = stripControlChars(payload.name);
+  const cleanCompany = stripControlChars(payload.company);
+  const cleanEmail = stripControlChars(payload.email);
+  const cleanService = stripControlChars(payload.service);
+
   await transporter.sendMail({
     from: SMTP_FROM,
     to: CONTACT_TO_EMAIL,
-    subject: `Portfolio Contact: ${payload.service} (${payload.name})`,
-    replyTo: payload.email,
-    text: `Name: ${payload.name}\nCompany: ${payload.company}\nEmail: ${payload.email}\nService: ${payload.service}\n\n${payload.message}`,
+    subject: `Portfolio Contact: ${cleanService} (${cleanName})`,
+    replyTo: cleanEmail,
+    text: `Name: ${cleanName}\nCompany: ${cleanCompany}\nEmail: ${cleanEmail}\nService: ${cleanService}\n\n${payload.message}`,
     html,
   });
 }
