@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 const isDev = process.env.NODE_ENV === "development";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Generate a cryptographically random nonce using Web Crypto API
   // (compatible with both Edge and Node.js runtimes, including Hostinger standalone)
   const nonceBytes = new Uint8Array(16);
