@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" rx="6" fill="#07080f"/>
-  <!-- Shield shape -->
-  <path d="M16 4 L26 8 L26 17 C26 22.5 21.5 27 16 29 C10.5 27 6 22.5 6 17 L6 8 Z" fill="none" stroke="#26d9b8" stroke-width="1.5"/>
-  <!-- JC text -->
-  <text x="16" y="21" font-family="monospace" font-size="10" font-weight="700" fill="#26d9b8" text-anchor="middle" letter-spacing="0.5">JC</text>
-</svg>
