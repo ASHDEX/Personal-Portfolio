@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { SITE } from "../lib/constants";
+import { SITE } from '@/lib/constants';
 
 const containerVariants = {
   hidden: {},
@@ -32,19 +32,20 @@ const stats = [
 ];
 
 const links = [
-  { icon: "✉", text: SITE.email, href: `mailto:${SITE.email}` },
-  { icon: "▸", text: "LinkedIn", href: SITE.linkedin },
-  { icon: "▸", text: "GitHub", href: SITE.github },
-  { icon: "▸", text: "FreeIntelHub", href: SITE.freeintelhub },
-  { icon: "▸", text: "Blog", href: SITE.blog },
+  { icon: "✉", label: SITE.email, href: `mailto:${SITE.email}`, external: false },
+  { icon: "▸", label: "LinkedIn", href: SITE.linkedin, external: true },
+  { icon: "▸", label: "GitHub", href: SITE.github, external: true },
+  { icon: "▸", label: "FreeIntelHub", href: SITE.freeintelhub, external: true },
+  { icon: "▸", label: "Blog", href: SITE.blog, external: true },
 ];
 
 export default function Hero() {
   return (
     <motion.section
-      className="px-6 py-12 md:px-12 md:py-20 lg:px-24 lg:py-28"
+      className="mb-16"
       initial="hidden"
-      animate="visible"
+      whileInView="visible"
+      viewport={{ once: true, margin: '0px 0px -100px 0px' }}
       variants={containerVariants}
     >
       {/* Prompt line */}
@@ -84,7 +85,7 @@ export default function Hero() {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="bg-[#0d1117] border border-[#1b2430] px-5 py-3 min-w-[140px] rounded"
+              className="bg-[#0d1117] border border-[#1b2430] px-5 py-3 min-w-[140px]"
             >
               <div className="text-xl font-bold text-[#00ff9c]">
                 {stat.value}
@@ -104,12 +105,12 @@ export default function Hero() {
             <a
               key={index}
               href={link.href}
-              className="text-xs px-4 py-2 border border-[#1b2430] text-[#c9d1d9] hover:border-[#00ff9c] hover:text-[#00ff9c] hover:bg-[rgba(0,255,156,0.1)] hover:shadow-[0_0_20px_rgba(0,255,156,0.15)] transition-all duration-250 flex items-center gap-1.5 rounded"
-              target={link.href.startsWith("http") ? "_blank" : undefined}
-              rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="text-xs px-4 py-2 border border-[#1b2430] text-[#c9d1d9] hover:border-[#00ff9c] hover:text-[#00ff9c] hover:bg-[rgba(0,255,156,0.1)] hover:shadow-[0_0_20px_rgba(0,255,156,0.15)] transition-all duration-250 flex items-center gap-1.5"
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
             >
               <span>{link.icon}</span>
-              <span>{link.text}</span>
+              <span>{link.label}</span>
             </a>
           ))}
         </div>
