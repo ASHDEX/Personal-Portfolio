@@ -6,58 +6,44 @@ import { certifications } from '../data/certifications'
 
 export default function Certifications() {
   return (
-    <section id="certifications" className="w-full py-20">
-      <div className="max-w-6xl mx-auto px-6">
-        <SectionHeader 
-          tag="MODULE" 
-          title="CREDENTIAL_STORE — Verified Certifications" 
-        />
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {certifications.map((cert, index) => (
-            <ScrollReveal key={cert.name} delay={index * 0.05}>
-              <div className="border border-terminal-green/20 p-5 rounded-lg bg-black/30 hover:bg-black/50 hover:border-terminal-green/40 transition-all duration-300">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-lg font-semibold text-terminal-cyan mb-1">
-                      {cert.name}
-                    </h3>
-                    <p className="text-sm text-text-secondary mb-2">
-                      {cert.fullName}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-text-tertiary">
-                        Issuer:
-                      </span>
-                      <span className="text-xs font-medium text-terminal-green">
-                        {cert.issuer}
-                      </span>
-                    </div>
-                  </div>
-                  <div className={`${cert.badgeColor} text-black text-xs font-bold px-2.5 py-1 rounded-full`}>
-                    {cert.badgeLabel}
-                  </div>
-                </div>
-                <div className="pt-3 border-t border-terminal-green/10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-text-tertiary">
-                      Credential ID: {cert.name}
-                    </span>
-                    <span className="text-xs text-terminal-green font-medium">
-                      VERIFIED
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
+    <section id="certifications" className="w-full pt-[120px] pb-[120px]">
+      <SectionHeader
+        tag="MODULE"
+        title="CREDENTIAL_STORE — Verified Certifications"
+      />
 
-        <div className="mt-5 px-5 py-3.5 bg-[#0d1117] border border-[#1b2430] text-xs text-[#6e7a88]">
-          <span className="text-[#ffb300]">▸ Currently pursuing:</span>{' '}
-          <span className="text-[#c9d1d9]">CRISC · ISSMP · ISSAP · ISSEP</span>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+        {certifications.map((cert, index) => (
+          <ScrollReveal
+            key={`${cert.issuer}-${cert.name}`}
+            delay={index * 0.05}
+            className="border border-[#1b2430] bg-[#0a0e14]/50 rounded-lg p-4 hover:border-[#00ff9c]/30 transition-colors duration-300"
+          >
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="flex-1">
+                <h3 className="text-sm font-mono font-semibold text-[#e6edf3] mb-1">
+                  {cert.name}
+                </h3>
+                <p className="text-xs text-[#6e7a88] font-mono mb-3">
+                  {cert.fullName}
+                </p>
+              </div>
+              <div className={`inline-block px-2.5 py-1 rounded text-[10px] font-mono font-semibold text-[#0a0e14] whitespace-nowrap ${cert.badgeColor}`}>
+                {cert.badgeLabel}
+              </div>
+            </div>
+            <div className="pt-3 border-t border-[#1b2430] flex items-center justify-between">
+              <p className="text-[10px] text-[#6e7a88] font-mono uppercase tracking-wider">
+                {cert.issuer}
+              </p>
+              <span className="text-[10px] text-[#00ff9c] font-mono">
+                ✓ VERIFIED
+              </span>
+            </div>
+          </ScrollReveal>
+        ))}
       </div>
+
     </section>
   )
 }

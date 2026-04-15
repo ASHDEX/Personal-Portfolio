@@ -49,3 +49,43 @@ export interface ContactItem {
   value: string;
   href?: string;
 }
+
+export interface GRCFramework {
+  id: string;
+  name: string;
+  fullName: string;
+  description: string;
+  contributions: string[];
+  outcome?: string;
+  outcomeLabel?: string;
+}
+
+export interface GRCPolicyGroup {
+  title: string;
+  policies: string[];
+  impact: string;
+}
+
+export interface GRCRiskMetric {
+  value: string;
+  label: string;
+  detail: string;
+}
+
+export interface CaseStudy {
+  id: string;
+  title: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM';
+  tags: string[];
+  scenario: string;
+  investigation: string;
+  response: string;
+  impact: { value: string; label: string }[];
+  impactSummary: string;
+  detectionExample?: {
+    title: string;
+    mitre: string;
+    language: string;
+    code: string;
+  };
+}

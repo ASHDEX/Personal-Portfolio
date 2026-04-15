@@ -1,18 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { navItems } from '@/src/data/navigation';
+import { navItems } from '@/data/navigation';
 
 export default function Navigation() {
-  const [activeSection, setActiveSection] = useState<string>('');
+  const [activeSection, setActiveSection] = useState<string>('about');
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = navItems.map(item => item.href.replace('#', ''));
-      const scrollPosition = window.scrollY + 120; // threshold: 120px from top
+      const threshold = 120;
+      const scrollPosition = window.scrollY + threshold;
 
-      for (const sectionId of sections) {
+      // Find which section is closest to the threshold
+      for (const item of navItems) {
+        const sectionId = item.href.replace('#', '');
         const element = document.getElementById(sectionId);
+
         if (element) {
           const { offsetTop, offsetHeight } = element;
           if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
@@ -24,13 +27,14 @@ export default function Navigation() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check
+    handleScroll(); // Initial check on mount
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleClick = (href: string) => {
-    const element = document.getElementById(href.replace('#', ''));
+    const sectionId = href.replace('#', '');
+    const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -42,18 +46,20 @@ export default function Navigation() {
         {navItems.map((item) => {
           const sectionId = item.href.replace('#', '');
           const isActive = activeSection === sectionId;
+
           return (
             <button
               key={item.href}
               onClick={() => handleClick(item.href)}
               className={`
                 px-4 py-2.5 text-[11px] tracking-wider whitespace-nowrap transition-all duration-200
-                ${isActive
-                  ? 'text-[#00ff9c] border-b-2 border-[#00ff9c] shadow-[0_0_8px_rgba(0,255,156,0.3)]'
-                  : 'text-[#6e7a88] border-b-2 border-transparent hover:text-[#00ff9c] hover:border-[#00ff9c]'
+                border-b-2
+                ${
+                  isActive
+                    ? 'text-[#00ff9c] border-[#00ff9c] drop-shadow-[0_0_8px_rgba(0,255,156,0.4)]'
+                    : 'text-[#6e7a88] border-transparent hover:text-[#00ff9c] hover:border-[#00ff9c]'
                 }
-                md:px-4 md:py-2.5 md:text-[11px]
-                sm:px-3 sm:py-2.5 sm:text-[10px]
+                sm:px-3 sm:text-[10px]
               `}
             >
               {item.label}
