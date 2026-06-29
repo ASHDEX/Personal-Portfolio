@@ -1,75 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap');
-
-/* CRT scan line overlay */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 255, 156, 0.008) 2px,
-    rgba(0, 255, 156, 0.008) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.3;
+html, body { margin: 0; padding: 0; }
+body {
+  background: #06090e;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+  -webkit-font-smoothing: antialiased;
 }
+*, *::before, *::after { box-sizing: border-box; }
 
-/* Noise texture */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9998;
-}
+::selection { background: #00ff9c; color: #06090e; }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(128,150,170,0.22); border-radius: 4px; }
+.nobar::-webkit-scrollbar { display: none; }
+.nobar { -ms-overflow-style: none; scrollbar-width: none; }
 
-::-webkit-scrollbar-track {
-  background: #0a0e14;
-}
+/* ── Keyframes ── */
 
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 156, 0.3);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 156, 0.5);
-}
-
-/* Selection */
-::selection {
-  background: #00ff9c;
-  color: #0a0e14;
-}
-
-/* Blink animation for cursor */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
 
-/* Pulse animation for glow */
-@keyframes pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 4px #00ff9c; }
-  50% { opacity: 0.4; }
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes fadeup {
+  from { transform: translateY(14px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes gridmove {
+  from { background-position: 0 0; }
+  to   { background-position: 0 46px; }
+}
+
+@keyframes radar {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0);     opacity: 0.5; }
+  50%       { transform: translateY(-10px); opacity: 1;   }
+}
+
+@keyframes logslide {
+  from { transform: translateX(-10px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes namescan {
+  0%   { top: -8%;  opacity: 0; }
+  8%   { opacity: 0.55; }
+  92%  { opacity: 0.55; }
+  100% { top: 104%; opacity: 0; }
+}
+
+@keyframes gtop {
+  0%, 86%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0,0); }
+  87%  { clip-path: inset(0 0 58% 0);  transform: translate(-4px,-2px); }
+  89%  { clip-path: inset(26% 0 40% 0); transform: translate(4px,1px); }
+  91%  { clip-path: inset(8% 0 72% 0);  transform: translate(-3px,2px); }
+  93%  { clip-path: inset(44% 0 22% 0); transform: translate(3px,-1px); }
+  95%  { clip-path: inset(0 0 100% 0);  transform: translate(0,0); }
+}
+
+@keyframes gbot {
+  0%, 84%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0,0); }
+  85%  { clip-path: inset(56% 0 0 0);    transform: translate(4px,2px); }
+  88%  { clip-path: inset(38% 0 26% 0);  transform: translate(-4px,-1px); }
+  90%  { clip-path: inset(72% 0 0 0);    transform: translate(3px,1px); }
+  92%  { clip-path: inset(30% 0 34% 0);  transform: translate(-3px,2px); }
+  94%  { clip-path: inset(100% 0 0 0);   transform: translate(0,0); }
+}
+
+/* ── Utility classes ── */
+
+.reveal {
+  animation: fadeup 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.animate-gridmove {
+  animation: gridmove 9s linear infinite;
+}
+
+.animate-radar {
+  animation: radar 7s linear infinite;
+}
+
+.animate-ticker {
+  animation: ticker 38s linear infinite;
+}
+
+.animate-logslide {
+  animation: logslide 0.4s ease both;
+}
+
+.animate-namescan {
+  animation: namescan 4.5s linear infinite;
+}
+
+.glitch-top {
+  animation: gtop 4s steps(1) infinite;
+}
+
+.glitch-bot {
+  animation: gbot 3.4s steps(1) infinite;
+}
+
+/* Fixed scanline + vignette overlays */
+.scanline-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(160,180,200,0.012) 2px,
+    rgba(160,180,200,0.012) 4px
+  );
+}
+
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 61;
+  box-shadow: inset 0 0 200px 40px rgba(0,0,0,0.55);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .reveal { animation: none !important; opacity: 1 !important; }
 }

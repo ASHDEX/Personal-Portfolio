@@ -1,14 +1,3 @@
-export interface ExperienceBullet {
-  verb: string;
-  text: string;
-}
-
-export interface ExperienceMetric {
-  label: string;
-  direction: '' | '↑' | '↓';
-  value: string;
-}
-
 export interface ExperienceEntry {
   company: string;
   role: string;
@@ -25,18 +14,18 @@ export interface SkillGroup {
 }
 
 export interface Project {
+  id: string;
   name: string;
-  description: string;
-  tech: string[];
-  link?: string;
+  problem: string;
+  approach: string;
+  outcome: string;
+  tools: string[];
 }
 
 export interface Certification {
   name: string;
-  fullName: string;
+  full: string;
   issuer: string;
-  badgeColor: string; // Tailwind bg class
-  badgeLabel: string; // Short label for badge
 }
 
 export interface NavItem {
@@ -50,28 +39,6 @@ export interface ContactItem {
   href?: string;
 }
 
-export interface GRCFramework {
-  id: string;
-  name: string;
-  fullName: string;
-  description: string;
-  contributions: string[];
-  outcome?: string;
-  outcomeLabel?: string;
-}
-
-export interface GRCPolicyGroup {
-  title: string;
-  policies: string[];
-  impact: string;
-}
-
-export interface GRCRiskMetric {
-  value: string;
-  label: string;
-  detail: string;
-}
-
 export interface CaseStudy {
   id: string;
   title: string;
@@ -81,11 +48,50 @@ export interface CaseStudy {
   investigation: string;
   response: string;
   impact: { value: string; label: string }[];
-  impactSummary: string;
+  impactSummary?: string;
   detectionExample?: {
     title: string;
     mitre: string;
     language: string;
     code: string;
   };
+}
+
+export interface MitreTech {
+  id: string;
+  name: string;
+  case?: string;
+  exp?: string;
+}
+
+export interface MitreTactic {
+  tactic: string;
+  techs: MitreTech[];
+  dim: { id: string; name: string }[];
+}
+
+export interface LogLine {
+  lvl: 'OK' | 'INFO' | 'WARN' | 'CRIT';
+  msg: string;
+}
+
+export type Theme = 'terminal' | 'console';
+
+export interface ThemeTokens {
+  bg: string;
+  panel: string;
+  panel2: string;
+  panelBlur: string;
+  border: string;
+  borderHi: string;
+  accent: string;
+  accent2: string;
+  accent3: string;
+  accentSoft: string;
+  glow: string;
+  heroGrid: string;
+  glowA: string;
+  text: string;
+  bright: string;
+  dim: string;
 }

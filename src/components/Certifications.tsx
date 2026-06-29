@@ -1,49 +1,40 @@
-'use client'
+'use client';
 
-import SectionHeader from '@/components/SectionHeader'
-import ScrollReveal from '@/components/ScrollReveal'
-import { certifications } from '../data/certifications'
+import { useTheme } from '@/lib/ThemeContext';
+import SectionHeader from '@/components/SectionHeader';
+import { certifications } from '../data/certifications';
 
 export default function Certifications() {
-  return (
-    <section id="certifications" className="w-full pt-[120px] pb-[120px]">
-      <SectionHeader
-        tag="MODULE"
-        title="CREDENTIAL_STORE — Verified Certifications"
-      />
+  const { t } = useTheme();
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-        {certifications.map((cert, index) => (
-          <ScrollReveal
-            key={`${cert.issuer}-${cert.name}`}
-            delay={index * 0.05}
-            className="border border-[#1b2430] bg-[#0a0e14]/50 rounded-lg p-4 hover:border-[#00ff9c]/30 transition-colors duration-300"
+  return (
+    <section id="certifications" style={{ marginBottom: '96px' }}>
+      <SectionHeader num="06" title="Credential Store" sub="15+ active certifications — governance, cloud, and offensive" />
+
+      <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(230px,1fr))' }}>
+        {certifications.map(cert => (
+          <div key={cert.name} className="reveal flex flex-col gap-[6px] border p-[16px_18px] transition-all duration-200"
+            style={{ background: t.panel, borderColor: t.border }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = t.accent;
+              (e.currentTarget as HTMLElement).style.boxShadow = t.glow;
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = t.border;
+              (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+            }}
           >
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div className="flex-1">
-                <h3 className="text-sm font-mono font-semibold text-[#e6edf3] mb-1">
-                  {cert.name}
-                </h3>
-                <p className="text-xs text-[#6e7a88] font-mono mb-3">
-                  {cert.fullName}
-                </p>
-              </div>
-              <div className={`inline-block px-2.5 py-1 rounded text-[10px] font-mono font-semibold text-[#0a0e14] whitespace-nowrap ${cert.badgeColor}`}>
-                {cert.badgeLabel}
-              </div>
-            </div>
-            <div className="pt-3 border-t border-[#1b2430] flex items-center justify-between">
-              <p className="text-[10px] text-[#6e7a88] font-mono uppercase tracking-wider">
-                {cert.issuer}
-              </p>
-              <span className="text-[10px] text-[#00ff9c] font-mono">
-                ✓ VERIFIED
+            <div className="flex justify-between items-baseline gap-2">
+              <span className="text-[15px] font-extrabold" style={{ fontFamily: "'JetBrains Mono',monospace", color: t.accent }}>
+                {cert.name}
               </span>
+              <span className="text-[9px] border px-[7px] py-[2px] tracking-[0.08em]"
+                style={{ color: t.dim, borderColor: t.border }}>{cert.issuer}</span>
             </div>
-          </ScrollReveal>
+            <span className="text-[11px] leading-[1.5]" style={{ color: t.text }}>{cert.full}</span>
+          </div>
         ))}
       </div>
-
     </section>
-  )
+  );
 }

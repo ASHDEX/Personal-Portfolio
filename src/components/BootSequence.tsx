@@ -1,211 +1,107 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/lib/ThemeContext';
 
-interface BootLine {
-  text: string;
-  delay: number;
-  type: 'system' | 'ok' | 'info' | 'header' | 'divider' | 'ascii' | 'blank';
-}
-
-const BOOT_LINES: BootLine[] = [
-  // ASCII Logo
-  { text: '┌──────────────────────────────────────────────┐', delay: 30, type: 'divider' },
-  { text: '│  ███████╗███████╗ ██████╗     ██████╗ ██████╗│', delay: 20, type: 'ascii' },
-  { text: '│  ██╔════╝██╔════╝██╔════╝    ██╔═══██╗██╔══██╗', delay: 20, type: 'ascii' },
-  { text: '│  ███████╗█████╗  ██║         ██║   ██║██████╔╝', delay: 20, type: 'ascii' },
-  { text: '│  ╚════██║██╔══╝  ██║         ██║   ██║██╔═══╝│', delay: 20, type: 'ascii' },
-  { text: '│  ███████║███████╗╚██████╗    ╚██████╔╝██║    │', delay: 20, type: 'ascii' },
-  { text: '│  ╚══════╝╚══════╝ ╚═════╝     ╚═════╝ ╚═╝    │', delay: 20, type: 'ascii' },
-  { text: '└──────────────────────────────────────────────┘', delay: 30, type: 'divider' },
-  { text: '', delay: 40, type: 'blank' },
-
-  // System Init
-  { text: 'SEC-OPS TERMINAL v3.0 — Security Operations Platform', delay: 60, type: 'header' },
-  { text: 'Build: 2025.06.15-stable | Kernel: sec-ops-core-4.2.1', delay: 40, type: 'system' },
-  { text: '', delay: 30, type: 'blank' },
-
-  // Hardware & system checks
-  { text: '[BIOS]  POST check ............................ OK', delay: 50, type: 'ok' },
-  { text: '[MEM]   Allocating secure memory pool ......... 256MB', delay: 40, type: 'info' },
-  { text: '[CPU]   Threat analysis cores ................. 8/8 ONLINE', delay: 50, type: 'ok' },
-  { text: '[DISK]  Encrypted storage mount ............... AES-256-XTS', delay: 40, type: 'info' },
-  { text: '[NET]   Secure tunnel established ............. TLS 1.3', delay: 50, type: 'ok' },
-  { text: '', delay: 30, type: 'blank' },
-
-  // Operator Auth
-  { text: '── OPERATOR AUTHENTICATION ───────────────────────', delay: 40, type: 'divider' },
-  { text: '[AUTH]  Operator: jayesh_choudhary ............. VERIFIED', delay: 80, type: 'ok' },
-  { text: '[AUTH]  Clearance: CISSP | CISM | CISA ........ LEVEL-5', delay: 60, type: 'ok' },
-  { text: '[AUTH]  Active credentials ..................... 16 CERTS', delay: 50, type: 'info' },
-  { text: '[AUTH]  Session PID: 1337 ..................... ASSIGNED', delay: 40, type: 'ok' },
-  { text: '', delay: 30, type: 'blank' },
-
-  // Module loading
-  { text: '── LOADING MODULES ──────────────────────────────', delay: 40, type: 'divider' },
-  { text: '[MOD]   EXEC_LOGS ........... career timeline   LOADED', delay: 35, type: 'ok' },
-  { text: '[MOD]   CASE_STUDY ......... IR engagements    LOADED', delay: 35, type: 'ok' },
-  { text: '[MOD]   CAPABILITY_MATRIX .. skills + GRC      LOADED', delay: 35, type: 'ok' },
-  { text: '[MOD]   DEPLOYED_SYSTEMS ... projects + OSS    LOADED', delay: 35, type: 'ok' },
-  { text: '[MOD]   CREDENTIAL_STORE ... certifications    LOADED', delay: 35, type: 'ok' },
-  { text: '[MOD]   IN_PROGRESS ........ pursuing certs    LOADED', delay: 35, type: 'ok' },
-  { text: '[MOD]   COMMS_INTERFACE .... contact channels  LOADED', delay: 35, type: 'ok' },
-  { text: '', delay: 30, type: 'blank' },
-
-  // Security subsystems
-  { text: '── SECURITY SUBSYSTEMS ─────────────────────────', delay: 40, type: 'divider' },
-  { text: '[SIEM]  Detection engine ...................... ACTIVE', delay: 30, type: 'ok' },
-  { text: '[CTI]   Threat intel feeds .................... 50+ SOURCES', delay: 30, type: 'info' },
-  { text: '[IR]    Incident response playbooks ........... ARMED', delay: 30, type: 'ok' },
-  { text: '[DLP]   Data loss prevention .................. ENFORCING', delay: 30, type: 'ok' },
-  { text: '[EDR]   Endpoint detection .................... MONITORING', delay: 30, type: 'ok' },
-  { text: '', delay: 30, type: 'blank' },
-
-  // Final
-  { text: '═══════════════════════════════════════════════════', delay: 40, type: 'divider' },
-  { text: '[READY] All systems operational. Welcome, Jayesh.', delay: 150, type: 'header' },
-  { text: '[SYS]   Terminal ready — 7 modules active, 0 errors', delay: 80, type: 'ok' },
+const BOOT_LINES = [
+  { text: '[BIOS]  POST check ........................ OK',           color: '#ffb300' },
+  { text: '[NET]   Secure tunnel ......... TLS 1.3 ONLINE',          color: '#ffb300' },
+  { text: '[AUTH]  operator: jayesh_choudhary .. VERIFIED',          color: '#ffb300' },
+  { text: '[AUTH]  clearance: CISSP|CISM|CISA .. LEVEL-5',           color: '#ffb300' },
+  { text: '[MOD]   TIMELINE .......... career      LOADED',           color: '#6e7a88' },
+  { text: '[MOD]   INCIDENT_FILES .... IR ops      LOADED',           color: '#6e7a88' },
+  { text: '[MOD]   CAPABILITY_MATRIX . skills      LOADED',           color: '#6e7a88' },
+  { text: '[MOD]   CREDENTIAL_STORE .. 16 certs    LOADED',           color: '#6e7a88' },
+  { text: '[SIEM]  Detection engine ........... ACTIVE',             color: '#ffb300' },
+  { text: '[CTI]   Threat-intel feeds ..... 50+ SOURCES',            color: '#00e5ff' },
+  { text: '[READY] All systems operational. Welcome.',               color: 'accent' },
 ];
 
-const totalLines = BOOT_LINES.length;
+const INTERVAL = 165;
 
 export default function BootSequence() {
-  const [isVisible, setIsVisible] = useState(true);
-  const [visibleLines, setVisibleLines] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
+  const { t } = useTheme();
+  const [step, setStep] = useState(0);
+  const [visible, setVisible] = useState(true);
 
   const skip = useCallback(() => {
-    setVisibleLines(totalLines);
-    setIsComplete(true);
-    setTimeout(() => setIsVisible(false), 300);
+    setStep(BOOT_LINES.length);
+    setTimeout(() => setVisible(false), 500);
   }, []);
 
   useEffect(() => {
-    let currentLine = 0;
-    let timeoutId: NodeJS.Timeout;
-
-    const showNextLine = () => {
-      if (currentLine >= totalLines) {
-        setIsComplete(true);
-        timeoutId = setTimeout(() => setIsVisible(false), 500);
-        return;
-      }
-      currentLine++;
-      setVisibleLines(currentLine);
-      timeoutId = setTimeout(showNextLine, BOOT_LINES[currentLine - 1].delay);
-    };
-
-    timeoutId = setTimeout(showNextLine, 200);
-    return () => clearTimeout(timeoutId);
-  }, []);
-
-  useEffect(() => {
-    const handleKeydown = () => {
-      if (!isComplete) skip();
-    };
-    window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
-  }, [isComplete, skip]);
-
-  const getLineClasses = (type: BootLine['type']) => {
-    switch (type) {
-      case 'ok': return 'text-[#c9d1d9]';
-      case 'info': return 'text-[#c9d1d9]';
-      case 'header': return 'text-[#00ff9c] font-semibold';
-      case 'divider': return 'text-[#2a3544]';
-      case 'ascii': return 'text-[#00ff9c] text-[11px] leading-none';
-      case 'system': return 'text-[#6e7a88]';
-      case 'blank': return '';
-      default: return 'text-[#c9d1d9]';
+    if (step >= BOOT_LINES.length) {
+      const t = setTimeout(() => setVisible(false), 650);
+      return () => clearTimeout(t);
     }
-  };
+    const id = setTimeout(() => setStep(s => s + 1), INTERVAL);
+    return () => clearTimeout(id);
+  }, [step]);
 
-  const formatLine = (text: string) => {
-    return text
-      .replace(/(OK|VERIFIED|LOADED|ACTIVE|ARMED|ENFORCING|MONITORING|ONLINE|ASSIGNED|READY)/g,
-        '<span class="text-[#00ff9c] font-semibold">$1</span>')
-      .replace(/(LEVEL-5|16 CERTS|50\+ SOURCES|256MB|8\/8|AES-256-XTS|TLS 1\.3)/g,
-        '<span class="text-[#00e5ff]">$1</span>')
-      .replace(/(\[(?:BIOS|MEM|CPU|DISK|NET|AUTH|MOD|SIEM|CTI|IR|DLP|EDR|SYS|READY)\])/g,
-        '<span class="text-[#ffb300]">$1</span>');
-  };
+  useEffect(() => {
+    const handler = () => { if (step < BOOT_LINES.length) skip(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [step, skip]);
 
-  if (!isVisible && isComplete) return null;
+  if (!visible) return null;
+
+  const pct = Math.round((step / BOOT_LINES.length) * 100);
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[10000] bg-[#0a0e14] flex flex-col items-center justify-center overflow-hidden"
-        >
-          {/* Scan line overlay */}
-          <div className="absolute inset-0 pointer-events-none bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,255,156,0.015)_2px,rgba(0,255,156,0.015)_4px)]" />
+    <div
+      className="fixed inset-0 z-[300] flex flex-col items-center justify-center p-6 cursor-pointer"
+      style={{ background: t.bg }}
+      onClick={skip}
+    >
+      <div className="w-[560px] max-w-[94vw]">
+        {/* Window chrome */}
+        <div className="flex items-center gap-[7px] px-[14px] py-[9px] border border-b-0"
+          style={{ background: t.panel, borderColor: t.border }}>
+          <span className="w-[10px] h-[10px] rounded-full bg-[#ff5f57]" />
+          <span className="w-[10px] h-[10px] rounded-full bg-[#febc2e]" />
+          <span className="w-[10px] h-[10px] rounded-full bg-[#28c840]" />
+          <span className="ml-[10px] text-[10px] tracking-[0.12em]" style={{ color: t.dim }}>
+            sec-ops-terminal — boot
+          </span>
+        </div>
 
-          {/* Terminal window */}
-          <div className="relative w-[620px] max-w-[92vw] max-h-[80vh] overflow-hidden">
-            {/* Window chrome */}
-            <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#0d1117] border border-[#1b2430] border-b-0">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
-              <span className="ml-3 text-[10px] text-[#6e7a88] tracking-wider">
-                sec-ops-terminal — boot
-              </span>
-            </div>
-
-            {/* Terminal body */}
-            <div className="bg-[#080c12] border border-[#1b2430] p-5 font-mono text-[12px] leading-[1.6] overflow-y-auto max-h-[70vh]">
-              {BOOT_LINES.slice(0, visibleLines).map((line, i) => (
-                <div
-                  key={i}
-                  className={getLineClasses(line.type)}
-                  dangerouslySetInnerHTML={{
-                    __html: line.type === 'blank' ? '&nbsp;' : formatLine(line.text),
-                  }}
-                />
-              ))}
-
-              {/* Blinking cursor */}
-              {!isComplete && (
-                <span className="inline-block w-[7px] h-[14px] bg-[#00ff9c] animate-[blink_1s_step-end_infinite] ml-0.5" />
-              )}
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          <div className="w-[620px] max-w-[92vw] h-[2px] bg-[#1b2430] mt-4 overflow-hidden">
-            <motion.div
-              className="h-full bg-[#00ff9c]"
-              style={{ boxShadow: '0 0 10px #00ff9c, 0 0 20px rgba(0,255,156,0.3)' }}
-              initial={{ width: '0%' }}
-              animate={{ width: `${(visibleLines / totalLines) * 100}%` }}
-              transition={{ duration: 0.1, ease: 'linear' }}
-            />
-          </div>
-
-          {/* Status line */}
-          <div className="w-[620px] max-w-[92vw] mt-2 flex justify-between text-[10px] text-[#6e7a88]">
-            <span>
-              {isComplete ? 'Boot complete' : `Loading... ${Math.round((visibleLines / totalLines) * 100)}%`}
-            </span>
-            <span>{visibleLines}/{totalLines} tasks</span>
-          </div>
-
-          {/* Skip button */}
-          {!isComplete && (
-            <button
-              onClick={skip}
-              className="mt-6 text-[10px] text-[#6e7a88] hover:text-[#00ff9c] transition-colors tracking-wider uppercase cursor-pointer"
+        {/* Terminal body */}
+        <div className="p-[18px] text-[12.5px] leading-[1.7] min-h-[240px] border"
+          style={{ background: t.panel2, borderColor: t.border }}>
+          {BOOT_LINES.slice(0, step).map((line, i) => (
+            <div
+              key={i}
+              className="whitespace-pre"
+              style={{ color: line.color === 'accent' ? t.accent : line.color }}
             >
-              Press any key to skip ›
-            </button>
-          )}
-        </motion.div>
-      )}
-    </AnimatePresence>
+              {line.text}
+            </div>
+          ))}
+          <span
+            className="inline-block w-[7px] h-[14px] align-[-2px] animate-blink"
+            style={{ background: t.accent }}
+          />
+        </div>
+
+        {/* Progress bar */}
+        <div className="h-[2px] mt-[14px] overflow-hidden" style={{ background: t.border }}>
+          <div
+            className="h-full transition-all duration-[120ms] linear"
+            style={{
+              width: `${pct}%`,
+              background: t.accent,
+              boxShadow: `0 0 10px ${t.accent}`,
+            }}
+          />
+        </div>
+
+        {/* Status row */}
+        <div className="mt-[9px] flex justify-between text-[10px] tracking-[0.1em]" style={{ color: t.dim }}>
+          <span>{step >= BOOT_LINES.length ? 'boot complete' : `loading… ${pct}%`}</span>
+          <span>press any key / click to skip ›</span>
+        </div>
+      </div>
+    </div>
   );
 }

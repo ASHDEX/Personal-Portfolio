@@ -1,66 +1,62 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTheme } from '@/lib/ThemeContext';
 import { navItems } from '@/data/navigation';
 
 export default function Navigation() {
-  const [activeSection, setActiveSection] = useState<string>('about');
+  const { t } = useTheme();
+  const [active, setActive] = useState('about');
 
   useEffect(() => {
-    const handleScroll = () => {
-      const threshold = 120;
-      const scrollPosition = window.scrollY + threshold;
-
-      // Find which section is closest to the threshold
+    const onScroll = () => {
+      const y = window.scrollY + 160;
       for (const item of navItems) {
-        const sectionId = item.href.replace('#', '');
-        const element = document.getElementById(sectionId);
-
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(sectionId);
-            break;
-          }
+        const id = item.href.replace('#', '');
+        const el = document.getElementById(id);
+        if (el && y >= el.offsetTop && y < el.offsetTop + el.offsetHeight) {
+          setActive(id);
+          break;
         }
       }
     };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check on mount
-
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const handleClick = (href: string) => {
-    const sectionId = href.replace('#', '');
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const goTo = (href: string) => {
+    const id = href.replace('#', '');
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: el.offsetTop - 92, behavior: 'smooth' });
   };
 
   return (
-    <nav className="fixed top-10 left-0 right-0 bg-[#0a0e14] border-b border-[#1b2430] z-[999]">
-      <div className="flex overflow-x-auto scrollbar-hide">
-        {navItems.map((item) => {
-          const sectionId = item.href.replace('#', '');
-          const isActive = activeSection === sectionId;
-
+    <nav
+      className="fixed top-[42px] left-0 right-0 z-[90] border-b"
+      style={{
+        background: t.panelBlur,
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderColor: t.border,
+      }}
+    >
+      <div className="nobar flex overflow-x-auto max-w-[1120px] mx-auto">
+        {navItems.map(item => {
+          const id = item.href.replace('#', '');
+          const isActive = active === id;
           return (
             <button
               key={item.href}
-              onClick={() => handleClick(item.href)}
-              className={`
-                px-4 py-2.5 text-[11px] tracking-wider whitespace-nowrap transition-all duration-200
-                border-b-2
-                ${
-                  isActive
-                    ? 'text-[#00ff9c] border-[#00ff9c] drop-shadow-[0_0_8px_rgba(0,255,156,0.4)]'
-                    : 'text-[#6e7a88] border-transparent hover:text-[#00ff9c] hover:border-[#00ff9c]'
-                }
-                sm:px-3 sm:text-[10px]
-              `}
+              onClick={() => goTo(item.href)}
+              className="px-4 py-[11px] text-[10.5px] tracking-[0.13em] whitespace-nowrap border-0 border-b-2 transition-all duration-200"
+              style={{
+                fontFamily: 'inherit',
+                background: 'transparent',
+                color: isActive ? t.accent : t.dim,
+                borderColor: isActive ? t.accent : 'transparent',
+                cursor: 'pointer',
+              }}
             >
               {item.label}
             </button>

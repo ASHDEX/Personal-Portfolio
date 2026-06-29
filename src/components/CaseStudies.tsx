@@ -1,172 +1,100 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/lib/ThemeContext';
 import SectionHeader from '@/components/SectionHeader';
-import ScrollReveal from '@/components/ScrollReveal';
 import { caseStudies } from '@/data/casestudies';
 
 export default function CaseStudies() {
-  const [open, setOpen] = useState<string | null>(null);
+  const { t } = useTheme();
+  const [openId, setOpenId] = useState<string | null>('01');
 
   return (
-    <div>
-      <SectionHeader
-        tag="MODULE"
-        title="INCIDENT_RESPONSE — Case Studies & Engagements (Anonymized)"
-      />
+    <section id="casestudies" style={{ marginBottom: '96px' }}>
+      <SectionHeader num="02" title="Incident Files" sub="Real engagements — redacted & generalized. Click to open the report." />
 
-      <div className="mt-8 space-y-4">
-        {caseStudies.map((cs, index) => (
-          <ScrollReveal key={cs.id} delay={index * 0.04}>
-            <div className="bg-[#0d1117] border border-[#1b2430]">
-              {/* HEADER */}
-              <div
-                onClick={() => setOpen(open === cs.id ? null : cs.id)}
-                className="p-6 cursor-pointer hover:border-[#00cc7d] hover:bg-[#0a0e14] transition-all duration-300 flex items-start justify-between gap-4"
+      <div className="flex flex-col gap-[14px]">
+        {caseStudies.map(cs => {
+          const isOpen = openId === cs.id;
+          const sevColor = cs.severity === 'CRITICAL' ? '#ff5f57' : t.accent3;
+          return (
+            <div key={cs.id} className="reveal" style={{ background: t.panel, border: `1px solid ${isOpen ? t.borderHi : t.border}` }}>
+              {/* Header button */}
+              <button
+                onClick={() => setOpenId(isOpen ? null : cs.id)}
+                className="w-full text-left border-0 cursor-pointer flex gap-4 items-start p-[20px_22px]"
+                style={{ background: 'transparent', fontFamily: 'inherit' }}
               >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2.5 flex-wrap">
-                    <span className="text-[#6e7a88] text-xs font-mono shrink-0">
-                      [{cs.id}]
+                <span className="text-[22px] font-extrabold leading-[1] mt-[-2px]"
+                  style={{ fontFamily: "'JetBrains Mono',monospace", color: isOpen ? t.accent : t.dim }}>
+                  {cs.id}
+                </span>
+                <span className="flex-1">
+                  <span className="flex flex-wrap items-center gap-[10px] mb-[9px]">
+                    <span className="text-[9px] tracking-[0.14em] font-bold border px-2 py-[2px]"
+                      style={{ color: sevColor, borderColor: sevColor }}>
+                      {cs.severity}
                     </span>
-                    <h3 className="text-[13px] font-semibold text-[#e6edf3] leading-snug">
-                      {cs.title}
-                    </h3>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {cs.tags.map((t) => (
-                      <span
-                        key={t}
-                        className="text-[9px] px-2 py-0.5 border border-[#1b2430] text-[#00e5ff] tracking-wider"
-                      >
-                        {t}
-                      </span>
+                    <span className="text-[16px] font-semibold leading-[1.35]" style={{ color: t.bright }}>{cs.title}</span>
+                  </span>
+                  <span className="flex flex-wrap gap-[6px]">
+                    {cs.tags.map(tag => (
+                      <span key={tag} className="text-[9.5px] border px-2 py-[2px] tracking-[0.03em]"
+                        style={{ color: t.dim, borderColor: t.border }}>{tag}</span>
+                    ))}
+                  </span>
+                </span>
+                <span className="text-[14px] mt-1" style={{ color: t.accent }}>{isOpen ? '▾' : '▸'}</span>
+              </button>
+
+              {/* Expanded body */}
+              {isOpen && (
+                <div className="px-[22px] pb-6 border-t" style={{ borderColor: t.border }}>
+                  <div className="grid gap-[18px] mt-[18px]">
+                    {[
+                      { label: '› Scenario',     color: t.accent3, text: cs.scenario },
+                      { label: '› Investigation', color: t.accent2, text: cs.investigation },
+                      { label: '› Response',      color: t.accent,  text: cs.response },
+                    ].map(({ label, color, text }) => (
+                      <div key={label}>
+                        <div className="text-[10px] tracking-[0.16em] uppercase mb-[6px]" style={{ color }}>{label}</div>
+                        <p className="m-0 text-[13px] leading-[1.75]" style={{ color: t.text }}>{text}</p>
+                      </div>
                     ))}
                   </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span
-                    className={`text-[10px] tracking-wider font-bold px-3 py-1 ${
-                      cs.severity === 'CRITICAL'
-                        ? 'bg-[#ff4444] text-white'
-                        : cs.severity === 'HIGH'
-                          ? 'bg-[#ffb300] text-[#0a0e14]'
-                          : 'bg-[#6e7a88] text-white'
-                    }`}
-                  >
-                    {cs.severity}
-                  </span>
-                  <span
-                    className={`text-[#6e7a88] text-sm transition-transform duration-300 ${
-                      open === cs.id ? 'rotate-90' : ''
-                    }`}
-                  >
-                    ▸
-                  </span>
-                </div>
-              </div>
 
-              {/* EXPANDED CONTENT */}
-              <AnimatePresence>
-                {open === cs.id && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                    className="overflow-hidden"
-                  >
-                    <div className="px-6 pb-6 border-t border-[#1b2430] pt-5 space-y-6">
-                      {/* SCENARIO */}
-                      <div>
-                        <h4 className="text-[10px] tracking-[2px] uppercase text-[#00ff9c] mb-2 font-semibold">
-                          Scenario
-                        </h4>
-                        <p className="text-[12px] text-[#c9d1d9] leading-[1.8]">
-                          {cs.scenario}
-                        </p>
+                  {/* Impact metrics */}
+                  <div className="flex flex-wrap gap-[10px] mt-[18px]">
+                    {cs.impact.map((m, i) => (
+                      <div key={i} className="border border-b-2 px-[14px] py-[9px] min-w-[112px]"
+                        style={{ borderColor: t.border, borderBottomColor: t.accent }}>
+                        <div className="text-[15px] font-bold" style={{ fontFamily: "'JetBrains Mono',monospace", color: t.accent2 }}>{m.value}</div>
+                        <div className="text-[9px] uppercase tracking-[0.1em] mt-[2px]" style={{ color: t.dim }}>{m.label}</div>
                       </div>
+                    ))}
+                  </div>
 
-                      {/* INVESTIGATION */}
-                      <div>
-                        <h4 className="text-[10px] tracking-[2px] uppercase text-[#00e5ff] mb-2 font-semibold">
-                          Investigation
-                        </h4>
-                        <p className="text-[12px] text-[#c9d1d9] leading-[1.8]">
-                          {cs.investigation}
-                        </p>
+                  {/* Code exhibit */}
+                  {cs.detectionExample && (
+                    <div className="mt-[20px] border" style={{ borderColor: t.border, background: t.panel2 }}>
+                      <div className="flex flex-wrap justify-between gap-2 px-[14px] py-[10px] border-b" style={{ borderColor: t.border }}>
+                        <span className="text-[11.5px]" style={{ color: t.bright }}>⬡ {cs.detectionExample.title}</span>
+                        <span className="text-[10px] tracking-[0.06em]" style={{ color: t.accent3 }}>
+                          {cs.detectionExample.mitre} · {cs.detectionExample.language}
+                        </span>
                       </div>
-
-                      {/* RESPONSE */}
-                      <div>
-                        <h4 className="text-[10px] tracking-[2px] uppercase text-[#ffb300] mb-2 font-semibold">
-                          Response
-                        </h4>
-                        <p className="text-[12px] text-[#c9d1d9] leading-[1.8]">
-                          {cs.response}
-                        </p>
-                      </div>
-
-                      {/* DETECTION EXAMPLE */}
-                      {cs.detectionExample && (
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2 mb-3">
-                            <h4 className="text-[10px] tracking-[2px] uppercase text-[#ff6ec7] font-semibold">
-                              Detection: {cs.detectionExample.title}
-                            </h4>
-                            <span className="text-[9px] px-2 py-0.5 bg-[rgba(0,255,156,0.13)] text-[#00ff9c] tracking-wider">
-                              MITRE {cs.detectionExample.mitre}
-                            </span>
-                            <span className="text-[9px] text-[#6e7a88]">
-                              {cs.detectionExample.language}
-                            </span>
-                          </div>
-                          <pre className="bg-[#0a0e14] border border-[#1b2430] p-4 overflow-x-auto text-[11px] leading-[1.7] text-[#c9d1d9] font-mono">
-                            <code>{cs.detectionExample.code}</code>
-                          </pre>
-                        </div>
-                      )}
-
-                      {/* IMPACT METRICS */}
-                      <div>
-                        <h4 className="text-[10px] tracking-[2px] uppercase text-[#ff7b72] mb-3 font-semibold">
-                          Impact Metrics
-                        </h4>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          {cs.impact.map((m, i) => (
-                            <div
-                              key={i}
-                              className="bg-[#0a0e14] border border-[#1b2430] p-3"
-                            >
-                              <div className="text-[12px] font-bold text-[#00cc7d]">
-                                {m.value}
-                              </div>
-                              <div className="text-[9px] text-[#6e7a88] mt-1">
-                                {m.label}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* IMPACT SUMMARY */}
-                      <div>
-                        <h4 className="text-[10px] tracking-[2px] uppercase text-[#79c0ff] mb-2 font-semibold">
-                          Summary
-                        </h4>
-                        <p className="text-[12px] text-[#c9d1d9] leading-[1.8]">
-                          {cs.impactSummary}
-                        </p>
-                      </div>
+                      <pre className="nobar m-0 px-4 py-[14px] overflow-x-auto text-[11.5px] leading-[1.65]"
+                        style={{ fontFamily: "'JetBrains Mono',monospace", color: t.text }}>
+                        <code>{cs.detectionExample.code}</code>
+                      </pre>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  )}
+                </div>
+              )}
             </div>
-          </ScrollReveal>
-        ))}
+          );
+        })}
       </div>
-    </div>
+    </section>
   );
 }

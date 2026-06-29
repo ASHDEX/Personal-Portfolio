@@ -1,80 +1,69 @@
-'use client'
+'use client';
 
-import SectionHeader from '@/components/SectionHeader'
-import ScrollReveal from '@/components/ScrollReveal'
-import { experience } from '../data/experience'
+import { useTheme } from '@/lib/ThemeContext';
+import SectionHeader from '@/components/SectionHeader';
+import { experience } from '../data/experience';
 
 export default function Experience() {
-  return (
-    <section id="experience" className="w-full pt-[120px] pb-[120px]">
-      <SectionHeader
-        tag="MODULE"
-        title="EXECUTION_LOGS — Career Timeline"
-      />
+  const { t } = useTheme();
 
-      <div className="space-y-8">
-        {experience.map((entry, index) => (
-          <ScrollReveal
-            key={`${entry.company}-${entry.role}`}
-            delay={index * 0.1}
-            className="border border-[#1b2430] bg-[#0a0e14]/50 rounded-lg p-6 hover:border-[#00ff9c]/30 transition-colors duration-300"
-          >
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-xl font-mono text-[#00ff9c]">{entry.company}</h3>
-                  <span className="text-gray-400">—</span>
-                  <span className="text-lg font-mono text-[#E5E7EB]">{entry.role}</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-500 font-mono">
-                  <span>{entry.date}</span>
-                  {entry.location && (
-                    <>
-                      <span className="text-gray-700">•</span>
-                      <span>{entry.location}</span>
-                    </>
-                  )}
-                </div>
+  return (
+    <section id="experience" style={{ marginBottom: '96px' }}>
+      <SectionHeader num="01" title="Career Timeline" sub="Six roles · five years · banking, cloud-native, and consulting estates" />
+
+      <div className="relative pl-[30px]">
+        {/* Rail */}
+        <div className="absolute" style={{ left: '5px', top: '6px', bottom: '6px', width: '1px', background: t.border }} />
+
+        {experience.map((job, idx) => (
+          <div key={idx} className="reveal relative mb-[30px]">
+            {/* Timeline node */}
+            <div className="absolute w-[11px] h-[11px] rounded-full border-2"
+              style={{ left: '-29px', top: '6px', background: t.bg, borderColor: t.accent, boxShadow: `0 0 10px ${t.accentSoft}` }} />
+
+            <div className="p-[22px_24px] border border-l-2"
+              style={{ background: t.panel, borderColor: t.border, borderLeftColor: t.accent }}>
+
+              <div className="flex flex-wrap justify-between gap-2 items-baseline mb-[3px]">
+                <h3 className="m-0 text-[17px] font-bold" style={{ color: t.bright }}>{job.role}</h3>
+                <span className="text-[11px] tracking-[0.08em]" style={{ color: t.dim }}>{job.date}</span>
               </div>
-              {entry.metrics && entry.metrics.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {entry.metrics.map((metric, idx) => (
-                    <div
-                      key={idx}
-                      className="px-3 py-1 bg-[#1b2430] border border-[#2a3441] rounded-full text-xs font-mono"
-                    >
-                      <span className="text-[#00ff9c]">{metric.value}</span>
-                      <span className="text-gray-400 ml-1">{metric.label}</span>
+              <div className="text-[13px] mb-4" style={{ color: t.accent }}>
+                {job.company} <span style={{ color: t.dim }}>· {job.location}</span>
+              </div>
+
+              {job.metrics && job.metrics.length > 0 && (
+                <div className="flex flex-wrap gap-[10px] mb-4">
+                  {job.metrics.map((m, i) => (
+                    <div key={i} className="border px-[14px] py-2 min-w-[98px]" style={{ borderColor: t.border }}>
+                      <div className="text-[16px] font-bold" style={{ fontFamily: "'JetBrains Mono',monospace", color: t.accent2 }}>{m.value}</div>
+                      <div className="text-[9px] uppercase tracking-[0.12em] mt-[2px]" style={{ color: t.dim }}>{m.label}</div>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
 
-            <ul className="space-y-3 mb-6">
-              {entry.bullets.map((bullet, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-gray-300 text-[15px] leading-relaxed">
-                  <span className="text-[#00ff9c] mt-1.5 text-xs">›</span>
-                  <span>{bullet}</span>
-                </li>
-              ))}
-            </ul>
+              <ul className="m-0 mb-4 p-0 list-none">
+                {job.bullets.map((b, i) => (
+                  <li key={i} className="relative pl-[18px] text-[13px] leading-[1.7] mb-[6px]" style={{ color: t.text }}>
+                    <span className="absolute left-0" style={{ color: t.accent }}>›</span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
 
-            {entry.tags && entry.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-[#1b2430]">
-                {entry.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2.5 py-0.5 bg-[#1b2430] text-[#6e7a88] text-xs font-mono rounded border border-[#2a3441]"
-                  >
+              <div className="flex flex-wrap gap-[7px]">
+                {job.tags.map((tag, i) => (
+                  <span key={i} className="text-[10px] px-[9px] py-[3px] border tracking-[0.04em]"
+                    style={{ color: t.dim, borderColor: t.border }}>
                     {tag}
                   </span>
                 ))}
               </div>
-            )}
-          </ScrollReveal>
+            </div>
+          </div>
         ))}
       </div>
     </section>
-  )
+  );
 }

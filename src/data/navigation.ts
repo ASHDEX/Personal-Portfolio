@@ -1,12 +1,12 @@
 import { NavItem } from '@/types';
 
 export const navItems: NavItem[] = [
-  { label: 'SYSTEM_INIT', href: '#about' },
-  { label: 'EXEC_LOGS', href: '#experience' },
-  { label: 'CASE_STUDY', href: '#casestudies' },
-  { label: 'CAPABILITIES', href: '#skills' },
-  { label: 'SYSTEMS', href: '#projects' },
-  { label: 'CREDENTIALS', href: '#certifications' },
-  { label: 'IN_PROGRESS', href: '#pursuing' },
-  { label: 'COMMS', href: '#contact' },
+  { label: 'WHOAMI',         href: '#about' },
+  { label: 'TIMELINE',       href: '#experience' },
+  { label: 'INCIDENT_FILES', href: '#casestudies' },
+  { label: 'ATT&CK',         href: '#attack' },
+  { label: 'CAPABILITY',     href: '#skills' },
+  { label: 'DEPLOYED',       href: '#projects' },
+  { label: 'CREDENTIALS',    href: '#certifications' },
+  { label: 'COMMS',          href: '#contact' },
 ];
