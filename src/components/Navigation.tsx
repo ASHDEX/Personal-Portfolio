@@ -33,6 +33,7 @@ export default function Navigation() {
 
   return (
     <nav
+      aria-label="Site navigation"
       className="fixed top-[42px] left-0 right-0 z-[90] border-b"
       style={{
         background: t.panelBlur,
@@ -49,6 +50,7 @@ export default function Navigation() {
             <button
               key={item.href}
               onClick={() => goTo(item.href)}
+              aria-current={isActive ? 'true' : undefined}
               className="px-4 py-[11px] text-[10.5px] tracking-[0.13em] whitespace-nowrap border-0 border-b-2 transition-all duration-200"
               style={{
                 fontFamily: 'inherit',

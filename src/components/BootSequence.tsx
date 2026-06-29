@@ -22,15 +22,20 @@ const INTERVAL = 165;
 export default function BootSequence() {
   const { t } = useTheme();
   const [step, setStep] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(() => {
+    if (typeof sessionStorage === 'undefined') return true;
+    return !sessionStorage.getItem('booted');
+  });
 
   const skip = useCallback(() => {
+    sessionStorage.setItem('booted', '1');
     setStep(BOOT_LINES.length);
     setTimeout(() => setVisible(false), 500);
   }, []);
 
   useEffect(() => {
     if (step >= BOOT_LINES.length) {
+      sessionStorage.setItem('booted', '1');
       const t = setTimeout(() => setVisible(false), 650);
       return () => clearTimeout(t);
     }
@@ -68,7 +73,9 @@ export default function BootSequence() {
 
         {/* Terminal body */}
         <div className="p-[18px] text-[12.5px] leading-[1.7] min-h-[240px] border"
-          style={{ background: t.panel2, borderColor: t.border }}>
+          style={{ background: t.panel2, borderColor: t.border }}
+          aria-live="polite"
+          aria-atomic="false">
           {BOOT_LINES.slice(0, step).map((line, i) => (
             <div
               key={i}

@@ -35,6 +35,7 @@ export default function TopBar() {
         {/* ⌘K search button */}
         <button
           onClick={openPalette}
+          aria-label="Open command palette"
           className="flex items-center gap-2 text-[10.5px] tracking-[0.08em] px-[11px] py-[5px] border transition-colors"
           style={{
             background: 'transparent',
@@ -59,6 +60,8 @@ export default function TopBar() {
         <div className="flex border" style={{ borderColor: t.border }}>
           <button
             onClick={() => setVariant('terminal')}
+            aria-label="Switch to green theme"
+            aria-pressed={variant === 'terminal'}
             className="text-[10px] tracking-[0.1em] px-[11px] py-[5px] border-0 uppercase transition-colors"
             style={{
               fontFamily: 'inherit',
@@ -71,6 +74,8 @@ export default function TopBar() {
           </button>
           <button
             onClick={() => setVariant('console')}
+            aria-label="Switch to cyan theme"
+            aria-pressed={variant === 'console'}
             className="text-[10px] tracking-[0.1em] px-[11px] py-[5px] border-0 border-l uppercase transition-colors"
             style={{
               fontFamily: 'inherit',
