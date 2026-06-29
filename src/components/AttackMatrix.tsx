@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTheme } from '@/lib/ThemeContext';
 import SectionHeader from '@/components/SectionHeader';
 import { mitreTactics } from '@/data/mitre';
@@ -19,12 +19,15 @@ export default function AttackMatrix() {
   const { t } = useTheme();
   const [sel, setSel] = useState<Selected>(DEFAULT);
 
-  const techSet = new Set<string>();
-  const engSet = new Set<string>();
-  mitreTactics.forEach(col => col.techs.forEach(tx => {
-    techSet.add(tx.id);
-    engSet.add(tx.case ?? tx.exp ?? '');
-  }));
+  const { techSet, engSet } = useMemo(() => {
+    const techSet = new Set<string>();
+    const engSet = new Set<string>();
+    mitreTactics.forEach(col => col.techs.forEach(tx => {
+      techSet.add(tx.id);
+      engSet.add(tx.case ?? tx.exp ?? '');
+    }));
+    return { techSet, engSet };
+  }, []);
 
   const goTo = (id: string) => {
     const el = document.getElementById(id);

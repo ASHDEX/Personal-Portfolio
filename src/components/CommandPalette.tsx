@@ -61,10 +61,10 @@ export default function CommandPalette() {
       run: () => { goTo(n.id); closePalette(); },
     })),
     { icon: '✉', label: 'Email Jayesh', hint: 'mailto', kw: 'email mail contact', run: () => { window.location.href = 'mailto:primeash1@gmail.com'; closePalette(); } },
-    { icon: '▸', label: 'Open LinkedIn', hint: 'external', kw: 'linkedin', run: () => { window.open('https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/', '_blank'); closePalette(); } },
-    { icon: '▸', label: 'Open GitHub', hint: 'external', kw: 'github code', run: () => { window.open('https://github.com/Ashdex', '_blank'); closePalette(); } },
-    { icon: '▸', label: 'Open FreeIntelHub', hint: 'external', kw: 'freeintelhub oss intel', run: () => { window.open('https://github.com/ASHDEX/FreeIntelhub', '_blank'); closePalette(); } },
-    { icon: '▸', label: 'Open Blog', hint: 'external', kw: 'blog news', run: () => { window.open('https://dailydoesofcybersecuritynews.com', '_blank'); closePalette(); } },
+    { icon: '▸', label: 'Open LinkedIn', hint: 'external', kw: 'linkedin', run: () => { window.open('https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/', '_blank', 'noopener,noreferrer'); closePalette(); } },
+    { icon: '▸', label: 'Open GitHub', hint: 'external', kw: 'github code', run: () => { window.open('https://github.com/Ashdex', '_blank', 'noopener,noreferrer'); closePalette(); } },
+    { icon: '▸', label: 'Open FreeIntelHub', hint: 'external', kw: 'freeintelhub oss intel', run: () => { window.open('https://github.com/ASHDEX/FreeIntelhub', '_blank', 'noopener,noreferrer'); closePalette(); } },
+    { icon: '▸', label: 'Open Blog', hint: 'external', kw: 'blog news', run: () => { window.open('https://dailydoesofcybersecuritynews.com', '_blank', 'noopener,noreferrer'); closePalette(); } },
     { icon: '◑', label: 'Switch theme — Green / Cyan', hint: 'THEME', kw: 'theme color green cyan toggle', run: () => setVariant('terminal') },
     { icon: '◑', label: 'Switch to Green theme', hint: 'THEME', kw: 'green terminal', run: () => { setVariant('terminal'); closePalette(); } },
     { icon: '◑', label: 'Switch to Cyan theme', hint: 'THEME', kw: 'cyan console blue', run: () => { setVariant('console'); closePalette(); } },
@@ -86,6 +86,9 @@ export default function CommandPalette() {
       onClick={closePalette}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
         className="w-[560px] max-w-[92vw]"
         style={{ background: t.panel, border: `1px solid ${t.borderHi}`, boxShadow: `0 24px 80px rgba(0,0,0,0.6), ${t.glow}` }}
         onClick={e => e.stopPropagation()}

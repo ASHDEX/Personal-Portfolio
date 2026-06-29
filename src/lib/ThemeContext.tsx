@@ -13,14 +13,7 @@ interface ThemeContextValue {
   paletteOpen: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({
-  variant: 'terminal',
-  t: getTheme('terminal'),
-  setVariant: () => {},
-  openPalette: () => {},
-  closePalette: () => {},
-  paletteOpen: false,
-});
+const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [variant, setVariant] = useState<Theme>('terminal');
@@ -40,6 +33,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useTheme() {
-  return useContext(ThemeContext);
+export function useTheme(): ThemeContextValue {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error('useTheme must be used inside ThemeProvider');
+  return ctx;
 }

@@ -22,6 +22,8 @@ export default function CaseStudies() {
               {/* Header button */}
               <button
                 onClick={() => setOpenId(isOpen ? null : cs.id)}
+                aria-expanded={isOpen}
+                aria-controls={`cs-body-${cs.id}`}
                 className="w-full text-left border-0 cursor-pointer flex gap-4 items-start p-[20px_22px]"
                 style={{ background: 'transparent', fontFamily: 'inherit' }}
               >
@@ -49,7 +51,7 @@ export default function CaseStudies() {
 
               {/* Expanded body */}
               {isOpen && (
-                <div className="px-[22px] pb-6 border-t" style={{ borderColor: t.border }}>
+                <div id={`cs-body-${cs.id}`} role="region" className="px-[22px] pb-6 border-t" style={{ borderColor: t.border }}>
                   <div className="grid gap-[18px] mt-[18px]">
                     {[
                       { label: '› Scenario',     color: t.accent3, text: cs.scenario },

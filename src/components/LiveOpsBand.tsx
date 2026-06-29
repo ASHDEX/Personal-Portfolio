@@ -32,14 +32,22 @@ function seed(): LiveLogLine[] {
     .map((l, i) => ({ ...l, ts: ts(), key: 'seed' + i }));
 }
 
+const STATIC_SEED: LiveLogLine[] = LOG_POOL.slice(0, 6).map((l, i) => ({
+  ...l, ts: '00:00:00', key: 'seed' + i,
+}));
+
 export default function LiveOpsBand() {
   const { t } = useTheme();
-  const [logLines, setLogLines] = useState<LiveLogLine[]>(seed);
+  const [logLines, setLogLines] = useState<LiveLogLine[]>(STATIC_SEED);
   const [clock, setClock] = useState('--:--:-- UTC');
   const [events, setEvents] = useState(13370);
   const evBase = useRef(13370);
 
   useEffect(() => {
+    // seed with random lines only after mount to avoid hydration mismatch
+    setLogLines(seed());
+    setClock(ts() + ' UTC');
+
     const clk = setInterval(() => {
       evBase.current += 1 + Math.floor(Math.random() * 4);
       setClock(ts() + ' UTC');
