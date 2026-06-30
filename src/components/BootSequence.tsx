@@ -22,10 +22,11 @@ const INTERVAL = 165;
 export default function BootSequence() {
   const { t } = useTheme();
   const [step, setStep] = useState(0);
-  const [visible, setVisible] = useState(() => {
-    if (typeof sessionStorage === 'undefined') return true;
-    return !sessionStorage.getItem('booted');
-  });
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('booted')) setVisible(false);
+  }, []);
 
   const skip = useCallback(() => {
     sessionStorage.setItem('booted', '1');

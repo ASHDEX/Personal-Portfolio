@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import BootSequence from '@/components/BootSequence';
 import TopBar from '@/components/TopBar';
 import Navigation from '@/components/Navigation';
@@ -16,6 +17,11 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
   return (
     <>
       {/* Fixed overlays */}
