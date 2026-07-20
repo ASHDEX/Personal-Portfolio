@@ -13,6 +13,8 @@ import AttackMatrix from '@/components/AttackMatrix';
 import Skills from '@/components/Skills';
 import Projects from '@/components/Projects';
 import Certifications from '@/components/Certifications';
+import Pursuing from '@/components/Pursuing';
+import OpenSource from '@/components/OpenSource';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
@@ -47,6 +49,8 @@ export default function Home() {
         <Skills />
         <Projects />
         <Certifications />
+        <Pursuing />
+        <OpenSource />
         <Contact />
         <Footer />
       </main>

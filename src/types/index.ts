@@ -28,6 +28,20 @@ export interface Certification {
   issuer: string;
 }
 
+export interface PursuingCert {
+  name: string;
+  full: string;
+  issuer: string;
+  target: string;
+}
+
+export interface Repo {
+  name: string;
+  description: string;
+  url: string;
+  language?: string;
+}
+
 export interface NavItem {
   label: string;
   href: string;

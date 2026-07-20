@@ -9,7 +9,7 @@ export default function Contact() {
 
   return (
     <section id="contact" style={{ marginBottom: '40px' }}>
-      <SectionHeader num="07" title="Open a Channel" sub="Detection engineering, IR, threat intel, security program builds" />
+      <SectionHeader num="09" title="Open a Channel" sub="Detection engineering, IR, threat intel, security program builds" />
 
       <div className="reveal border p-[26px]" style={{ background: t.panel, borderColor: t.border }}>
         <div className="text-[12px] mb-[22px]">
