@@ -38,15 +38,14 @@ npm run build    # static site in out/
 
 ## Deploy (Hostinger)
 
-The workflow in `deploy/deploy-hostinger.yml` builds the site on every push to `main` and publishes `out/` to the `hostinger` branch. Hostinger's Git deployment pulls that branch into `public_html`.
+Hostinger builds the site straight from `main` on every push. Build settings in hPanel:
 
-**Enable the workflow once:** on github.com open the repo → Add file → Create new file, name it `.github/workflows/deploy-hostinger.yml`, paste the contents of `deploy/deploy-hostinger.yml`, and commit to `main`. (Creating it in the browser avoids the `workflow` token scope that command-line pushes need.)
-
-One-time setup in hPanel → Websites → Advanced → **Git**:
-
-1. Repository: `https://github.com/ASHDEX/Personal-Portfolio.git`
-2. Branch: **`hostinger`** (not `main`; Hostinger cannot run the Next.js build)
-3. Install path: leave empty to deploy into `public_html`
-4. Turn on **Auto deployment** and add the webhook URL Hostinger shows to the GitHub repo (Settings → Webhooks), so each publish deploys automatically.
+| Setting | Value |
+|---|---|
+| Node.js | 20 or newer |
+| Build command | `npm run build` |
+| Output directory | **`out`** (the site is a static export; `.next` will not work) |
 
 `public/.htaccess` ships with the build: HTTPS redirect, 404 page, security headers and long-lived caching for hashed assets.
+
+The project has no PostCSS or Tailwind config on purpose: Turbopack runs PostCSS in a separate Node process, which Hostinger's build environment does not allow.
