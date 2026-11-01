@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jayesh Choudhary · SOC Wall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400;62..125,500;62..125,700;62..125,800&family=Chivo+Mono:wght@400;500&family=Silkscreen&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/MaskPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<style>
+:root {
+  color-scheme: dark;
+  --wall:    #04060a;
+  --bezel:   #0d1219;
+  --bezel-2: #121924;
+  --screen:  #070b11;
+  --rule:    #1a2430;
+  --ink:     #e9eef3;
+  --ink-2:   #a3afbc;
+  --ink-3:   #7d8a97;
+  --cyan:    #5ad2e6;
+  --cyan-dim:#2a6f7c;
+  --amber:   #f2b33d;
+  --red:     #ff6b5e;
+  --f-display: 'Archivo', 'Arial Narrow', sans-serif;
+  --f-ui:      'Archivo', system-ui, sans-serif;
+  --f-data:    'Chivo Mono', ui-monospace, Menlo, monospace;
+  --f-pixel:   'Silkscreen', 'Chivo Mono', monospace;
+  --gut: clamp(16px, 2vw, 28px);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--wall); color: var(--ink); }
+body { font: 15px/1.5 var(--f-ui); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+::selection { background: var(--cyan); color: var(--wall); }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+.num { font-variant-numeric: tabular-nums; }
+
+#bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
+#trail { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 30; pointer-events: none; }
+
+/* ── boot veil / transition ── */
+#veil { position: fixed; inset: 0; z-index: 60; background: #000; display: grid; place-items: center; pointer-events: none; }
+#veil .px { position: relative; z-index: 2; font: 400 clamp(20px, 2.6vw, 34px)/1 var(--f-pixel); letter-spacing: .08em; white-space: pre; }
+#veil .px.granted { color: var(--cyan); }
+.bootui { position: absolute; inset: 0; display: grid; grid-template-rows: auto 1fr auto auto; gap: 18px; padding: calc(env(safe-area-inset-top, 0px) + 22px) var(--gut) calc(env(safe-area-inset-bottom, 0px) + 20px); font: 12.5px/1.6 var(--f-data); color: var(--ink-3); pointer-events: auto; cursor: pointer; }
+.bootui[hidden] { display: none; }
+.bt-top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; letter-spacing: .06em; }
+.bt-top b { color: var(--ink); font-weight: 500; }
+.bt-mid { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: clamp(24px, 5vw, 80px); align-items: center; align-content: center; }
+.dump { margin: 0; justify-self: center; font: 14px/1.9 var(--f-data); color: #3a4652; white-space: pre; }
+.dump .k { color: var(--ink); } .dump .o { color: #4c5866; } .dump .hot { color: var(--cyan); }
+.cap2 { display: block; margin-top: 10px; font: 12px/1 var(--f-data); color: #4c5866; letter-spacing: .04em; }
+.bt-count { display: grid; gap: 16px; }
+.hex { font: 800 clamp(96px, 17vw, 260px)/.8 var(--f-display); font-stretch: 62%; letter-spacing: -.01em; color: var(--ink); }
+.hex .px0 { color: var(--ink-3); }
+.bits { display: flex; gap: 8px; align-items: center; }
+.bits i { width: clamp(18px, 2vw, 28px); height: clamp(18px, 2vw, 28px); border-radius: 3px; background: #10161d; box-shadow: inset 0 0 0 1px #1d2833; transition: background-color .12s ease, box-shadow .12s ease; }
+.bits i.on { background: var(--cyan); box-shadow: 0 0 18px -4px var(--cyan); }
+.bits span { margin-left: 10px; color: var(--ink-2); }
+.art { margin: 0; font: 18px/1.16 var(--f-data); color: var(--ink-2); white-space: pre; letter-spacing: .04em; }
+.art b { color: var(--cyan); font-weight: 400; }
+.art em { font-style: normal; color: var(--amber); }
+.bt-fp { display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline; border-top: 1px solid #141b23; padding-top: 14px; }
+.bt-fp b { font-weight: 400; color: var(--ink); word-break: break-all; }
+.bt-fp b .u { color: var(--ink-3); }
+.bt-log { margin: 0; min-height: calc(1.6em * 8); white-space: pre-wrap; color: var(--ink-3); }
+.bt-log .ts { color: #4c5866; }
+.bt-log .ok { color: var(--cyan); }
+.bt-log .pass { color: #0b1a10; background: #46d68f; padding: 0 4px; border-radius: 2px; }
+.bt-skip { position: absolute; right: var(--gut); bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); color: #4c5866; }
+@media (max-width: 1100px) { .dump { display: none; } .bt-mid { grid-template-columns: minmax(0, 1fr) auto; } }
+@media (max-width: 760px) { .bt-mid { grid-template-columns: 1fr; } .art { font-size: 12px; } .bt-skip { display: none; } }
+
+/* ── header ── */
+.page { position: relative; z-index: 1; }
+.bar { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 40; height: 62px; display: flex; align-items: center; gap: 28px; padding: 0 calc(var(--gut) + 4px); background: #04060a; }
+.mark { font: 700 15px/1 var(--f-display); font-stretch: 85%; letter-spacing: .02em; }
+.mark span { color: var(--ink-3); font-weight: 500; }
+.bar nav { display: flex; gap: 22px; font-size: 14px; color: var(--ink-2); }
+.bar nav a { transition: color .15s ease; text-underline-offset: 6px; }
+.bar nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--cyan); }
+@media (hover: hover) and (pointer: fine) { .bar nav a:hover { color: var(--ink); } }
+.bar .sp { flex: 1; }
+.clock { font: 13px/1 var(--f-data); color: var(--ink-2); }
+.clock b { color: var(--ink); font-weight: 500; }
+.cta { font: 600 13px/1 var(--f-ui); padding: 11px 14px; border-radius: 6px; background: var(--cyan); color: #031418; transition: transform .16s var(--ease-out), background-color .2s ease; }
+.cta:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) { .cta:hover { background: #82e1f0; } }
+
+.view { position: relative; min-height: 100vh; padding-top: 112px; }
+.view[hidden] { display: none; }
+
+/* ── wall ── */
+.wall { display: grid; gap: 14px; padding: 8px var(--gut) 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr) minmax(0, 1fr); grid-template-areas: "radar dossier stream" "matrix ledger stream"; }
+.mon { position: relative; background: var(--bezel); border-radius: 10px; padding: 7px; display: grid; grid-template-rows: auto 1fr; box-shadow: 0 18px 40px -18px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.035); }
+.mon > h2 { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 10px 9px; font: 500 13px/1.2 var(--f-ui); color: var(--ink-2); }
+.mon > h2 small { font: 12px/1 var(--f-data); color: var(--ink-3); }
+.scr { position: relative; background: var(--screen); border-radius: 5px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--rule); }
+.radar { grid-area: radar; } .dossier { grid-area: dossier; } .stream { grid-area: stream; } .matrix { grid-area: matrix; } .ledger { grid-area: ledger; }
+
+/* target-lock brackets */
+.lock { position: absolute; width: 14px; height: 14px; border: 1.5px solid var(--cyan); opacity: 0; transition: transform .7s var(--ease-out), opacity .3s ease; pointer-events: none; }
+.lock.tl { left: -7px; top: -7px; border-right: 0; border-bottom: 0; transform: translate(-14px, -14px); }
+.lock.tr { right: -7px; top: -7px; border-left: 0; border-bottom: 0; transform: translate(14px, -14px); }
+.lock.bl { left: -7px; bottom: -7px; border-right: 0; border-top: 0; transform: translate(-14px, 14px); }
+.lock.br { right: -7px; bottom: -7px; border-left: 0; border-top: 0; transform: translate(14px, 14px); }
+.locked .lock { opacity: .9; transform: none; }
+.locked.settled .lock { opacity: .28; transition: opacity 1.2s ease; }
+
+/* dossier */
+.dossier .scr { padding: clamp(28px, 3.4vw, 52px); display: grid; align-content: center; gap: 22px; background: radial-gradient(120% 90% at 0% 0%, #0b1620 0%, var(--screen) 60%); }
+.dossier h1 { margin: 0; font: 800 clamp(52px, 6.4vw, 104px)/.86 var(--f-display); font-stretch: 68%; letter-spacing: -.012em; text-transform: uppercase; }
+.role { font: 500 clamp(19px, 1.6vw, 24px)/1.25 var(--f-display); font-stretch: 92%; color: var(--cyan); }
+.pitch { margin: 0; max-width: 58ch; color: var(--ink-2); font-size: 16px; line-height: 1.62; }
+.pitch b { color: var(--ink); font-weight: 500; }
+.targets { display: flex; flex-wrap: wrap; gap: 8px; font: 13px/1 var(--f-data); color: var(--ink-2); align-items: center; }
+.targets span { padding: 8px 10px; border-radius: 4px; background: var(--bezel-2); color: var(--ink); }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; font: 600 15px/1 var(--f-ui); padding: 15px 20px; border-radius: 6px; border: 1px solid var(--rule); color: var(--ink); transition: transform .16s var(--ease-out), background-color .2s ease, border-color .2s ease; }
+.btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; transition: transform .2s var(--ease-out); }
+.btn:active { transform: scale(.97); }
+.btn.p { background: var(--cyan); border-color: var(--cyan); color: #031418; }
+@media (hover: hover) and (pointer: fine) { .btn.p:hover { background: #82e1f0; } .btn.p:hover svg { transform: translateX(3px); } .btn:not(.p):hover { border-color: #3a4a5a; } }
+.creds { font: 12.5px/1.6 var(--f-data); color: var(--ink-3); }
+.creds b { color: var(--ink-2); font-weight: 400; }
+
+/* 3D tiles */
+.radar .scr, .matrix .scr { min-height: 330px; }
+.gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.labels { position: absolute; inset: 0; pointer-events: none; }
+.tag { position: absolute; transform: translate(-50%, -100%); display: inline-flex; align-items: center; gap: 6px; font: 500 10.5px/1 var(--f-data); letter-spacing: .04em; color: var(--ink-2); padding: 4px 7px 4px 6px; border-radius: 999px; background: rgba(4,7,11,.55); white-space: nowrap; pointer-events: auto; cursor: default; transition: color .15s ease, background-color .2s ease; }
+.tag::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 3px color-mix(in oklab, var(--amber) 22%, transparent); }
+.tag.crit::before { background: var(--red); box-shadow: 0 0 0 3px color-mix(in oklab, var(--red) 22%, transparent); }
+.tag .nm { max-width: 0; overflow: hidden; opacity: 0; color: var(--ink); transition: max-width .35s var(--ease-out), opacity .2s ease; }
+.tag.on { color: var(--ink); background: rgba(4,7,11,.88); z-index: 2; }
+.tag.on .nm { max-width: 260px; opacity: 1; }
+.tlabel { position: absolute; transform: translate(-50%, 0); font: 10.5px/1.15 var(--f-data); color: var(--ink-3); white-space: nowrap; }
+.cap { position: absolute; left: 14px; right: 14px; bottom: 12px; display: flex; justify-content: space-between; gap: 12px; font: 12.5px/1.35 var(--f-data); color: var(--ink-3); pointer-events: none; }
+.cap b { color: var(--ink); font-weight: 500; }
+
+/* stream */
+.stream .scr { padding: 14px 16px; display: grid; grid-template-rows: auto 1fr; }
+.stream ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; align-content: start; }
+.stream li { display: grid; grid-template-columns: 54px 1fr; gap: 12px; padding: 10px 8px; border-radius: 4px; }
+.stream li.enter { animation: enter .55s var(--ease-out) both; }
+@keyframes enter { from { opacity: 0; transform: translateY(-8px); filter: blur(3px); } }
+.stream time { font: 12px/1.45 var(--f-data); color: var(--ink-3); }
+.stream .what { display: grid; gap: 3px; }
+.stream .what b { font: 500 14px/1.35 var(--f-ui); }
+.stream .what span { font: 12px/1.35 var(--f-data); color: var(--ink-3); }
+.stream .what em { font-style: normal; color: var(--cyan); }
+.stream li.crit em { color: var(--red); }
+.stream .head { display: flex; justify-content: space-between; font: 12px/1 var(--f-data); color: var(--ink-3); padding: 2px 8px 10px; border-bottom: 1px solid var(--rule); margin-bottom: 6px; }
+.pause { color: var(--ink-2); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--rule); }
+
+/* ledger */
+.ledger .scr { padding: 10px 6px; }
+.ledger table { width: 100%; border-collapse: collapse; }
+.ledger td { padding: 11px 14px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.ledger tr:last-child td { border-bottom: 0; }
+.ledger .m { font: 500 14.5px/1.3 var(--f-ui); white-space: nowrap; }
+.ledger .where { font: 12px/1.3 var(--f-data); color: var(--ink-3); }
+.ledger .delta { font: 500 15px/1 var(--f-data); color: var(--cyan); text-align: right; white-space: nowrap; width: 1%; }
+.ledger .viz { width: 42%; }
+.meter { position: relative; height: 8px; border-radius: 2px; background: #17222d; overflow: hidden; }
+.meter i { position: absolute; inset: 0 auto 0 0; width: var(--after); background: var(--cyan); border-radius: 2px; transform-origin: left; transform: scaleX(0); transition: transform 1.1s var(--ease-out); }
+.meter.in i { transform: scaleX(1); }
+
+/* ── section heads (decrypt) ── */
+.sh { padding: 0 calc(var(--gut) + 4px); display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+.sh h2 { margin: 0; font: 800 clamp(48px, 7.6vw, 124px)/.88 var(--f-display); font-stretch: 68%; text-transform: uppercase; letter-spacing: -.01em; }
+.sh p { margin: 0; max-width: 38ch; color: var(--ink-2); font-size: 16px; }
+.dec { white-space: pre-wrap; }
+
+/* ── kill chain ── */
+.chain { position: relative; height: 330vh; margin-top: 140px; }
+.chain .stage { position: sticky; top: 112px; height: calc(100vh - 112px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 0; padding: 18px var(--gut) var(--gut); }
+.chain .left { display: grid; align-content: space-between; gap: 24px; padding: 18px 8px 0 4px; }
+.chain .left h2 { margin: 0; font: 800 clamp(44px, 5.6vw, 92px)/.88 var(--f-display); font-stretch: 68%; text-transform: uppercase; }
+.chain .left > p { margin: 0; max-width: 40ch; color: var(--ink-2); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: baseline; padding: 9px 10px; border-radius: 5px; color: var(--ink-3); transition: color .3s ease, background-color .3s ease; }
+.steps li .n { font: 12px/1 var(--f-data); }
+.steps li .t { font: 500 15px/1.3 var(--f-ui); }
+.steps li .t small { display: block; font: 12px/1.4 var(--f-data); color: var(--ink-3); margin-top: 3px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height .4s var(--ease-out), opacity .3s ease; }
+.steps li .id { font: 12px/1 var(--f-data); }
+.steps li.on { color: var(--ink); }
+.steps li.on .id { color: var(--cyan); }
+.steps li.cur { background: var(--bezel-2); }
+.steps li.cur .t small { max-height: 3em; opacity: 1; }
+.chain .view3d { position: relative; border-radius: 10px; overflow: hidden; background: radial-gradient(90% 80% at 50% 40%, #0a1520, #05080c 70%); box-shadow: inset 0 0 0 1px var(--rule); }
+.chain .view3d .readout { position: absolute; left: 18px; bottom: 16px; right: 18px; display: flex; justify-content: space-between; font: 12.5px/1.4 var(--f-data); color: var(--ink-3); }
+.chain .view3d .readout b { color: var(--cyan); font-weight: 500; }
+
+/* ── escalation ── */
+.esc { position: relative; height: 260vh; }
+.esc .stick { position: sticky; top: 0; height: 100vh; display: grid; place-items: center; }
+.esc .card { position: absolute; inset: 124px var(--gut) var(--gut); border-radius: 12px; overflow: hidden; background: #05070a; box-shadow: inset 0 0 0 1px var(--rule); clip-path: inset(38% 36% 20% 36% round 10px); }
+.esc .words { position: relative; z-index: 2; display: flex; align-items: baseline; gap: clamp(18px, 3vw, 48px); pointer-events: none; }
+.esc .words span { font: 800 clamp(56px, 9vw, 150px)/.9 var(--f-display); font-stretch: 66%; text-transform: uppercase; letter-spacing: -.01em; }
+.esc .words .c { color: var(--red); } .esc .words .h { color: var(--amber); }
+.esc .meta { position: absolute; z-index: 2; left: calc(var(--gut) + 22px); bottom: calc(var(--gut) + 20px); font: 13px/1.5 var(--f-data); color: var(--ink-2); opacity: 0; }
+.esc .meta b { color: var(--ink); font-weight: 500; }
+
+/* ── contact ── */
+.contact { padding: 140px calc(var(--gut) + 4px) 60px; display: grid; gap: 34px; }
+.contact h2 { margin: 0; font: 800 clamp(56px, 10vw, 168px)/.86 var(--f-display); font-stretch: 66%; text-transform: uppercase; }
+.contact .row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; font: 14px/1.4 var(--f-data); color: var(--ink-2); padding-top: 22px; border-top: 1px solid var(--rule); }
+
+/* ── record view ── */
+.rec-head { padding: 90px calc(var(--gut) + 4px) 40px; }
+.rec-head h1 { margin: 0; font: 800 clamp(88px, 18vw, 300px)/.8 var(--f-display); font-stretch: 62%; text-transform: uppercase; }
+.rec-head p { margin: 22px 0 0; max-width: 54ch; color: var(--ink-2); font-size: 17px; }
+.timeline { padding: 30px calc(var(--gut) + 4px) 120px; }
+.rrow { display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; padding: 30px 0; border-top: 1px solid var(--rule); }
+.rrow .yr { font: 800 52px/1 var(--f-display); font-stretch: 70%; color: var(--ink-3); }
+.rrow h3 { margin: 0; font: 600 26px/1.15 var(--f-display); font-stretch: 85%; }
+.rrow h3 small { display: block; margin-top: 8px; font: 13px/1.3 var(--f-data); color: var(--ink-3); }
+.rrow ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; color: var(--ink-2); }
+.rrow ul b { color: var(--cyan); font-weight: 500; }
+
+
+/* ── page bar: every page, always visible ── */
+.tabs { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 62px); left: 0; right: 0; z-index: 39; background: #04060a; border-bottom: 1px solid var(--rule); backdrop-filter: saturate(140%); }
+.tabs .track { position: relative; display: flex; gap: 2px; padding: 0 calc(var(--gut) - 6px); overflow-x: auto; scrollbar-width: none; }
+.tabs .track::-webkit-scrollbar { display: none; }
+.tabs a { flex: none; display: inline-flex; align-items: baseline; gap: 7px; padding: 13px 12px 14px; font: 500 14px/1 var(--f-ui); color: var(--ink-2); white-space: nowrap; transition: color .15s ease; }
+.tabs a .n { font: 11px/1 var(--f-data); color: var(--ink-3); transition: color .15s ease; }
+.tabs a[aria-current="page"] { color: var(--ink); }
+.tabs a[aria-current="page"] .n { color: var(--cyan); }
+@media (hover: hover) and (pointer: fine) { .tabs a:hover { color: var(--ink); } }
+.tabs .ind { position: absolute; left: 0; bottom: 0; width: 1px; height: 2px; background: var(--cyan); transform-origin: left; transition: transform .35s var(--ease-out); pointer-events: none; }
+@media (max-width: 760px) { .tabs::after { content: ''; position: absolute; right: 0; top: 0; bottom: 1px; width: 40px; background: linear-gradient(90deg, transparent, rgba(4,6,10,.95)); pointer-events: none; } }
+.where { display: none; }
+/* ── page chrome ── */
+.where { font: 13px/1 var(--f-data); color: var(--ink-2); letter-spacing: .06em; }
+.where b { color: var(--cyan); font-weight: 500; }
+.idx-btn { display: inline-flex; align-items: center; gap: 10px; font: 13px/1 var(--f-data); color: var(--ink-2); border: 1px solid var(--rule); border-radius: 6px; padding: 9px 11px; background: rgba(7,11,17,.7); transition: border-color .15s ease, transform .16s var(--ease-out); }
+.idx-btn:active { transform: scale(.97); }
+.idx-btn kbd { font: inherit; border: 1px solid var(--rule); border-radius: 4px; padding: 2px 5px; }
+@media (hover: hover) and (pointer: fine) { .idx-btn:hover { border-color: #3a4a5a; color: var(--ink); } }
+.index { position: fixed; inset: 0; z-index: 55; background: rgba(3,5,8,.94); display: grid; align-content: center; padding: 90px var(--gut) 40px; }
+.index[hidden] { display: none; }
+.index ol { list-style: none; margin: 0 auto; padding: 0; width: min(1100px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+.index li a { display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: baseline; padding: 14px 6px; border-bottom: 1px solid var(--rule); transition: background-color .15s ease, padding-left .25s var(--ease-out); }
+.index li a .n { font: 13px/1 var(--f-data); color: var(--ink-3); }
+.index li a .l { font: 800 clamp(26px, 3vw, 40px)/1 var(--f-display); font-stretch: 68%; text-transform: uppercase; }
+.index li a .d { font: 13px/1.3 var(--f-data); color: var(--ink-3); text-align: right; }
+.index li a[aria-current="page"] .l, .index li a[aria-current="page"] .n { color: var(--cyan); }
+@media (hover: hover) and (pointer: fine) { .index li a:hover { background: var(--bezel); padding-left: 14px; } .index li a:hover .l { color: var(--cyan); } }
+.index .hint { width: min(1100px, 100%); margin: 26px auto 0; font: 12.5px/1 var(--f-data); color: var(--ink-3); display: flex; justify-content: space-between; }
+
+.pg-head { padding: 60px calc(var(--gut) + 4px) 34px; display: grid; gap: 20px; }
+.pg-head h1 { margin: 0; font: 800 clamp(76px, 15vw, 240px)/.8 var(--f-display); font-stretch: 62%; text-transform: uppercase; letter-spacing: -.01em; }
+.pg-head p { margin: 0; max-width: 62ch; color: var(--ink-2); font-size: 17px; line-height: 1.6; }
+.pg-head .meta { font: 13px/1.4 var(--f-data); color: var(--ink-3); display: flex; gap: 18px; flex-wrap: wrap; }
+.pg-head .meta b { color: var(--ink); font-weight: 500; }
+.pg-body { padding: 0 calc(var(--gut) + 4px) 40px; }
+.pg-foot { margin-top: 80px; padding: 28px calc(var(--gut) + 4px) 60px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.pg-foot a { display: grid; gap: 8px; }
+.pg-foot a span { font: 13px/1 var(--f-data); color: var(--ink-3); }
+.pg-foot a b { font: 800 clamp(30px, 4vw, 56px)/.9 var(--f-display); font-stretch: 66%; text-transform: uppercase; transition: color .15s ease; }
+.pg-foot a.next { text-align: right; }
+@media (hover: hover) and (pointer: fine) { .pg-foot a:hover b { color: var(--cyan); } }
+.chip { display: inline-block; font: 12px/1 var(--f-data); color: var(--ink-2); padding: 6px 8px; border-radius: 4px; background: var(--bezel-2); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* timeline */
+.tl-row { display: grid; grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1.25fr); gap: 36px; padding: 34px 0; border-top: 1px solid var(--rule); }
+.tl-row .when { font: 13px/1.5 var(--f-data); color: var(--ink-3); }
+.tl-row .when b { display: block; font: 800 46px/1 var(--f-display); font-stretch: 70%; color: var(--ink-2); margin-bottom: 8px; }
+.tl-row h3 { margin: 0 0 6px; font: 700 28px/1.1 var(--f-display); font-stretch: 85%; }
+.tl-row .co { font: 14px/1.4 var(--f-data); color: var(--cyan); }
+.tl-row .mx { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 22px; }
+.tl-row .mx div { display: grid; gap: 4px; }
+.tl-row .mx b { font: 800 34px/1 var(--f-display); font-stretch: 72%; color: var(--ink); }
+.tl-row .mx span { font: 12px/1.2 var(--f-data); color: var(--ink-3); }
+.tl-row ul { margin: 0 0 18px; padding: 0 0 0 18px; display: grid; gap: 9px; color: var(--ink-2); line-height: 1.55; }
+.tl-row ul li::marker { color: var(--cyan-dim); }
+
+/* incident files */
+.cf { border-top: 1px solid var(--rule); }
+.cf-h { width: 100%; display: grid; grid-template-columns: 70px 110px minmax(0, 1fr) 30px; gap: 20px; align-items: center; padding: 26px 0; text-align: left; }
+.cf-h .id { font: 800 40px/1 var(--f-display); font-stretch: 70%; color: var(--ink-3); }
+.sev { justify-self: start; font: 500 12px/1 var(--f-data); letter-spacing: .06em; padding: 6px 8px; border-radius: 4px; }
+.sev.CRITICAL { color: var(--red); background: color-mix(in oklab, var(--red) 14%, transparent); }
+.sev.HIGH { color: var(--amber); background: color-mix(in oklab, var(--amber) 14%, transparent); }
+.cf-h .t { font: 600 clamp(19px, 1.8vw, 26px)/1.25 var(--f-display); font-stretch: 88%; }
+.cf-h .pm { width: 22px; height: 22px; position: relative; }
+.cf-h .pm::before, .cf-h .pm::after { content: ''; position: absolute; left: 3px; right: 3px; top: 10px; height: 2px; background: var(--ink-2); transition: transform .3s var(--ease-out); }
+.cf-h .pm::after { transform: rotate(90deg); }
+.cf.open .cf-h .pm::after { transform: rotate(0deg); }
+.cf.open .cf-h .id { color: var(--cyan); }
+@media (hover: hover) and (pointer: fine) { .cf-h:hover .t { color: var(--cyan); } }
+.cf-b { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s var(--ease-out); }
+.cf.open .cf-b { grid-template-rows: 1fr; }
+.cf-b > div { overflow: hidden; }
+.cf-in { padding: 0 0 40px 90px; display: grid; gap: 30px; }
+.cf-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; }
+.cf-3 h4 { margin: 0 0 10px; font: 500 13px/1 var(--f-data); color: var(--cyan); letter-spacing: .06em; }
+.cf-3 p { margin: 0; color: var(--ink-2); line-height: 1.62; font-size: 15px; }
+.cf-imp { display: flex; flex-wrap: wrap; gap: 14px; }
+.cf-imp div { background: var(--bezel); border-radius: 8px; padding: 16px 18px; display: grid; gap: 6px; min-width: 160px; }
+.cf-imp b { font: 800 30px/1 var(--f-display); font-stretch: 72%; }
+.cf-imp span { font: 12px/1.3 var(--f-data); color: var(--ink-3); }
+.cf-sum { margin: 0; max-width: 80ch; color: var(--ink); line-height: 1.6; }
+.code { background: #05080c; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--rule); overflow: hidden; }
+.code .ch { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--rule); font: 12.5px/1.3 var(--f-data); color: var(--ink-3); }
+.code .ch b { color: var(--ink); font-weight: 500; }
+.code pre { margin: 0; padding: 18px 16px; overflow-x: auto; font: 13px/1.65 var(--f-data); color: #c6d6e2; }
+.code pre .cm { color: #5d6b78; } .code pre .kw { color: var(--cyan); } .code pre .st { color: var(--amber); }
+
+/* att&ck matrix */
+.mx-wrap { overflow-x: auto; padding-bottom: 8px; }
+.mx-grid { display: grid; grid-template-columns: repeat(11, minmax(150px, 1fr)); gap: 8px; min-width: 1700px; }
+.mx-col h3 { margin: 0 0 8px; padding: 10px; font: 600 14px/1.2 var(--f-display); font-stretch: 85%; background: var(--bezel); border-radius: 6px; display: flex; justify-content: space-between; }
+.mx-col h3 small { font: 12px/1 var(--f-data); color: var(--cyan); }
+.mx-col .cell { display: grid; gap: 4px; padding: 10px; border-radius: 6px; margin-bottom: 6px; font: 12px/1.3 var(--f-data); }
+.mx-col a.cell { background: color-mix(in oklab, var(--cyan) 12%, var(--screen)); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--cyan) 35%, transparent); color: var(--ink); transition: background-color .15s ease; }
+.mx-col a.cell span { color: var(--cyan); }
+.mx-col a.cell em { font-style: normal; color: var(--ink-3); }
+@media (hover: hover) and (pointer: fine) { .mx-col a.cell:hover { background: color-mix(in oklab, var(--cyan) 22%, var(--screen)); } }
+.mx-col .cell.dim { color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--rule); }
+
+/* capability */
+.cap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.cap-grid .mon .scr { padding: 18px; }
+.cap-grid .chips { gap: 8px; }
+.cap-grid .chip { font-size: 13px; padding: 8px 10px; color: var(--ink); }
+
+/* deployed */
+.pj { border-top: 1px solid var(--rule); padding: 40px 0; display: grid; gap: 24px; }
+.pj h3 { margin: 0; display: flex; gap: 18px; align-items: baseline; font: 800 clamp(30px, 3.4vw, 50px)/.95 var(--f-display); font-stretch: 68%; text-transform: uppercase; }
+.pj h3 span { font: 13px/1 var(--f-data); color: var(--cyan); }
+.pj .cf-3 p { font-size: 15px; }
+
+/* credentials */
+.cr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.cr { background: var(--bezel); border-radius: 10px; padding: 22px 20px; display: grid; gap: 10px; align-content: start; min-height: 170px; position: relative; overflow: hidden; }
+.cr b { font: 800 40px/.9 var(--f-display); font-stretch: 66%; text-transform: uppercase; }
+.cr p { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.45; }
+.cr span { font: 12px/1 var(--f-data); color: var(--cyan); margin-top: auto; }
+.cr.next b { color: var(--amber); }
+.cr .tgt { position: absolute; right: 18px; top: 22px; font: 12px/1 var(--f-data); color: var(--amber); }
+.pursue { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pursue .cr { min-height: 260px; padding: 30px; }
+.pursue .cr b { font-size: clamp(64px, 8vw, 120px); }
+.pursue .cr p { font-size: 17px; max-width: 34ch; }
+
+/* open source + comms */
+.rows a, .rows div.rw { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) 120px 30px; gap: 24px; align-items: baseline; padding: 24px 0; border-top: 1px solid var(--rule); }
+.rows .nm { font: 700 22px/1.2 var(--f-display); font-stretch: 85%; word-break: break-word; }
+.rows .ds { color: var(--ink-2); line-height: 1.55; }
+.rows .lg { font: 12px/1 var(--f-data); color: var(--ink-3); }
+.rows .ar { color: var(--ink-3); transition: transform .2s var(--ease-out), color .15s ease; }
+@media (hover: hover) and (pointer: fine) { .rows a:hover .nm, .rows a:hover .ar { color: var(--cyan); } .rows a:hover .ar { transform: translate(3px, -3px); } }
+.rows.comms a, .rows.comms div.rw { grid-template-columns: 160px minmax(0, 1fr) 30px; }
+.rows.comms .nm { font: 500 13px/1 var(--f-data); color: var(--ink-3); letter-spacing: .06em; }
+.rows.comms .ds { font: 700 clamp(22px, 2.6vw, 38px)/1.1 var(--f-display); font-stretch: 80%; color: var(--ink); }
+
+@media (max-width: 1080px) {
+  .tl-row { grid-template-columns: 1fr; gap: 14px; }
+  .cf-3, .cap-grid { grid-template-columns: 1fr 1fr; }
+  .cf-in { padding-left: 0; }
+  .index ol { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .cf-3, .cap-grid, .pursue { grid-template-columns: 1fr; }
+  .cf-h { grid-template-columns: 50px minmax(0, 1fr) 24px; } .cf-h .sev { display: none; }
+  .rows a, .rows div.rw { grid-template-columns: 1fr; gap: 8px; } .rows .ar, .rows .lg { display: none; }
+  .rows.comms a, .rows.comms div.rw { grid-template-columns: 1fr; }
+  .where, .idx-btn kbd { display: none; }
+}
+
+@media (max-width: 1080px) {
+  .wall { grid-template-columns: 1fr 1fr; grid-template-areas: "dossier dossier" "radar matrix" "ledger ledger" "stream stream"; }
+  .bar nav { display: none; }
+  .chain .stage { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .chain .left > p, .steps li .t small { display: none; }
+  .steps { grid-template-columns: repeat(4, 1fr); }
+  .steps li { grid-template-columns: 1fr; gap: 2px; padding: 6px; }
+  .steps li .id { display: none; }
+}
+@media (max-width: 640px) {
+  .wall { grid-template-columns: 1fr; grid-template-areas: "dossier" "radar" "ledger" "matrix" "stream"; }
+  .ledger .viz, .mark span, .clock { display: none; }
+  .steps { grid-template-columns: repeat(2, 1fr); }
+  .rrow { grid-template-columns: 1fr; gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #trail { display: none; }
+  .chain, .esc { height: auto; } .chain .stage, .esc .stick { position: relative; height: 90vh; }
+  .esc .card { clip-path: none !important; }
+  *, *::before, *::after { animation: none !important; transition-duration: 0s !important; }
+}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<canvas id="trail" aria-hidden="true"></canvas>
+<div id="veil" aria-hidden="true">
+  <div class="px" id="px"></div>
+  <div class="bootui" id="bootui">
+    <div class="bt-top"><span><b>ASHDEX</b> // SECURE BOOT</span><span>session <b id="sess">--------</b></span><span>Gurugram node · IST</span></div>
+    <div class="bt-mid">
+      <div class="bt-count"><div class="hex num" id="hex">0x00</div><div class="bits" id="bits"></div></div>
+      <pre class="dump" id="dump"></pre>
+      <div><pre class="art" id="art"></pre><span class="cap2">session key · drunken-bishop randomart</span></div>
+    </div>
+    <div class="bt-fp"><span>SHA256</span><b id="fp"></b></div>
+    <pre class="bt-log" id="log"></pre>
+    <div class="bt-skip">Press any key to skip</div>
+  </div>
+</div>
+
+<header class="bar">
+  <a class="mark" href="#" data-go="home">Ashdex <span>/ Jayesh Choudhary</span></a>
+  <span class="where" id="where"><b>01</b> / WHOAMI</span>
+  <span class="sp"></span>
+  <span class="clock">Gurugram <b class="num" id="clock">--:--</b> IST</span>
+  <button class="idx-btn" id="idxBtn" type="button" aria-controls="index">Index <kbd>⌘K</kbd></button>
+  <a class="cta" href="#comms" data-go="comms">Request a briefing</a>
+</header>
+<nav class="tabs" id="tabs" aria-label="Pages"><div class="track" id="tabTrack"><i class="ind" id="tabInd"></i></div></nav>
+<div class="index" id="index" hidden role="dialog" aria-label="Page index"><ol></ol><div class="hint"><span>Press 1–9, 0 to jump</span><span>Esc to close</span></div></div>
+
+<div class="page">
+<!-- ═════════ WALL ═════════ -->
+<main class="view" id="home">
+  <div class="wall">
+    <section class="mon dossier" aria-labelledby="who">
+      <h2>Analyst on shift <small>Lead Security Engineer · Payatu</small></h2>
+      <div class="scr">
+        <h1 id="who">Jayesh<br>Choudhary</h1>
+        <div class="role">Seven years across the whole defensive stack</div>
+        <p class="pitch">SOC operations, incident response, insider threat, cloud IR and data security. I build security programs end to end: <b>a full SOC and IR program in four weeks</b> after a SWIFT fraud, <b>Purview DLP across ~400 endpoints</b>, and 60+ ATT&amp;CK-mapped detections in production.</p>
+        <div class="targets">Open to <span>Security Architect</span><span>Principal D&amp;R Engineer</span><span>Security Consultant / vCISO</span></div>
+        <div class="ctas">
+          <a class="btn p" href="#comms" data-go="comms">Request a briefing <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+          <a class="btn" href="#">Download CV <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
+        </div>
+        <div class="creds"><b>CISSP · CISM · CISA · SC-100 · CCSK · AZ-500</b> and 10 more · CRISC and AAISM in progress</div>
+      </div>
+    </section>
+    <section class="mon radar" aria-labelledby="rt">
+      <h2 id="rt">Engagements <small>height is severity</small></h2>
+      <div class="scr" id="radarScr"><canvas class="gl" id="radar" aria-label="3D radar of eight engagements"></canvas><div class="labels" id="radarLabels"></div><div class="cap"><span id="radarCap">Hover a marker to read the case</span><span>5 critical · 3 high</span></div></div>
+    </section>
+    <section class="mon stream" aria-labelledby="st">
+      <h2 id="st">Record <small>2019 → now</small></h2>
+      <div class="scr"><div class="head"><span id="streamCount">0 entries</span><button class="pause" id="pause" type="button">Pause feed</button></div><ol id="feed"></ol></div>
+    </section>
+    <section class="mon matrix" aria-labelledby="mt">
+      <h2 id="mt">ATT&amp;CK coverage <small>from real cases</small></h2>
+      <div class="scr" id="matrixScr"><canvas class="gl" id="matrix" aria-label="3D ATT&amp;CK coverage matrix"></canvas><div class="labels" id="matrixLabels"></div><div class="cap"><span id="matrixCap">Solid blocks are techniques I have detected; outlines are adjacent ones</span></div></div>
+    </section>
+    <section class="mon ledger" aria-labelledby="lt">
+      <h2 id="lt">Measured results <small>before → after</small></h2>
+      <div class="scr"><table id="ledger"></table></div>
+    </section>
+  </div>
+
+  <!-- escalation -->
+  <section class="esc" id="esc" aria-label="Engagements by severity">
+    <div class="stick">
+      <div class="card" id="escCard"><canvas class="gl" id="escGL" aria-label="Full-screen radar of eight engagements"></canvas></div>
+      <div class="words"><span class="c" id="wA">5 Critical</span><span class="h" id="wB">3 High</span></div>
+      <p class="meta" id="escMeta"><b>8 engagements</b> · banks, fintechs and cloud-native teams<br>SWIFT BEC · SilverFox C2 · cross-cloud pivot · MSRPC abuse · DGA takedown</p>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="sh" style="padding:0"><h2 class="dec" data-dec>Brief me on<br>your SOC</h2></div>
+    <div class="row"><a class="btn p" href="#comms" data-go="comms">Open comms <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a><span>LinkedIn · GitHub · FreeIntelhub</span><span>CISSP · CISM · CISA · SC-100</span></div>
+  </section>
+</main>
+
+<!-- ═════════ 02 TIMELINE ═════════ -->
+<main class="view" id="timeline" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>Timeline</h1><p>From DLP policy engineering to leading incident response and building security programs. Every figure is measured.</p><div class="meta"><span><b>6</b> roles</span><span><b>2019 → now</b></span><span>Gurugram · Mumbai</span></div></div>
+  <div class="pg-body" id="tlBody"></div>
+</main>
+<!-- ═════════ 03 INCIDENT FILES ═════════ -->
+<main class="view" id="incidents" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>Incident files</h1><p>Eight engagements, each with the scenario, how I investigated it, what I did, the measured impact and a detection I wrote for it.</p><div class="meta" id="cfMeta"></div></div>
+  <div class="pg-body" id="cfBody"></div>
+</main>
+<!-- ═════════ 04 ATT&CK ═════════ -->
+<main class="view" id="attack" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>ATT&amp;CK</h1><p>Techniques I have detected in real engagements, mapped to MITRE ATT&amp;CK. Scroll through the kill chain, then read the full matrix.</p><div class="meta" id="mxMeta"></div></div>
+  <!-- kill chain -->
+  <section class="chain" id="chain" aria-labelledby="kc">
+    <div class="stage">
+      <div class="left">
+        <div>
+          <h2 id="kc" class="dec" data-dec>Where I break
+the chain</h2>
+        </div>
+        <p>Scroll to follow an intrusion stage by stage. At each one is a detection I have shipped in a real engagement.</p>
+        <ol class="steps" id="steps"></ol>
+      </div>
+      <div class="view3d" id="chainView"><canvas class="gl" id="chainGL" aria-label="3D kill chain path through eight ATT&amp;CK stages"></canvas><div class="readout"><span id="chainNow">Stage 0 of 8</span><span><b id="chainPct">0%</b> of the chain covered</span></div></div>
+    </div>
+  </section>
+  <div class="pg-body"><div class="mx-wrap"><div class="mx-grid" id="mxGrid"></div></div></div>
+</main>
+<!-- ═════════ 05 CAPABILITY ═════════ -->
+<main class="view" id="capability" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>Capability</h1><p>Frameworks, domains and the tooling I work in day to day.</p><div class="meta" id="capMeta"></div></div>
+  <div class="pg-body"><div class="cap-grid" id="capGrid"></div></div>
+</main>
+<!-- ═════════ 06 DEPLOYED ═════════ -->
+<main class="view" id="deployed" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>Deployed</h1><p>Systems I designed and shipped, each framed as the problem, the approach and the measured outcome.</p><div class="meta"><span><b>6</b> projects in production</span></div></div>
+  <div class="pg-body" id="pjBody"></div>
+</main>
+<!-- ═════════ 07 CREDENTIALS ═════════ -->
+<main class="view" id="credentials" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>Credentials</h1><p>Management, architecture, offensive and cloud certifications held.</p><div class="meta" id="crMeta"></div></div>
+  <div class="pg-body"><div class="cr-grid" id="crGrid"></div></div>
+</main>
+<!-- ═════════ 08 IN PROGRESS ═════════ -->
+<main class="view" id="inprogress" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>In progress</h1><p>Certifications I am working toward now, in risk governance and AI security management.</p></div>
+  <div class="pg-body"><div class="pursue" id="puGrid"></div></div>
+</main>
+<!-- ═════════ 09 OPEN SOURCE ═════════ -->
+<main class="view" id="opensource" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>Open source</h1><p>Public repositories: threat-intel tooling, detection rules and automation.</p><div class="meta"><span><b>6</b> repositories</span><span>github.com/ASHDEX</span></div></div>
+  <div class="pg-body rows" id="osBody"></div>
+</main>
+<!-- ═════════ 10 COMMS ═════════ -->
+<main class="view" id="comms" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>Brief me on your SOC</h1><p>Hiring for a security architect, principal detection and response engineer, or a vCISO? Reach me on any channel below.</p></div>
+  <div class="pg-body rows comms" id="cmBody"></div>
+</main>
+
+</div>
+
+<script id="data" type="application/json">{"experience":[{"company":"Payatu","role":"Lead Security Engineer","date":"May 2025 – Present","location":"Gurugram, Haryana","bullets":["Built end-to-end threat intelligence automation aggregating 50+ cybersecurity RSS sources with auto-categorization, reducing manual triage by 70–80%","Automated IOC enrichment (IPs, domains, hashes) via AlienVault OTX and VirusTotal with concurrent lookups and confidence scoring for faster SOC/IR investigations","Delivered Microsoft Purview DLP across ~400 endpoints and 15+ data sources — 10+ custom SITs, trainable classifiers, 25+ DLP policies — improving classification accuracy ~40%","Deployed and integrated Microsoft Defender, Intune, and Wazuh with 30+ custom security policies, achieving 95% endpoint compliance","Built 30+ MITRE ATT&CK-mapped threat-hunting queries in Microsoft Sentinel, improving detection coverage ~30%","Led incident response for active breach scenarios, reducing MTTC ~35% and driving 15+ prioritized remediation actions","Designed full incident management policy and response program — severity models, escalation matrices, playbooks — improving SOC readiness ~40%","Implemented Microsoft Teams → Azure Logic Apps → SharePoint Excel workflows eliminating manual security advisory entry"],"metrics":[{"value":"↓70-80%","label":"Manual Triage"},{"value":"↓35%","label":"MTTC"},{"value":"95%","label":"Endpoint Compliance"},{"value":"↑30%","label":"Detection Coverage"}],"tags":["Microsoft Sentinel","Purview DLP","Defender","Wazuh","Intune","Azure Logic Apps","MITRE ATT&CK"]},{"company":"Coralogix","role":"Cloud Incident Response","date":"Sep 2024 – May 2025","location":"Gurugram, Haryana","bullets":["Reduced MTTD by 40% through cloud-native detections across CloudTrail, IAM, and VPC telemetry for privilege escalation and data exfiltration scenarios","Decreased MTTR by 35% with automated containment playbooks — disabled compromised IAM identities and isolated workloads within minutes","Led end-to-end response for high-severity cloud incidents including IAM compromise and misconfigured storage exposure","Developed 30+ cloud detection use cases mapped to MITRE ATT&CK (Cloud), reducing false positives by 30% via contextual enrichment and behavioral baselining","Enforced least-privilege IAM and guardrails, improving overall cloud security posture by 25%"],"metrics":[{"value":"↓40%","label":"MTTD"},{"value":"↓35%","label":"MTTR"},{"value":"↓30%","label":"False Positives"}],"tags":["AWS CloudTrail","IAM","VPC Flow Logs","MITRE ATT&CK Cloud"]},{"company":"Bank of America","role":"Insider Threat Management Officer","date":"Sep 2023 – Sep 2024","location":"Gurugram, Haryana","bullets":["Implemented detection alerts for data exfiltration via alternate protocols (DNS/HTTPS tunneling)","Created detection/response alerts for password spray attacks, Windows tampering, steganography tool usage, and cryptographic site monitoring","Leveraged threat intelligence feeds to proactively identify insider threats, reducing data exfiltration incidents by 25%","Contributed to insider threat playbooks incorporating threat intelligence insights, reducing IR times by 30%","Applied external and internal threat intelligence to enhance monitoring rules — 15% reduction in false positives","Deployed playbooks and runbooks for incident triage, reducing time by 30%"],"metrics":[{"value":"↓25%","label":"Exfil Incidents"},{"value":"↓30%","label":"IR Time"},{"value":"↓15%","label":"False Positives"}],"tags":["Insider Threat","DNS Tunneling","Steganography","SIEM","Playbook Design"]},{"company":"Bank of America","role":"Cyber Security Analyst","date":"Sep 2021 – Aug 2023","location":"Gurugram, Haryana","bullets":["Monitored for malicious incidents and managed threats by blocking malicious IP/domains before user access — enabling proactive risk mitigation","Identified and banned access to high-risk domains across 7,000+ users to prevent data exfiltration"],"tags":["SOC","Threat Monitoring","Domain Blocking"]},{"company":"Detection & Response","role":"Analyst — Detection and Response","date":"Apr 2019 – Mar 2021","bullets":["Designed and tuned EDM- and regex-based DLP detection policies to improve identification of sensitive data patterns","Conducted periodic DLP policy reviews and user guidance to improve adherence and reduce policy noise","Refined detection logic to reduce false positives and improve analyst triage efficiency"],"tags":["DLP","Detection Logic","Regex","EDM"]},{"company":"CRMNext","role":"Graduate Engineer Trainee","date":"Apr 2021 – Aug 2021","location":"Mumbai, Maharashtra","bullets":["Implemented and managed CRM systems, improving data accuracy and achieving 15% increase in customer satisfaction","Led CRM system upgrades and migrations with minimal business disruption"],"tags":["CRM","System Migration"]}],"caseStudies":[{"id":"01","title":"SWIFT Payment Fraud via BEC — Incident Response & Ground-Up SOC Build","severity":"CRITICAL","tags":["BEC","SWIFT","Phishing","Forensics","Wazuh","Defender","Intune","O365","ISO 27001","SEBI","RBI"],"scenario":"A fintech trading firm reported a significant financial loss after a user was socially engineered via a targeted spear-phishing email. The phishing payload redirected the user through a credential-harvesting proxy that captured the user's session token and MFA response. The attacker replayed the session to access the firm's SWIFT payment interface, modified beneficiary account details on a pending high-value wire transfer, and routed funds to a mule account. The fraud was discovered only when the legitimate counterparty reported non-receipt — 72 hours after execution.","investigation":"Conducted full-scope digital forensics across the compromised endpoint, Exchange Online tenant, and network boundary. Extracted the phishing email from Exchange message trace logs — identified an OAuth app consent phishing vector that had granted the attacker persistent mailbox access via a malicious Azure AD application. Memory forensics revealed browser credential cache exfiltration and a secondary payload establishing persistence via Scheduled Task. Correlated Azure AD Sign-In logs, Unified Audit Logs, and Conditional Access policy data to reconstruct the session hijack timeline. Identified two additional users with compromised sessions via the same OAuth consent grant.","response":"Immediate: Revoked all active sessions and refresh tokens. Disabled the malicious OAuth application. Isolated 3 compromised endpoints via network segmentation. Initiated SWIFT GPI recall on the fraudulent transaction. Post-IR SOC Build: Deployed Wazuh across all Windows endpoints. Configured Microsoft Defender for Endpoint with custom ASR rules. Enrolled all endpoints in Intune with compliance baselines. Hardened Exchange Online and O365 — configured anti-phishing policies, disabled legacy authentication, enforced Conditional Access. Built the firm's entire incident response program: call trees, escalation matrices, SLAs aligned to SEBI, RBI, and ISO 27001.","impact":[{"value":"Full SOC","label":"Built from Scratch"},{"value":"3","label":"Endpoints Contained"},{"value":"72h→<1h","label":"Detection Gap Closed"},{"value":"SEBI/RBI","label":"Regulatory Aligned"}],"impactSummary":"Fraud transaction partially recovered via SWIFT GPI recall. Three concurrent compromises contained before further financial impact. Complete SOC and IR program operationalized within 4 weeks — transforming the firm from zero security operations to a monitored, compliant environment aligned to SEBI, RBI, and ISO 27001.","detectionExample":{"title":"OAuth Consent Phishing — Malicious App Registration","mitre":"T1566.002 / T1098.003","language":"KQL / Azure AD Unified Audit Log","code":"// Detect OAuth application consent grants with suspicious permissions\nlet suspiciousScopes = dynamic([\"Mail.Read\", \"Mail.ReadWrite\", \"Mail.Send\",\n  \"MailboxSettings.ReadWrite\", \"Files.ReadWrite.All\", \"User.ReadWrite.All\"]);\nAuditLogs\n| where OperationName == \"Consent to application\"\n| extend AppId = tostring(TargetResources[0].id)\n| extend ConsentedScopes = tostring(TargetResources[0].modifiedProperties[0].newValue)\n| where ConsentedScopes has_any (suspiciousScopes)\n| extend ActorUPN = tostring(InitiatedBy.user.userPrincipalName)\n| extend ActorIP = tostring(InitiatedBy.user.ipAddress)\n| join kind=leftouter (\n    SigninLogs\n    | where ResultType == 0\n    | summarize KnownIPs = make_set(IPAddress) by UserPrincipalName\n) on $left.ActorUPN == $right.UserPrincipalName\n| where ActorIP !in (KnownIPs)\n| project TimeGenerated, ActorUPN, ActorIP, AppId, ConsentedScopes"}},{"id":"02","title":"BreachForums Data Exposure — Multi-Vector Compromise & SilverFox C2","severity":"CRITICAL","tags":["BreachForums","SilverFox C2","KMSPico","Trojan Dropper","CrowdStrike Falcon","Memory Forensics","Third-Party Risk"],"scenario":"The CTI team identified a threat actor posting a client organization's data on BreachForums — including customer PII, transaction amounts, and internal financial records. Investigation revealed the client had received multiple extortion emails over preceding weeks, but these were misclassified as spam. The data sample on BreachForums was validated against production database schemas, confirming authenticity and indicating a deep compromise.","investigation":"Deployed CrowdStrike Falcon and conducted parallel forensic workstreams across three attack vectors. Vector 1 — Unlicensed Software: Entire infrastructure running pirated OS and applications with no legitimate licenses or patch management. Endpoints were years behind on critical patches (EternalBlue, PrintNightmare, ZeroLogon). Vector 2 — Trojanized KMSPico: Administrators had downloaded a trojanized KMS activator. The binary was a multi-stage dropper executing legitimate KMS activation as a decoy while unpacking a reflective DLL injection payload that loaded the SilverFox RAT into svchost.exe. Falcon's IOA engine and process hollowing indicators confirmed the injection. YARA analysis confirmed SilverFox characteristics. Vector 3 — Third-Party Default Credentials: Network forensics revealed authentication to managed services provider occurring over PAP (cleartext), with factory-default credentials on VPN concentrator and RMM tools.","response":"Correlated SilverFox C2 beacon initiation with KMSPico download event and lateral movement artifacts to conclusively identify the trojanized KMSPico as primary vector. Delivered comprehensive remediation: immediate credential rotation, SilverFox C2 infrastructure blocklisting, full OS rebuild from legitimate licensed media, centralized patch management deployment, migration from PAP to EAP-TLS for third-party authentication, and proper security monitoring stack implementation.","impact":[{"value":"3 Vectors","label":"Identified & Triaged"},{"value":"SilverFox","label":"C2 Eradicated"},{"value":"Root Cause","label":"KMSPico Trojan"},{"value":"Full Rebuild","label":"Remediation Delivered"}],"impactSummary":"Primary attack vector conclusively identified despite near-zero logging infrastructure. SilverFox C2 eradicated, all three access vectors closed. Remediation roadmap included full infrastructure rebuild, licensing compliance, patch management deployment, and third-party authentication hardening.","detectionExample":{"title":"SilverFox C2 — Reflective DLL Injection into svchost.exe","mitre":"T1055.001 / T1071.001","language":"YARA","code":"rule SilverFox_Reflective_DLL_Injector {\n    meta:\n        description = \"Detects SilverFox RAT reflective DLL injection loader\"\n        mitre = \"T1055.001, T1071.001\"\n        severity = \"critical\"\n    strings:\n        $reflective_pe = { 4D 5A 90 00 03 00 00 00 }\n        $loader_func = \"ReflectiveLoader\" ascii\n        $mutex_pattern = /SFX_MTX_[A-F0-9]{8}/ ascii\n        $c2_config = { 68 74 74 70 73 3A 2F 2F }\n        $reg_persist = \"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\" ascii\n        $cred_harvest = \"vaultcli.dll\" ascii\n    condition:\n        uint16(0) == 0x5A4D and filesize < 2MB and\n        $reflective_pe and $loader_func and\n        2 of ($mutex_pattern, $c2_config, $reg_persist, $cred_harvest)\n}"}},{"id":"03","title":"Enterprise CTI Platform & Brand Monitoring — Architecture & Automation","severity":"HIGH","tags":["STIX/TAXII","OASIS","Azure Logic Apps","Typosquatting","IOC Validation","CTI","Automation"],"scenario":"Multiple fintech clients lacked centralized threat intelligence capabilities — CTI was ad-hoc, scattered across email subscriptions, vendor portals, and individual analyst bookmarks. Brand abuse (typosquatting domains, impersonation campaigns) was discovered reactively. There was no automated IOC lifecycle — indicators were manually copy-pasted between tools with no enrichment, deduplication, or confidence scoring.","investigation":"Conducted threat intelligence maturity assessment across 5 client environments. Identified gaps: no structured feed ingestion (STIX/TAXII), no automated IOC enrichment pipeline, no brand monitoring for domain squatting, no TLP-based sharing taxonomy, and no feedback loop from SOC to CTI for indicator quality refinement. Benchmarked against FIRST CSIRT capabilities framework and MITRE ATT&CK.","response":"Designed and built modular CTI platform: Feed Aggregation Layer — integrated 50+ cybersecurity RSS sources and STIX/TAXII 2.1 OASIS-compliant feeds (AlienVault OTX, MISP, abuse.ch, Phishtank). IOC Enrichment Pipeline — automated concurrent lookups (VirusTotal, AlienVault OTX, Whois, passive DNS, geolocation). Each IOC received composite confidence score. Brand Monitoring — Python scripts for typosquatting detection (Levenshtein distance, homoglyphs, TLD permutation), automated domain capture via Certificate Transparency logs, and WHOIS delta monitoring. Azure Logic Apps orchestrated the pipeline with Sentinel integration, Teams notifications, and ServiceNow tickets.","impact":[{"value":"50+","label":"Sources Integrated"},{"value":"↓70-80%","label":"Manual Triage"},{"value":"Multi-Sector","label":"Platform Deployed"},{"value":"Real-Time","label":"Brand Monitoring"}],"impactSummary":"Platform deployed across multiple client engagements. Reduced analyst manual triage by 70-80%. Automated typosquatting detection identified 40+ impersonation domains in the first month. IOC enrichment pipeline processing thousands of indicators daily with composite confidence scoring.","detectionExample":{"title":"Typosquatting Detection — Homoglyph & Levenshtein","mitre":"T1583.001","language":"Python","code":"import itertools\nfrom Levenshtein import distance\n\nHOMOGLYPHS = {\n    'a': ['@', 'а'], 'e': ['е', '3'],\n    'i': ['1', 'l'], 'o': ['0', 'о'],\n    'l': ['1', 'I'], 's': ['5', '$'],\n}\nTLD_VARIANTS = ['.com', '.net', '.org', '.io']\n\ndef generate_typosquat_candidates(domain: str) -> set[str]:\n    base = domain.split('.')[0]\n    candidates = set()\n\n    for i in range(len(base)):\n        candidates.add(base[:i] + base[i+1:])\n        for c in 'abcdefghijklmnopqrstuvwxyz0123456789-':\n            candidates.add(base[:i] + c + base[i+1:])\n\n    for i, char in enumerate(base):\n        if char in HOMOGLYPHS:\n            for glyph in HOMOGLYPHS[char]:\n                candidates.add(base[:i] + glyph + base[i+1:])\n\n    return {c + tld for c in candidates for tld in TLD_VARIANTS\n            if c != base and distance(c, base) <= 2}"}},{"id":"04","title":"Multi-SIEM Detection Engineering Program — Sigma/YARA + Automated SOAR Response","severity":"HIGH","tags":["Sentinel","CrowdStrike","Splunk","OpenSearch","Sigma","YARA","SOAR","MITRE ATT&CK","Detection-as-Code"],"scenario":"Client portfolio spanning fintech, healthcare, and SaaS required unified detection engineering across heterogeneous SIEMs — Sentinel, CrowdStrike LogScale, Splunk Enterprise, and OpenSearch. Detection content was siloed per platform with no portability, no version control, no testing framework. False positive rates averaged 60-70%, creating alert fatigue.","investigation":"Audited existing detection content across all four SIEM platforms. Found: 80% vendor-default rules with zero tuning, no MITRE ATT&CK mapping, no severity calibration. Identified 15 priority techniques with zero detection coverage including T1055 (Process Injection), T1048 (Exfiltration), T1078.004 (Cloud Accounts), T1053.005 (Scheduled Task), and T1071.004 (DNS C2).","response":"Implemented detection-as-code program with Sigma as canonical source. Rules compiled to KQL, SPL, Lucene/DQL via sigma-cli with custom backend plugins. Authored YARA rules for file-based detection targeting packed executables (entropy > 7.0), reflective DLL loaders, and C2 framework stagers. Built SOAR-like automation with Azure Logic Apps and CrowdStrike RTR scripts for auto-enrichment and automated containment. Implemented closed-loop FP feedback system with weekly detection quality reviews.","impact":[{"value":"↓60%→12%","label":"False Positive Rate"},{"value":"4 SIEMs","label":"Unified Detection"},{"value":"100+","label":"Sigma Rules Deployed"},{"value":"Closed-Loop","label":"FP Feedback System"}],"impactSummary":"False positive rates reduced from 60-70% to under 12% through systematic tuning and feedback loops. 100+ Sigma rules deployed across 4 SIEM platforms from a single source of truth. SOAR-like automation reduced SOC analyst triage time by 55%.","detectionExample":{"title":"Process Injection via CreateRemoteThread","mitre":"T1055.003","language":"Sigma","code":"title: Remote Thread Injection into Suspicious Target Process\nid: 8a7f5c2e-1234-5678-abcd-jayesh-detect\nstatus: stable\nlogsource:\n    category: create_remote_thread\n    product: windows\ndetection:\n    selection_target:\n        TargetImage|endswith:\n            - '\\\\svchost.exe'\n            - '\\\\lsass.exe'\n            - '\\\\explorer.exe'\n    filter_known_good:\n        SourceImage|endswith:\n            - '\\\\csrss.exe'\n            - '\\\\MsMpEng.exe'\n    condition: selection_target and not filter_known_good\nlevel: high\ntags:\n    - attack.defense_evasion\n    - attack.t1055.003"}},{"id":"05","title":"Advanced Malware Forensics — Custom Implant Reverse Engineering & C2 Takedown","severity":"CRITICAL","tags":["Ghidra","IDA Pro","Volatility3","WinDbg","YARA","CAPA","Maltego","DNS Sinkhole","Memory Forensics"],"scenario":"CrowdStrike Falcon flagged anomalous behavior on a domain controller — intermittent DNS queries to algorithmically generated domains (DGA) and a svchost.exe instance with abnormally large private working set (450MB vs. typical 20-40MB). EDR telemetry showed an unsigned DLL loaded from temp directory — but the file had been deleted post-injection.","investigation":"Performed live memory acquisition and analyzed with Volatility3. Malfind plugin identified a 380KB executable region with RWX permissions and no backing file. Extracted the in-memory PE using procdump and dlllist. Static analysis: PEstudio flagged 14 suspicious indicators — UPX-modified sections, process injection primitives, forged compilation timestamp. CAPA framework identified 23 capabilities including DNS TXT record reception, AES-256-CBC encryption, Windows Service persistence, and LSASS credential capture. Ghidra decompilation revealed custom DGA seeded by current UTC date generating 500 candidate domains daily. C2 communication bidirectional over DNS: commands via TXT records (AES-256-CBC encrypted), exfiltrated data chunked into A record queries. Credential harvesting via SSPI hooking.","response":"Coordinated ISP and DNS registrar to sinkhole identified DGA domains for current and next 30 days. Deployed custom YARA signatures across all endpoints via CrowdStrike Falcon and Wazuh. Built Sigma rule detecting DNS query pattern. Rebuilt compromised domain controller and rotated Kerberos keys. Implemented DNS Response Policy Zones (RPZ) at recursive resolver level. Delivered IOC package (IPs, domains, file hashes, YARA rules, Sigma rules) to FIRST/CSIRT community under TLP:AMBER.","impact":[{"value":"45+ Days","label":"Dwell Time Uncovered"},{"value":"47 Domains","label":"C2 Infra Mapped"},{"value":"0","label":"Data Confirmed Exfil"},{"value":"TLP:AMBER","label":"Intel Shared via FIRST"}],"impactSummary":"Custom implant fully reverse-engineered — DGA algorithm, C2 protocol, and credential harvesting mechanism documented. C2 infrastructure sinkholed, all Kerberos credentials rotated. YARA and Sigma detections deployed enterprise-wide. IOC package shared with FIRST community.","detectionExample":{"title":"DGA Domain Query Detection — High Entropy Subdomains","mitre":"T1568.002 / T1071.004","language":"Splunk SPL","code":"index=dns sourcetype=stream:dns\n| eval subdomain=mvindex(split(query, \".\"), 0)\n| eval sub_len=len(subdomain)\n| where sub_len > 20\n| stats count AS query_count dc(query) AS unique_domains\n    values(query) AS sample_queries by src_ip\n| where query_count > 50 AND unique_domains > 30\n| lookup known_dga_domains domain AS sample_queries OUTPUT is_known_dga\n| table src_ip query_count unique_domains sample_queries"}},{"id":"06","title":"Active Exploitation of Financial API — MSRPC Abuse & Compensating Controls","severity":"CRITICAL","tags":["MSRPC","API Security","Wireshark","tcpdump","Sigma","Sentinel KQL","Compensating Controls"],"scenario":"Custom MSRPC-specific alerts flagged unauthorized RPC endpoint mapper queries targeting internal financial transaction processing servers. Simultaneously, API gateway logs showed malformed requests with SQL injection payloads. Both originated from a user workstation with no legitimate business need to interact with MSRPC services.","investigation":"Captured full packet traces via tcpdump. Wireshark deep-packet inspection of MSRPC traffic revealed: EPM enumeration of all registered RPC interfaces, authenticated MSRPC calls using compromised user's NTLM token, exploitation of input validation vulnerability in custom RPC method accepting transaction parameters. Attacker injecting serialized .NET objects (BinaryFormatter deserialization) for RCE. Parallel API analysis showed automated SQL injection (SQLMap fingerprint in User-Agent, time-based blind patterns). API lacked parameterized queries on 3 legacy endpoints and no WAF or rate limiting.","response":"Isolated compromised workstation, revoked Kerberos TGT and NTLM hash. Deployed emergency network microsegmentation via firewall rules restricting MSRPC to authorized service accounts. Developed MSRPC-specific detection alerts in Sentinel: KQL queries detecting EPM enumeration patterns, unauthorized RPC binding, anomalous serialized object payloads. Built Sigma rules for API exploitation pattern. Designed compensating controls: mandatory input validation layer (WAF with custom rulesets), disabled BinaryFormatter deserialization in favor of JSON DTOs with strict schema, implemented RPC interface ACLs, and deployed application-layer microsegmentation with mutual TLS.","impact":[{"value":"↓20%","label":"Missed MSRPC Detections"},{"value":"0","label":"Financial Loss"},{"value":"Board-Level","label":"Risk Briefing Delivered"},{"value":"3 Controls","label":"Compensating Deployed"}],"impactSummary":"Active exploitation contained before transaction manipulation succeeded. MSRPC detection capability closed a previously unmonitored attack surface. API deserialization vulnerability patched with defense-in-depth compensating controls. Board-level risk briefing secured emergency remediation budget.","detectionExample":{"title":"MSRPC Endpoint Mapper Enumeration from Non-Server Source","mitre":"T1021.003 / T1046","language":"KQL / Microsoft Sentinel","code":"let authorizedRPCServers = dynamic([\"TXNSVR01\", \"TXNSVR02\", \"DC01\", \"DC02\"]);\nSecurityEvent\n| where EventID == 5156\n| where Application has \"svchost.exe\"\n| where DestPort == 135\n| where Computer !in (authorizedRPCServers)\n| summarize EPM_Queries = count(), UniqueTargets = dcount(DestAddress)\n    by Computer, SourceAddress, bin(TimeGenerated, 5m)\n| where EPM_Queries > 15 or UniqueTargets > 3\n| extend AlertSeverity = iff(UniqueTargets > 5, \"CRITICAL\", \"HIGH\")\n| project TimeGenerated, Computer, SourceAddress,\n    EPM_Queries, UniqueTargets, AlertSeverity"}},{"id":"07","title":"Cross-Cloud Lateral Movement — Federated Identity Abuse (Azure AD → AWS)","severity":"CRITICAL","tags":["SAML","Azure AD","AWS STS","Federation","CloudTrail","Conditional Access","Identity Architecture"],"scenario":"Azure AD Sign-In logs showed a Global Administrator authenticating from a TOR exit node — but Conditional Access policies were not triggering MFA because attacker was replaying a stolen Primary Refresh Token (PRT). Within minutes, AWS CloudTrail recorded AssumeRoleWithSAML calls to 4 production AWS accounts using SAML assertions — federated trust being abused as lateral movement pivot from Azure to AWS.","investigation":"Deep-dive into Azure AD Sign-In and Audit logs: Global Administrator endpoint compromised via targeted phishing deploying a PRT extraction tool. Stolen PRT replayed from TOR exit node using custom user-agent mimicking victim's Edge browser. Azure AD token issuance logs confirmed SAML assertion generation for AWS SSO application with role claims mapping to AdministratorAccess. CloudTrail analysis showed: EPM enumeration of all IAM roles and policies, creation of new IAM users with programmatic access in 2 accounts, attachment of AdministratorAccess policies, S3 bucket access containing financial data and customer PII. 12-minute attack window detected via custom detection rule correlating Azure AD Sign-In anomalies with AWS AssumeRoleWithSAML events.","response":"Immediate: Revoked all Azure AD sessions and refresh tokens. Disabled attacker-created IAM users and deleted access keys. Rotated SAML signing certificate for AWS SSO federation. Emergency Conditional Access updates: blocked PRT from unmanaged devices, required phishing-resistant MFA (FIDO2) for privileged roles, added TOR/VPN blocklists. AWS SCPs restricting iam:CreateUser and iam:AttachRolePolicy to break-glass role only. Built cross-cloud detection in Sentinel correlating Azure AD anomalies with AWS AssumeRoleWithSAML. Redesigned federation: replaced overly permissive SAML role mapping with granular per-group mappings. Deployed AWS IAM Access Analyzer.","impact":[{"value":"12 min","label":"Attack Window"},{"value":"4 Accounts","label":"Lateral Movement Scope"},{"value":"0 Exfil","label":"Data Impact Prevented"},{"value":"FIDO2","label":"Phishing-Resistant MFA"}],"impactSummary":"Cross-cloud lateral movement contained within initial attack window — attacker-created persistence eradicated before data exfiltration. Federation architecture redesigned with least-privilege SAML role mappings. PRT replay attack vector closed via FIDO2 MFA enforcement. Cross-cloud detection correlation deployed as permanent use case.","detectionExample":{"title":"Cross-Cloud Federation Abuse — Azure AD to AWS Pivot","mitre":"T1078.004 / T1550.001","language":"KQL / Microsoft Sentinel","code":"let azureRiskySignIns = SigninLogs\n| where RiskLevelDuringSignIn in (\"high\", \"medium\")\n| where AppDisplayName has \"AWS\"\n| project AzureTime=TimeGenerated, UPN=UserPrincipalName,\n    RiskLevel=RiskLevelDuringSignIn, SourceIP=IPAddress;\nlet awsSAMLAssumptions = AWSCloudTrail\n| where EventName == \"AssumeRoleWithSAML\"\n| project AWSTime=TimeGenerated, SourceIP=SourceIpAddress;\nazureRiskySignIns\n| join kind=inner (awsSAMLAssumptions) on SourceIP\n| where abs(datetime_diff('minute', AzureTime, AWSTime)) <= 15\n| project AzureTime, AWSTime, UPN, SourceIP, RiskLevel"}},{"id":"08","title":"Security Program Architecture for Regulated Fintech — Board-Level Strategy & Execution","severity":"HIGH","tags":["CISM","CISA","ISO 27001","SEBI CSCRF","RBI IT Risk","NIST CSF","FIRST","Risk Quantification","Board Reporting"],"scenario":"Series-B fintech operating in Indian regulated market (SEBI-registered, RBI-supervised) scaling rapidly with 400+ endpoints and 15+ SaaS applications. Zero formal security program: no CISO, no security policies, no risk register, no incident response procedures, no compliance mapping to SEBI or RBI. Recent regulatory audit flagged 23 observations with 90-day remediation deadline.","investigation":"Comprehensive maturity assessment mapped to NIST CSF and benchmarked against SEBI CSCRF and RBI IT Risk Management guidelines. Current state: NIST CSF Tier 1 (Partial) across all functions — no formal policies, no risk management process, no detection capabilities, incident response was ad-hoc. Gap analysis identified 67 control gaps mapped to ISO 27001:2013 Annex A domains. Quantified risk exposure using FAIR methodology — modeled 12 top-risk scenarios (data breach, payment fraud, ransomware, insider threat). Annualized Loss Expectancy totaled ₹18.5 Cr.","response":"Executed in 3 phases over 16 weeks. Phase 1: Governance Foundation — drafted 12 foundational policies aligned to ISO 27001 and SEBI/RBI requirements. Established security governance structure: CISO reporting to CEO with board security committee. Phase 2: Technical Control Implementation — deployed Wazuh + Defender + Intune + Sentinel (95% endpoint compliance). Implemented Purview DLP (25+ policies), 30+ MITRE ATT&CK-mapped detections, O365 email hardening, Conditional Access, privileged access workstations, JIT access via PIM. Phase 3: Operationalization — built complete incident response program with severity classification, escalation matrices, playbooks for 8 scenarios, SLAs per tier, 2 tabletop exercises. Closed all 23 regulatory observations within 90-day deadline. Delivered board risk report quantifying residual risk reduction from ₹18.5 Cr to ₹4.2 Cr ALE.","impact":[{"value":"23/23","label":"Audit Obs. Closed"},{"value":"Tier 1→3","label":"NIST CSF Maturity"},{"value":"77%","label":"Risk Reduction (ALE)"},{"value":"340%","label":"Security ROI"}],"impactSummary":"Complete security program designed and operationalized in 16 weeks — advancing from NIST CSF Tier 1 to Tier 3 across all five functions. All 23 regulatory observations closed within deadline. Security investment delivered 340% ROI measured by ALE reduction. Program serves as repeatable template for regulated fintech clients."}],"projects":[{"id":"01","name":"Automated Security Scanner","problem":"Security teams burned 6+ hours per sprint on ad-hoc vulnerability scans across web apps and cloud — no consistency, no audit trail, no CI integration.","approach":"A CLI wrapping Nmap, Nuclei, and Trivy behind one interface. Scan profiles (web, cloud, container) are YAML-defined and version-controlled; output normalizes to a common schema and ships to Elasticsearch for trending.","outcome":"Scan time cut from 6h to 22m. Wired into 4 CI/CD pipelines blocking critical findings pre-merge. 300+ vulns surfaced in 90 days.","tools":["Python","Docker","Nmap","Nuclei","Trivy","Elasticsearch","GitLab CI"]},{"id":"02","name":"Threat Intelligence Dashboard","problem":"Analysts context-switched across 8 threat feeds (MISP, VirusTotal, Shodan, AbuseIPDB) with no unified view — IOC correlation was manual and error-prone.","approach":"React + Elasticsearch front-end fed by a Node.js aggregation service. A lightweight correlation engine dedups and scores IOCs by frequency, recency, and source confidence; alerts surface to Slack and the SIEM.","outcome":"IOC triage time down 55%. Onboarded 3 new feeds with zero code changes. Analyst context switches per shift fell from 8 to 2.","tools":["React","Node.js","Elasticsearch","MISP","Python","Redis","Slack API"]},{"id":"03","name":"Detection-as-Code Framework","problem":"Detection rules lived in SIEM UIs — no version control, no peer review, no testing. One bad rule caused a 4-hour alert flood that buried tier-1.","approach":"A Go CLI compiling Sigma rules to platform queries (Splunk, Elasticsearch, Chronicle), running unit tests against log fixtures, and gating deploys via GitLab CI. Rules are reviewed as pull requests.","outcome":"Zero alert floods since rollout. Deploy cycle cut from 2 weeks to 4 hours. 180+ rules under version control with full test coverage.","tools":["Go","Sigma","GitLab CI","Terraform","Splunk","Elasticsearch"]},{"id":"04","name":"Cloud Security Posture Automation","problem":"Monthly manual AWS config audits produced stale findings — remediation lag averaged 45 days and misconfigured S3 buckets kept recurring.","approach":"Continuous assessment with Cloud Custodian policies (IaC) deployed via AWS CDK. Violations trigger Lambda auto-remediation for safe fixes; risky changes open ServiceNow tickets instead.","outcome":"Auto-fix remediation lag dropped from 45 days to 6 hours. Critical backlog cleared in 3 weeks. Continuous coverage replaced monthly snapshots.","tools":["AWS CDK","Python","Cloud Custodian","Lambda","ServiceNow","Terraform"]},{"id":"05","name":"Data Platform Security Program — Purview, Intune & Sentinel","problem":"Snowflake and Databricks held classified and regulated data with no DLP coverage — no visibility into who accessed sensitive tables, no control over exfiltration paths (shares, stages, external export), and unmanaged endpoints querying both platforms outside any compliance baseline.","approach":"Deployed Microsoft Purview DLP and rolled out sensitivity labeling and classification across Snowflake and Databricks data estates via Purview Data Map scanning. Enrolled and baselined all endpoints in Intune, enforcing Conditional Access and compliance policies before granting data-platform access. Onboarded Snowflake access_history, login_history, and copy_history alongside Purview classification events into Microsoft Sentinel / Splunk, and authored a correlation detection library joining Snowflake DDL and query activity against Purview classification metadata to flag unauthorized access, role/share modification, and stage-based exfiltration of classified objects — plus a standalone Snowflake account-security ruleset covering password spraying, impossible travel, and anomalous data transfer.","outcome":"Classified 90%+ of regulated data across both platforms within the first quarter. Cut mean time to detect unauthorized access to classified Snowflake objects from days (manual audit) to under 15 minutes. 100% of endpoints brought under Intune compliance baselines prior to data-platform access. Detection library shipped as 15+ production Sentinel/Splunk correlation rules, published as an open-source Snowflake SPL query set.","tools":["Microsoft Purview","Microsoft Intune","Microsoft Defender","Microsoft Sentinel","Snowflake","Databricks","Splunk","SPL","Azure AD Conditional Access"]},{"id":"06","name":"Insider Threat Risk Management Program — Ground-Up Build","problem":"No formal insider threat program existed — privileged users, admins, and exiting contractors were monitored no differently than standard employees. Investigations were reactive, evidence was scattered across disconnected tools, and there was no risk-scoring model to prioritize which users actually warranted scrutiny.","approach":"Designed the program architecture end-to-end, structured on CISA's Insider Threat Mitigation Guide and benchmarked against the NITTF Maturity Framework and CISA's Insider Risk Mitigation Program Evaluation (IRMPE), with detection logic mapped to the MITRE Insider Threat (Inside-R) framework across the intent, reconnaissance, collection, and exfiltration stages. Stood up a multidisciplinary governance model spanning Security, HR, Legal, and IT per CISA's recommended cross-functional structure. Segmented the user population into three monitoring tiers — standard users and contractors; users with elevated access; and admin users — with enhanced monitoring (ObserveIT / Proofpoint ITM session recording, Purview and Trellix DLP content inspection) deployed continuously on elevated and admin tiers. For contractors, enhanced monitoring auto-triggers 2 weeks ahead of known contract end dates to catch pre-departure data staging and exfiltration attempts, aligned to CISA's offboarding and employment-screening guidance. Built a UEBA-driven risk-scoring model combining tier, DLP/ITM behavioral signals, badge/access anomalies, and HR/ER inputs (resignation, PIP, disciplinary action, role change) drawn from CISA's HR's Role in Preventing Insider Threats guidance; users crossing a risk threshold are automatically escalated to a higher scrutiny tier regardless of their baseline access level. All signals correlate centrally in Splunk and Microsoft Sentinel, feeding tiered escalation playbooks (HR, Legal, SOC) and a case-management workflow for investigators, validated via quarterly tabletop exercises modeled on CISA's pathway-to-violence and workplace-security-awareness training.","outcome":"Stood up full program — governance, tiering model, tooling, and playbooks — in under 90 days, reaching NITTF-equivalent \"Maturing\" status on program self-assessment within the first year. Elevated/admin population under continuous monitoring from day one; 100% of contractor exits covered by the 2-week pre-departure monitoring window. Risk-scoring model surfaced high-risk users an average of 12 days before any exfiltration event in tabletop validation. Cut insider-incident investigation time from days to under 4 hours via unified case correlation.","tools":["ObserveIT","Proofpoint ITM","Microsoft Purview","Trellix DLP","Splunk","Microsoft Sentinel","MITRE Insider Threat Framework","CISA Insider Threat Mitigation Guide","NITTF Maturity Framework","UEBA"]}],"certifications":[{"name":"CISSP","full":"Certified Information Systems Security Professional","issuer":"ISC²"},{"name":"CISM","full":"Certified Information Security Manager","issuer":"ISACA"},{"name":"CISA","full":"Certified Information Systems Auditor","issuer":"ISACA"},{"name":"CASP+","full":"CompTIA Advanced Security Practitioner","issuer":"CompTIA"},{"name":"PenTest+","full":"CompTIA Penetration Testing","issuer":"CompTIA"},{"name":"CySA+","full":"CompTIA Cybersecurity Analyst","issuer":"CompTIA"},{"name":"Security+","full":"CompTIA Security+","issuer":"CompTIA"},{"name":"CFR-410","full":"CyberSec First Responder","issuer":"CertNexus"},{"name":"SC-100","full":"Cybersecurity Architect Expert","issuer":"Microsoft"},{"name":"SC-300","full":"Identity & Access Administrator","issuer":"Microsoft"},{"name":"SC-200","full":"Security Operations Analyst","issuer":"Microsoft"},{"name":"AZ-500","full":"Azure Security Engineer Associate","issuer":"Microsoft"},{"name":"SC-900","full":"Security, Compliance & Identity Fundamentals","issuer":"Microsoft"},{"name":"CCSK v4 & v5","full":"Certificate of Cloud Security Knowledge","issuer":"CSA"},{"name":"Google IT Pro","full":"Google Career Certificate","issuer":"Google"}],"pursuingCerts":[{"name":"CRISC","full":"Certified in Risk and Information Systems Control","issuer":"ISACA","target":"2026"},{"name":"AAISM","full":"Advanced in AI Security Management","issuer":"ISACA","target":"2026"}],"skillGroups":[{"title":"Frameworks & Methodology","skills":["MITRE ATT&CK","MITRE CAR","MITRE D3FEND","ISO 27001:2013","CMMI","Threat Modeling","OSINT"]},{"title":"Security Domains","skills":["DLP","Vulnerability Management","Threat Intelligence","Endpoint Security","Cloud Security","IAM","AppSec","Incident Response","Risk Management","Cryptography","Network Security","Privacy Regulations"]},{"title":"Security Tools","skills":["Splunk","ArcSight","Microsoft Sentinel","CrowdStrike","Trellix EPO","Proofpoint","ObserveIT","Security Onion","AlienVault","TheHive","Wireshark","tcpdump","Panther","Elastic","Vanta","Zeropath","Step Security"]},{"title":"Malware Analysis","skills":["STIX / OpenIOC","MISP","OpenCTI","IDA Pro","Ghidra","PEstudio","CAPA","Maltego","WinDbg","YARA","UPX","Regshot"]},{"title":"Cloud & Infrastructure","skills":["AWS","Azure","GCP","Docker","Microsoft Defender","Intune","Wazuh","Azure Logic Apps"]},{"title":"Languages & Platforms","skills":["Python","JIRA","ServiceNow","RSAM"]}],"repos":[{"name":"FreeIntelhub","description":"Self-hosted CTI platform aggregating 50+ threat feeds with IOC lookup, threat actor tracking, CVE prioritization & MITRE ATT&CK mapping","url":"https://github.com/ASHDEX/FreeIntelhub","language":"Jupyter Notebook"},{"name":"Snowflake-SPL-Queries","description":"SPL detection library correlating Snowflake activity with Microsoft Purview classification metadata, plus standalone account-security rules","url":"https://github.com/ASHDEX/Snowflake-SPL-Queries"},{"name":"brand-domain-monitoring-toolkit","description":"Python toolkit for brand protection: bulk domain lookups, reachability checks, visual screenshot reports, and domain reputation monitoring","url":"https://github.com/ASHDEX/brand-domain-monitoring-toolkit","language":"Python"},{"name":"CTI-Automation-Scripts","description":"Python scripts for CTI automation: OTX/VT lookups, domain snapshots, CTI summarization, and cyber advisory generation","url":"https://github.com/ASHDEX/CTI-Automation-Scripts","language":"Python"},{"name":"100-days-of-YARA","description":"A daily YARA rule writing challenge — one detection rule per day","url":"https://github.com/ASHDEX/100-days-of-YARA"},{"name":"sigma","description":"Sigma detection rules for platform-agnostic SIEM correlation","url":"https://github.com/ASHDEX/sigma"}],"contacts":[{"label":"EMAIL","value":"primeash1@gmail.com","href":"mailto:primeash1@gmail.com"},{"label":"PHONE","value":"+91-7357726793"},{"label":"LINKEDIN","value":"linkedin.com/in/jayesh-chaudhary","href":"https://www.linkedin.com/in/jayesh-chaudhary-cissp-cism-cisa-5b563519b/"},{"label":"GITHUB","value":"github.com/Ashdex","href":"https://github.com/Ashdex"},{"label":"FREEINTELHUB","value":"ASHDEX/FreeIntelhub","href":"https://github.com/ASHDEX/FreeIntelhub"},{"label":"BLOG","value":"dailydoesofcybersecuritynews.com","href":"https://dailydoesofcybersecuritynews.com"}],"mitreTactics":[{"tactic":"Resource Dev","techs":[{"id":"T1583.001","name":"Acquire Domains","case":"03"}],"dim":[{"id":"T1587.001","name":"Develop Malware"},{"id":"T1585","name":"Establish Accounts"}]},{"tactic":"Initial Access","techs":[{"id":"T1566.002","name":"Spearphishing Link","case":"01"}],"dim":[{"id":"T1190","name":"Exploit Public App"},{"id":"T1133","name":"External Remote Svcs"}]},{"tactic":"Execution","techs":[{"id":"T1053.005","name":"Scheduled Task","case":"01"}],"dim":[{"id":"T1059.001","name":"PowerShell"},{"id":"T1204.002","name":"Malicious File"}]},{"tactic":"Persistence","techs":[{"id":"T1098.003","name":"Additional Cloud Roles","case":"01"},{"id":"T1053.005","name":"Scheduled Task","case":"01"}],"dim":[{"id":"T1547.001","name":"Registry Run Keys"},{"id":"T1136","name":"Create Account"}]},{"tactic":"Priv. Escalation","techs":[{"id":"T1078.004","name":"Valid Accounts: Cloud","case":"07"}],"dim":[{"id":"T1068","name":"Exploit for PrivEsc"},{"id":"T1484","name":"Domain Policy Mod"}]},{"tactic":"Defense Evasion","techs":[{"id":"T1055.001","name":"Reflective DLL Injection","case":"02"},{"id":"T1055.003","name":"CreateRemoteThread","case":"04"},{"id":"T1027.003","name":"Steganography","exp":"Insider Threat @ Bank of America"},{"id":"T1550.001","name":"App Access Token","case":"07"}],"dim":[{"id":"T1070","name":"Indicator Removal"},{"id":"T1562.001","name":"Disable Security Tools"}]},{"tactic":"Credential Access","techs":[{"id":"T1110.003","name":"Password Spraying","exp":"Insider Threat @ Bank of America"},{"id":"T1003.001","name":"LSASS Memory","case":"05"}],"dim":[{"id":"T1558","name":"Kerberoasting"},{"id":"T1555","name":"Password Stores"}]},{"tactic":"Discovery","techs":[{"id":"T1046","name":"Network Service Discovery","case":"06"}],"dim":[{"id":"T1087","name":"Account Discovery"},{"id":"T1018","name":"Remote System Disc."}]},{"tactic":"Lateral Movement","techs":[{"id":"T1021.003","name":"DCOM / MSRPC","case":"06"},{"id":"T1550.001","name":"App Access Token (SAML)","case":"07"}],"dim":[{"id":"T1021.001","name":"RDP"},{"id":"T1570","name":"Lateral Tool Transfer"}]},{"tactic":"Command & Control","techs":[{"id":"T1071.001","name":"Web Protocol C2","case":"02"},{"id":"T1071.004","name":"DNS C2","case":"05"},{"id":"T1568.002","name":"Domain Generation Algo","case":"05"}],"dim":[{"id":"T1573","name":"Encrypted Channel"},{"id":"T1090","name":"Proxy"}]},{"tactic":"Exfiltration","techs":[{"id":"T1048","name":"Exfil Over Alt Protocol","exp":"Insider Threat @ Bank of America"}],"dim":[{"id":"T1041","name":"Exfil Over C2"},{"id":"T1567","name":"Exfil to Cloud"}]}]}</script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DPR = Math.min(devicePixelRatio || 1, 2);
+  gsap.registerPlugin(ScrollTrigger);
+  const CYAN = new THREE.Color('#5ad2e6'), RED = new THREE.Color('#ff6b5e'), AMBER = new THREE.Color('#f2b33d');
+
+  /* ── smooth scroll ── */
+  let lenis = null;
+  if (!reduce && window.Lenis) { lenis = new Lenis({ lerp: .09 }); lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
+
+  /* ── shared ── */
+  const pointer = { tx: 0, ty: 0, x: 0, y: 0, vx: 0, vy: 0, cx: -9999, cy: -9999 };
+  addEventListener('pointermove', e => { pointer.tx = e.clientX / innerWidth * 2 - 1; pointer.ty = e.clientY / innerHeight * 2 - 1; pointer.cx = e.clientX; pointer.cy = e.clientY; });
+  const spring = dt => { const k = 40, d = 2 * Math.sqrt(k) * .9; pointer.vx += ((pointer.tx - pointer.x) * k - pointer.vx * d) * dt; pointer.x += pointer.vx * dt; pointer.vy += ((pointer.ty - pointer.y) * k - pointer.vy * d) * dt; pointer.y += pointer.vy * dt; };
+  const scenes = [], vis = new Map();
+  const io = new IntersectionObserver(es => es.forEach(e => vis.set(e.target, e.isIntersecting)), { rootMargin: '100px' });
+  const mk = c => { const r = new THREE.WebGLRenderer({ canvas: c, antialias: true, alpha: true }); r.setPixelRatio(DPR); r.setClearColor(0, 0); return r; };
+  const fit = (r, cam, el) => { const w = el.clientWidth, h = el.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
+  const fitDist = (cam, hw, hh) => { const t = Math.tan(cam.fov * Math.PI / 360); return Math.max(hw / (t * cam.aspect), hh / t); };
+
+  /* ── 1. background terrain with sonar pings ── */
+  (() => {
+    const canvas = document.getElementById('bg'), r = mk(canvas), scene = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(55, 1, .1, 400); cam.position.set(0, 9, 34);
+    const W = 220, D = 160, NX = 110, NZ = 80, pos = [];
+    for (let j = 0; j <= NZ; j++) for (let i = 0; i < NX; i++) { const z = -j / NZ * D + 20; pos.push(i / NX * W - W / 2, 0, z, (i + 1) / NX * W - W / 2, 0, z); }
+    for (let i = 0; i <= NX; i += 2) for (let j = 0; j < NZ; j++) { const x = i / NX * W - W / 2; pos.push(x, 0, -j / NZ * D + 20, x, 0, -(j + 1) / NZ * D + 20); }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    const N = `vec2 h2(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return -1.+2.*fract(sin(p)*43758.5453);}
+      float n2(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);return mix(mix(dot(h2(i),f),dot(h2(i+vec2(1,0)),f-vec2(1,0)),u.x),mix(dot(h2(i+vec2(0,1)),f-vec2(0,1)),dot(h2(i+vec2(1,1)),f-vec2(1,1)),u.x),u.y);}
+      float fbm(vec2 p){float v=0.,a=.55;for(int k=0;k<4;k++){v+=a*n2(p);p*=2.03;a*=.5;}return v;}`;
+    const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: { uT: { value: 0 }, uCol: { value: CYAN }, uPing: { value: new THREE.Vector3(0, 0, -999) }, uPingT: { value: 99 } },
+      vertexShader: N + `uniform float uT; varying float vH; varying float vD; varying vec3 vW;
+        void main(){ vec3 p=position; float h=fbm(vec2(p.x*.035,(p.z-uT*2.2)*.035)); float v=smoothstep(0.,26.,abs(p.x)); p.y=h*9.*(.25+.75*v)-2.; vH=h; vW=p; vec4 mv=modelViewMatrix*vec4(p,1.); vD=-mv.z; gl_Position=projectionMatrix*mv; }`,
+      fragmentShader: `uniform vec3 uCol; uniform vec3 uPing; uniform float uPingT; varying float vH; varying float vD; varying vec3 vW;
+        void main(){ float fog=smoothstep(150.,20.,vD)*smoothstep(4.,16.,vD); float crest=smoothstep(.05,.45,vH);
+          float d=distance(vW.xz,uPing.xz); float ring=exp(-pow((d-uPingT*28.)/2.2,2.))*exp(-uPingT*1.1);
+          gl_FragColor=vec4(uCol*(.35+1.1*crest+ring*3.), fog*(.10+.32*crest+ring*.9)); }` });
+    scene.add(new THREE.LineSegments(geo, mat));
+    const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), ray = new THREE.Raycaster(), hit = new THREE.Vector3();
+    addEventListener('pointerdown', e => { if (e.target.closest('a,button,.scr,.view3d')) return; ray.setFromCamera(new THREE.Vector2(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), cam); if (ray.ray.intersectPlane(plane, hit)) { mat.uniforms.uPing.value.copy(hit); mat.uniforms.uPingT.value = 0; } });
+    const rs = () => fit(r, cam, canvas); addEventListener('resize', rs); rs();
+    scenes.push({ always: true, step(t, dt) { mat.uniforms.uT.value = t; mat.uniforms.uPingT.value += dt; cam.position.x = pointer.x * 3.2; cam.position.y = 9 - pointer.y * 1.6; cam.lookAt(0, 2, -40); r.render(scene, cam); } });
+    // first ping on load, centred: the sonar announces the wall
+    setTimeout(() => { mat.uniforms.uPing.value.set(0, 0, -30); mat.uniforms.uPingT.value = 0; }, reduce ? 0 : 2600);
+  })();
+
+  /* ── 2. radar factory ── */
+  const CASES = [
+    { id: '01', name: 'SWIFT payment fraud via BEC', sev: 'CRITICAL', b: 20, d: .62 },
+    { id: '02', name: 'BreachForums exposure · SilverFox C2', sev: 'CRITICAL', b: 75, d: .82 },
+    { id: '03', name: 'Enterprise CTI and brand monitoring', sev: 'HIGH', b: 128, d: .48 },
+    { id: '04', name: 'Multi-SIEM detection engineering program', sev: 'HIGH', b: 172, d: .74 },
+    { id: '05', name: 'Custom implant reverse engineering · C2 takedown', sev: 'CRITICAL', b: 214, d: .56 },
+    { id: '06', name: 'Financial API exploitation · MSRPC abuse', sev: 'CRITICAL', b: 258, d: .86 },
+    { id: '07', name: 'Cross-cloud lateral movement · Azure AD → AWS', sev: 'CRITICAL', b: 300, d: .40 },
+    { id: '08', name: 'Security program architecture, regulated fintech', sev: 'HIGH', b: 338, d: .70 },
+  ];
+  const makeRadar = (scr, canvas, opt) => {
+    io.observe(scr);
+    const r = mk(canvas), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(opt.big ? 34 : 38, 1, .1, 200), R = 10;
+    if (opt.big) { scene.fog = new THREE.Fog(0x05070a, 30, 70); scene.add(new THREE.HemisphereLight(0x9fdcff, 0x020304, .5)); }
+    const g = new THREE.Group(); scene.add(g);
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(R, 96), new THREE.ShaderMaterial({ transparent: true, depthWrite: false,
+      vertexShader: 'varying vec2 vP; void main(){ vP=position.xy; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ',
+      fragmentShader: 'varying vec2 vP; void main(){ float d=length(vP)/10.0; gl_FragColor=vec4(.07,.16,.2,.55*(1.-d*d)); }' }));
+    disc.rotation.x = -Math.PI / 2; g.add(disc);
+    const lm = o => new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: o });
+    for (let k = 1; k <= 4; k++) { const p = []; for (let i = 0; i <= 128; i++) { const a = i / 128 * Math.PI * 2; p.push(new THREE.Vector3(Math.cos(a) * R * k / 4, 0, Math.sin(a) * R * k / 4)); } g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(p), lm(k === 4 ? .5 : .18))); }
+    const tk = []; for (let i = 0; i < 72; i++) { const a = i / 72 * Math.PI * 2, l = i % 9 === 0 ? .9 : .4; tk.push(Math.cos(a) * R, 0, Math.sin(a) * R, Math.cos(a) * (R + l), 0, Math.sin(a) * (R + l)); }
+    const tg = new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.Float32BufferAttribute(tk, 3)); g.add(new THREE.LineSegments(tg, lm(.45)));
+    const sm = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uA: { value: 0 } },
+      vertexShader: 'varying vec2 vP; void main(){ vP=position.xy; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ',
+      fragmentShader: 'uniform float uA; varying vec2 vP; void main(){ float a=atan(vP.y,vP.x); float d=mod(uA-a,6.2831853); float r=length(vP)/10.0; gl_FragColor=vec4(.35,.82,.9,exp(-d*2.6)*.42*smoothstep(1.,.96,r)); }' });
+    const sw = new THREE.Mesh(new THREE.CircleGeometry(R, 128), sm); sw.rotation.x = -Math.PI / 2; sw.position.y = .01; g.add(sw);
+    const beam = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, .02, 0), new THREE.Vector3(R, .02, 0)]), lm(.95)); g.add(beam);
+    const labels = opt.labels, cap = opt.cap;
+    // ── beacon markers: light beam, diamond node in a turning shell, ground glow with target ring and shockwave ──
+    const VS = 'varying vec2 vUv; varying vec2 vP; void main(){ vUv=uv; vP=position.xy; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ';
+    const beamMat = (col, k) => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+      uniforms: { uCol: { value: col }, uI: { value: .6 }, uK: { value: k } }, vertexShader: VS,
+      fragmentShader: 'uniform vec3 uCol; uniform float uI; uniform float uK; varying vec2 vUv; void main(){ float a = (0.25 + 0.75*pow(1.0 - vUv.y, 1.4)) * uI * uK; gl_FragColor = vec4(mix(uCol, vec3(1.0), 0.35*uK*uI), a); }' });
+    const groundMat = col => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: { uCol: { value: col }, uI: { value: .6 }, uP: { value: 1 } }, vertexShader: VS,
+      fragmentShader: `uniform vec3 uCol; uniform float uI; uniform float uP; varying vec2 vP;
+        void main(){ float d = length(vP);
+          float core = exp(-d*d*9.0) * uI * 0.9;
+          float target = smoothstep(0.022, 0.0, abs(d - 0.55)) * 0.45 + smoothstep(0.015, 0.0, abs(d - 0.95)) * 0.18;
+          float rp = uP * 2.3; float wave = smoothstep(0.16, 0.0, abs(d - rp)) * pow(1.0 - uP, 1.5) * 0.9;
+          float a = core + target * (0.5 + 0.5*uI) + wave;
+          gl_FragColor = vec4(mix(uCol, vec3(1.0), core*0.4), a * smoothstep(2.4, 2.0, d)); }` });
+    const nodeGeo = new THREE.OctahedronGeometry(.17, 0), shellGeo = new THREE.EdgesGeometry(new THREE.OctahedronGeometry(.34, 0));
+    const pillars = CASES.map(c => {
+      const crit = c.sev === 'CRITICAL', a = c.b * Math.PI / 180, x = Math.cos(a) * R * c.d, z = -Math.sin(a) * R * c.d, h = crit ? 3.1 : 1.9, col = crit ? RED : AMBER;
+      const grp = new THREE.Group(); grp.position.set(x, 0, z); g.add(grp);
+      const core = new THREE.Mesh(new THREE.CylinderGeometry(.036, .036, h, 12, 1, true), beamMat(col, 1)); core.position.y = h / 2; grp.add(core);
+      const halo = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, h, 24, 1, true), beamMat(col, .3)); halo.position.y = h / 2; grp.add(halo);
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 4.8), groundMat(col)); ground.rotation.x = -Math.PI / 2; ground.position.y = .02; grp.add(ground);
+      const node = new THREE.Mesh(nodeGeo, new THREE.MeshBasicMaterial({ color: col.clone().lerp(new THREE.Color(1, 1, 1), .35) })); node.position.y = h; grp.add(node);
+      const shell = new THREE.LineSegments(shellGeo, new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: .55 })); shell.position.y = h; grp.add(shell);
+      const p = { c, a, grp, core, halo, ground, node, shell, col, h, crit, flash: 0, pt: 1, hot: false, spin: Math.random() * 6, I: .6 };
+      if (labels) {
+        const el = document.createElement('span'); el.className = 'tag' + (crit ? ' crit' : ''); el.innerHTML = `${c.id}<span class="nm">${c.name}</span>`; el.tabIndex = 0;
+        el.setAttribute('aria-label', `Case ${c.id}: ${c.name}, ${c.sev.toLowerCase()}`); labels.appendChild(el); p.el = el;
+        const on = () => { p.hot = true; el.classList.add('on'); cap.innerHTML = `<b>Case ${c.id}</b> · ${c.name}`; };
+        const off = () => { p.hot = false; el.classList.remove('on'); cap.textContent = 'Hover a marker to read the case'; };
+        el.addEventListener('mouseenter', on); el.addEventListener('mouseleave', off); el.addEventListener('focus', on); el.addEventListener('blur', off);
+      }
+      return p;
+    });
+    const rs = () => fit(r, cam, scr); new ResizeObserver(rs).observe(scr); rs();
+    const v = new THREE.Vector3(); let A = 0;
+    scenes.push({ el: scr, step(t, dt) {
+      const prev = A; A = (A + dt * .9) % (Math.PI * 2); sm.uniforms.uA.value = A; beam.rotation.y = A;
+      const yaw = -.35 + pointer.x * .12, pitch = (cam.aspect < .8 ? 1.22 : (opt.big ? .62 : .78)) - pointer.y * .06;
+      const Dd = fitDist(cam, R + 1.6, R * .62) * (opt.big ? .9 : 1.04);
+      cam.position.set(Math.sin(yaw) * Dd * Math.cos(pitch), Math.sin(pitch) * Dd, Math.cos(yaw) * Dd * Math.cos(pitch)); cam.lookAt(0, .6, 0);
+      const W = scr.clientWidth, H = scr.clientHeight;
+      pillars.forEach(p => {
+        const crossed = prev <= A ? (p.a > prev && p.a <= A) : (p.a > prev || p.a <= A);
+        if (crossed) { p.flash = 1; p.pt = 0; }
+        p.flash = Math.max(0, p.flash - dt * .9); p.pt = Math.min(1, p.pt + dt * .55);
+        // intensity eases toward its target: idle breathe, sweep flare, hover lock
+        const breathe = .5 + .08 * Math.sin(t * (p.crit ? 3.2 : 2) + p.a * 3);
+        const want = breathe + p.flash * 1.1 + (p.hot ? .9 : 0);
+        p.I += (want - p.I) * Math.min(1, dt * 10);
+        p.core.material.uniforms.uI.value = p.I; p.halo.material.uniforms.uI.value = p.I;
+        p.ground.material.uniforms.uI.value = p.I; p.ground.material.uniforms.uP.value = p.pt;
+        p.spin += dt * (.5 + p.flash * 5 + (p.hot ? 1.5 : 0));
+        p.shell.rotation.set(p.spin * .6, p.spin, 0); p.node.rotation.y = -p.spin * .8;
+        const ns = 1 + p.flash * .45 + (p.hot ? .3 : 0); p.node.scale.setScalar(ns); p.shell.scale.setScalar(1 + p.flash * .25 + (p.hot ? .2 : 0));
+        p.shell.material.opacity = .35 + p.flash * .5 + (p.hot ? .4 : 0);
+        p.node.position.y = p.shell.position.y = p.h + Math.sin(t * 1.6 + p.a) * .06;
+        if (p.el) { v.set(p.grp.position.x, p.h + .55, p.grp.position.z).project(cam); p.el.style.left = ((v.x + 1) / 2 * W) + 'px'; p.el.style.top = ((1 - v.y) / 2 * H) + 'px'; }
+      });
+      r.render(scene, cam);
+    }});
+  };
+  makeRadar(document.getElementById('radarScr'), document.getElementById('radar'), { labels: document.getElementById('radarLabels'), cap: document.getElementById('radarCap') });
+  makeRadar(document.getElementById('escCard'), document.getElementById('escGL'), { big: true });
+
+  /* ── 3. ATT&CK matrix ── */
+  const TACTICS = [
+    ['Resource Dev', [['T1583.001','Acquire Domains','03']]], ['Initial Access', [['T1566.002','Spearphishing Link','01']]], ['Execution', [['T1053.005','Scheduled Task','01']]],
+    ['Persistence', [['T1098.003','Additional Cloud Roles','01'],['T1053.005','Scheduled Task','01']]], ['Priv. Escalation', [['T1078.004','Valid Accounts: Cloud','07']]],
+    ['Defense Evasion', [['T1055.001','Reflective DLL Injection','02'],['T1055.003','CreateRemoteThread','04'],['T1027.003','Steganography','BofA'],['T1550.001','App Access Token','07']]],
+    ['Credential Access', [['T1110.003','Password Spraying','BofA'],['T1003.001','LSASS Memory','05']]], ['Discovery', [['T1046','Network Service Discovery','06']]],
+    ['Lateral Movement', [['T1021.003','DCOM / MSRPC','06'],['T1550.001','App Access Token (SAML)','07']]],
+    ['Command & Control', [['T1071.001','Web Protocol C2','02'],['T1071.004','DNS C2','05'],['T1568.002','Domain Generation Algo','05']]], ['Exfiltration', [['T1048','Exfil Over Alt Protocol','BofA']]],
+  ];
+  const SHORT = ['Res Dev', 'Initial', 'Exec', 'Persist', 'PrivEsc', 'Evasion', 'Creds', 'Discov', 'Lateral', 'C2', 'Exfil'];
+  (() => {
+    const scr = document.getElementById('matrixScr'), canvas = document.getElementById('matrix'), labels = document.getElementById('matrixLabels'), cap = document.getElementById('matrixCap');
+    io.observe(scr);
+    const r = mk(canvas), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(32, 1, .1, 200);
+    scene.add(new THREE.HemisphereLight(0x9fe8f5, 0x05080c, .9)); const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(6, 12, 8); scene.add(key);
+    const N = TACTICS.length, gap = 1.25, solidGeo = new THREE.BoxGeometry(.9, .7, .9), edgeGeo = new THREE.EdgesGeometry(solidGeo), pick = [], tl = [];
+    TACTICS.forEach(([tac, techs], i) => {
+      const x = (i - (N - 1) / 2) * gap;
+      techs.forEach((t, k) => { const b = new THREE.Mesh(solidGeo, new THREE.MeshStandardMaterial({ color: 0x2a8fa0, emissive: 0x0b3a44, roughness: .45 })); b.position.set(x, .35 + k * .8, 0); b.userData = { tac, t, base: b.position.y, i }; scene.add(b); pick.push(b); const e = new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: .55 })); e.position.copy(b.position); scene.add(e); b.userData.edge = e; });
+      for (let k = 0; k < 2; k++) { const e = new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ color: 0x3a4a5a, transparent: true, opacity: .55 })); e.position.set(x, .35 + (techs.length + k) * .8, 0); scene.add(e); }
+      const el = document.createElement('span'); el.className = 'tlabel'; el.textContent = SHORT[i]; el.title = tac; labels.appendChild(el); tl.push({ el, x, low: i % 2 === 1 });
+    });
+    const ray = new THREE.Raycaster(), m2 = new THREE.Vector2(-9, -9); let hover = null, inside = false; const def = cap.innerHTML;
+    scr.addEventListener('pointermove', e => { const b = scr.getBoundingClientRect(); m2.set((e.clientX - b.left) / b.width * 2 - 1, -((e.clientY - b.top) / b.height) * 2 + 1); inside = true; });
+    scr.addEventListener('pointerleave', () => { inside = false; m2.set(-9, -9); });
+    const rs = () => fit(r, cam, scr); new ResizeObserver(rs).observe(scr); rs();
+    const v = new THREE.Vector3();
+    scenes.push({ el: scr, step(t, dt) {
+      const yaw = Math.sin(t * .18) * .32 + pointer.x * .1, dist = fitDist(cam, N * gap / 2 + .6, 3.4) * 1.05;
+      cam.position.set(Math.sin(yaw) * dist, 8.5 - pointer.y * .8, Math.cos(yaw) * dist); cam.lookAt(0, 1.6, 0);
+      ray.setFromCamera(m2, cam); const h = inside ? (ray.intersectObjects(pick)[0] || {}).object || null : null;
+      if (h !== hover) { hover = h; cap.innerHTML = h ? `<b>${h.userData.t[0]}</b> ${h.userData.t[1]} · ${/^\d/.test(h.userData.t[2]) ? 'case ' + h.userData.t[2] : 'Bank of America insider program'}` : def; }
+      pick.forEach(b => { const want = b === hover ? .35 : 0; b.userData.lift = (b.userData.lift || 0) + (want - (b.userData.lift || 0)) * Math.min(1, dt * 14); b.position.y = b.userData.base + b.userData.lift + (reduce ? 0 : Math.max(0, Math.sin(t * 1.4 - b.userData.i * .45)) * .06); b.userData.edge.position.y = b.position.y; b.material.emissive.setHex(b === hover ? 0x2a8fa0 : 0x0b3a44); });
+      const W = scr.clientWidth, H = scr.clientHeight; tl.forEach(l => { v.set(l.x, -.2, 1.4).project(cam); l.el.style.left = ((v.x + 1) / 2 * W) + 'px'; l.el.style.top = ((1 - v.y) / 2 * H + (l.low ? 14 : 0)) + 'px'; });
+      r.render(scene, cam);
+    }});
+  })();
+
+  /* ── 4. kill chain: a tube drawn by scroll through eight stages ── */
+  const STAGES = [
+    ['Initial access', 'OAuth consent phishing, risky scopes from unknown IPs', 'T1566.002', 'case 01'],
+    ['Persistence', 'Malicious app registration and scheduled-task implants', 'T1098.003', 'case 01'],
+    ['Privilege escalation', 'Federated cloud accounts abused for role assumption', 'T1078.004', 'case 07'],
+    ['Defense evasion', 'Reflective DLL injection into svchost.exe', 'T1055.001', 'case 02'],
+    ['Credential access', 'Password spraying against enterprise identity', 'T1110.003', 'BofA'],
+    ['Lateral movement', 'MSRPC endpoint mapper enumeration from non-servers', 'T1021.003', 'case 06'],
+    ['Command and control', 'High-entropy DGA subdomains over DNS', 'T1568.002', 'case 05'],
+    ['Exfiltration', 'DNS and HTTPS tunnelling out of the estate', 'T1048', 'BofA'],
+  ];
+  const steps = document.getElementById('steps');
+  steps.innerHTML = STAGES.map(([n, d, id, src], i) => `<li><span class="n num">${String(i + 1).padStart(2, '0')}</span><span class="t">${n}<small>${d} · ${src}</small></span><span class="id">${id}</span></li>`).join('');
+  const chain = (() => {
+    const box = document.getElementById('chainView'), canvas = document.getElementById('chainGL');
+    io.observe(box);
+    const r = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    r.setPixelRatio(Math.min(DPR, 1.5)); r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.1;
+    const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, 1, .1, 200);
+    scene.background = new THREE.Color(0x04070b); scene.fog = new THREE.FogExp2(0x04070b, .028);
+    if (THREE.RoomEnvironment) { const pm = new THREE.PMREMGenerator(r); scene.environment = pm.fromScene(new THREE.RoomEnvironment(), .04).texture; }
+    scene.add(new THREE.HemisphereLight(0x9fdcff, 0x020304, .35));
+    const kl = new THREE.DirectionalLight(0xffffff, .9); kl.position.set(4, 8, 6); scene.add(kl);
+
+    // bloom, when the post-processing scripts are present
+    let composer = null, bloom = null;
+    if (THREE.EffectComposer && THREE.UnrealBloomPass) {
+      composer = new THREE.EffectComposer(r);
+      composer.addPass(new THREE.RenderPass(scene, cam));
+      bloom = new THREE.UnrealBloomPass(new THREE.Vector2(256, 256), .72, .5, .24);
+      composer.addPass(bloom);
+    }
+
+    const CY = new THREE.Color('#5ad2e6'), THREAT = new THREE.Color('#ff5a4e'), DIM = new THREE.Color('#1a232d');
+    // stage nodes on a descending helix: the intrusion goes deeper into the estate
+    const nodes = STAGES.map((s, i) => { const a = i * .95, y = 6 - i * 1.75; return new THREE.Vector3(Math.cos(a) * 6, y, Math.sin(a) * 6); });
+    const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(-14, 9, -4), ...nodes, new THREE.Vector3(10, -10, 6)], false, 'centripetal');
+    const nodeTs = nodes.map(n => { let best = 0, bd = 1e9; for (let i = 0; i <= 600; i++) { const d = curve.getPoint(i / 600).distanceTo(n); if (d < bd) { bd = d; best = i / 600; } } return best; });
+
+    // ── conduit: fresnel rim, forward-flowing pulses, glowing leading edge ──
+    const tubeMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: { uProg: { value: 0 }, uT: { value: 0 }, uCol: { value: CY } },
+      vertexShader: `varying vec2 vUv; varying vec3 vN; varying vec3 vV;
+        void main(){ vUv = uv; vN = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `uniform float uProg; uniform float uT; uniform vec3 uCol; varying vec2 vUv; varying vec3 vN; varying vec3 vV;
+        void main(){
+          if (vUv.x > uProg) discard;
+          float fres = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.2);
+          float flow = pow(max(0.0, sin(vUv.x * 140.0 - uT * 7.0)), 18.0);
+          float lead = exp(-(uProg - vUv.x) * 55.0);
+          float tail = smoothstep(0.0, 0.06, vUv.x);
+          vec3 c = uCol * (0.18 + fres * 1.4 + flow * 1.6) + vec3(1.0) * lead * 1.8;
+          gl_FragColor = vec4(c, (0.22 + fres * 0.7 + flow * 0.6 + lead) * tail);
+        }` });
+    scene.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 900, .16, 20, false), tubeMat));
+
+    // ── route not yet travelled: shimmering particles ──
+    const RP = 700, rpos = new Float32Array(RP * 3), rt = new Float32Array(RP);
+    for (let i = 0; i < RP; i++) { const k = i / (RP - 1), q = curve.getPoint(k); rpos[i*3] = q.x; rpos[i*3+1] = q.y; rpos[i*3+2] = q.z; rt[i] = k; }
+    const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.BufferAttribute(rpos, 3)); rg.setAttribute('aT', new THREE.BufferAttribute(rt, 1));
+    const routeMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uProg: { value: 0 }, uT: { value: 0 } },
+      vertexShader: `attribute float aT; uniform float uProg; uniform float uT; varying float vA;
+        void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); float ahead = step(uProg, aT);
+          vA = ahead * (0.25 + 0.35 * sin(aT * 220.0 - uT * 3.0)) * smoothstep(uProg, uProg + 0.04, aT);
+          gl_PointSize = (2.2 + 1.6 * vA) * (60.0 / -mv.z); gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `varying float vA; void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard; gl_FragColor = vec4(0.35, 0.75, 0.85, vA * (1.0 - d * 2.0)); }` });
+    scene.add(new THREE.Points(rg, routeMat));
+
+    // ── dust for depth ──
+    const DN = 900, dpos = new Float32Array(DN * 3);
+    for (let i = 0; i < DN; i++) { dpos[i*3] = (Math.random() - .5) * 40; dpos[i*3+1] = (Math.random() - .5) * 30; dpos[i*3+2] = (Math.random() - .5) * 40; }
+    const dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.BufferAttribute(dpos, 3));
+    const dust = new THREE.Points(dg, new THREE.PointsMaterial({ color: 0x6fb7c8, size: .05, transparent: true, opacity: .45, depthWrite: false }));
+    scene.add(dust);
+
+    // ── packet head with spark trail and its own light ──
+    const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'); const g = x.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.18, 'rgba(160,240,255,.85)'); g.addColorStop(.5, 'rgba(90,210,230,.18)'); g.addColorStop(1, 'rgba(90,210,230,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+    const head = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })); head.scale.setScalar(2.2); scene.add(head);
+    const headLight = new THREE.PointLight(0x7fe6ff, 3, 9, 2); scene.add(headLight);
+    const TN = 48, tpos = new Float32Array(TN * 3), tA = new Float32Array(TN);
+    for (let i = 0; i < TN; i++) tA[i] = 1 - i / TN;
+    const tg = new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.BufferAttribute(tpos, 3)); tg.setAttribute('aA', new THREE.BufferAttribute(tA, 1));
+    const trail = new THREE.Points(tg, new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      vertexShader: `attribute float aA; varying float vA; void main(){ vA = aA; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = (1.0 + 7.0 * aA) * (40.0 / -mv.z); gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `varying float vA; void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard; gl_FragColor = vec4(mix(vec3(0.35,0.82,0.9), vec3(1.0), vA*vA), vA * vA * (1.0 - d * 2.0)); }` }));
+    scene.add(trail);
+    const jitter = Array.from({ length: TN }, () => new THREE.Vector3((Math.random() - .5) * .35, (Math.random() - .5) * .35, (Math.random() - .5) * .35));
+
+    // ── molecules: one per stage ──
+    const atomGeo = new THREE.SphereGeometry(1, 32, 24), bondGeo = new THREE.CylinderGeometry(1, 1, 1, 10, 1, true);
+    const shellGeo = new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.22, 1));
+    const waveMat = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, uniforms: { uA: { value: 0 } },
+      vertexShader: `varying vec3 vN; varying vec3 vV; void main(){ vN = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `uniform float uA; varying vec3 vN; varying vec3 vV; void main(){ float f = pow(1.0 - abs(dot(vN, vV)), 3.0); gl_FragColor = vec4(0.45, 0.88, 0.95, f * uA); }` });
+    const mols = nodes.map((n, i) => {
+      const g = new THREE.Group(); g.position.copy(n); scene.add(g);
+      const spin = new THREE.Group(); g.add(spin);
+      const coreMat = new THREE.MeshPhysicalMaterial({ color: 0x141b23, roughness: .22, metalness: .1, clearcoat: 1, clearcoatRoughness: .08, emissive: 0x000000 });
+      const core = new THREE.Mesh(atomGeo, coreMat); core.scale.setScalar(.42); spin.add(core);
+      const count = 3 + (i % 3), sats = [];
+      for (let k = 0; k < count; k++) {
+        // deterministic spread on a sphere (golden angle)
+        const phi = Math.acos(1 - 2 * (k + .5) / count), th = k * 2.39996 + i;
+        const dir = new THREE.Vector3(Math.sin(phi) * Math.cos(th), Math.cos(phi), Math.sin(phi) * Math.sin(th)), len = .95 + (k % 2) * .25;
+        const m = new THREE.MeshPhysicalMaterial({ color: 0x18212b, roughness: .3, clearcoat: 1, emissive: 0x000000 });
+        const atom = new THREE.Mesh(atomGeo, m); atom.scale.setScalar(.13 + (k % 3) * .03); atom.position.copy(dir).multiplyScalar(len); spin.add(atom);
+        const bm = new THREE.MeshBasicMaterial({ color: DIM, transparent: true, opacity: .8 });
+        const bond = new THREE.Mesh(bondGeo, bm); bond.scale.set(.025, len, .025); bond.position.copy(dir).multiplyScalar(len / 2);
+        bond.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir); spin.add(bond);
+        sats.push({ m, bm, k });
+      }
+      const shell = new THREE.LineSegments(shellGeo, new THREE.LineBasicMaterial({ color: CY, transparent: true, opacity: 0 })); g.add(shell);
+      const wave = new THREE.Mesh(atomGeo, waveMat()); wave.visible = false; g.add(wave);
+      const lt = new THREE.PointLight(0x5ad2e6, 0, 5, 2); g.add(lt);
+      return { g, spin, coreMat, sats, count, shell, wave, lt, on: 0, active: false, waveT: 1, sS: 1.7, sV: 0, seed: i * 1.37 };
+    });
+
+    const rs = () => { const w = box.clientWidth, h = box.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); if (composer) { composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); } };
+    new ResizeObserver(rs).observe(box); rs();
+    let P = 0, sm = 0;
+    const now = document.getElementById('chainNow'), pct = document.getElementById('chainPct'), lis = [...steps.children];
+    const tmp = new THREE.Color();
+    scenes.push({ el: box, step(t, dt) {
+      sm += (P - sm) * Math.min(1, dt * 6);
+      const prog = Math.max(.0005, Math.min(.9995, sm));
+      tubeMat.uniforms.uProg.value = prog; tubeMat.uniforms.uT.value = t;
+      routeMat.uniforms.uProg.value = prog; routeMat.uniforms.uT.value = t;
+      const hp = curve.getPoint(prog); head.position.copy(hp); headLight.position.copy(hp);
+      head.scale.setScalar(2 + Math.sin(t * 9) * .15);
+      for (let k = 0; k < TN; k++) { const q = curve.getPoint(Math.max(0, prog - k * .0022)); tpos[k*3] = q.x + jitter[k].x * k / TN; tpos[k*3+1] = q.y + jitter[k].y * k / TN; tpos[k*3+2] = q.z + jitter[k].z * k / TN; }
+      tg.attributes.position.needsUpdate = true;
+      dust.rotation.y = t * .01;
+
+      let reached = 0;
+      mols.forEach((s, i) => {
+        const want = prog >= nodeTs[i] - .004;
+        if (want) reached = i + 1;
+        if (want && !s.active) { s.waveT = 0; s.sS = 1.9; s.sV = 0; }   // rising edge: shockwave + shell snaps in
+        s.active = want;
+        s.on += ((want ? 1 : 0) - s.on) * Math.min(1, dt * 4);
+        // threat state: faint red pulse; contained: cyan
+        const threat = (1 - s.on) * (.42 + .2 * Math.sin(t * 2.4 + s.seed));
+        s.coreMat.emissive.copy(THREAT).multiplyScalar(threat).add(tmp.copy(CY).multiplyScalar(s.on * .42));
+        s.sats.forEach(a => {
+          const local = Math.max(0, Math.min(1, s.on * (s.count + 1) - a.k));   // atoms light one after another
+          a.m.emissive.copy(THREAT).multiplyScalar(threat * .8).add(tmp.copy(CY).multiplyScalar(local * .65));
+          a.bm.color.copy(DIM).lerp(CY, local);
+        });
+        s.spin.rotation.y += dt * (.25 + s.on * .5); s.spin.rotation.x = Math.sin(t * .4 + s.seed) * .3;
+        // containment shell on an underdamped spring: slight overshoot as it locks
+        const target = want ? 1 : 1.9, k = 120, d = 9;
+        s.sV += ((target - s.sS) * k - s.sV * d) * dt; s.sS += s.sV * dt;
+        s.shell.scale.setScalar(s.sS); s.shell.material.opacity = s.on * .4; s.shell.rotation.y -= dt * .3; s.shell.rotation.z += dt * .12;
+        s.waveT = Math.min(1, s.waveT + dt * .9);
+        s.wave.visible = s.waveT < 1; s.wave.scale.setScalar(.5 + (1 - Math.pow(1 - s.waveT, 3)) * 4); s.wave.material.uniforms.uA.value = (1 - s.waveT) * 1.6;
+        s.lt.intensity = s.on * .9 + (1 - s.waveT) * 3;
+      });
+      lis.forEach((li, i) => { li.classList.toggle('on', i < reached); li.classList.toggle('cur', i === reached - 1); });
+      now.textContent = reached ? `Stage ${reached} of 8 contained · ${STAGES[reached - 1][2]}` : 'Stage 0 of 8';
+      pct.textContent = Math.round(reached / 8 * 100) + '%';
+      // camera rides alongside the packet, easing toward it
+      const camT = new THREE.Vector3(hp.x * .35 + 15 + pointer.x * 1.5, hp.y + 5 - pointer.y, hp.z * .35 + 16);
+      cam.position.lerp(camT, Math.min(1, dt * 2.5)); cam.lookAt(hp.x * .8, hp.y - .6, hp.z * .8);
+      composer ? composer.render() : r.render(scene, cam);
+    }});
+    return { set: p => { P = p; } };
+  })();
+
+  /* ── record feed + ledger + timeline ── */
+  const RECORD = [
+    ['2025', 'Threat-intel automation across 50+ sources', 'Payatu · manual triage <em>↓70–80%</em>'],
+    ['2025', 'Led response on active breaches', 'Payatu · MTTC <em>↓35%</em>', true],
+    ['2025', 'Purview DLP: 25+ policies, 10+ custom SITs', 'Payatu · ~400 endpoints · accuracy <em>↑~40%</em>'],
+    ['2025', '30+ ATT&CK-mapped hunts in Sentinel', 'Payatu · coverage <em>↑~30%</em>'],
+    ['2025', 'Defender, Intune and Wazuh rollout', 'Payatu · endpoint compliance <em>95%</em>'],
+    ['2024', 'Cloud-native detections on CloudTrail, IAM, VPC', 'Coralogix · MTTD <em>↓40%</em> · MTTR <em>↓35%</em>'],
+    ['2024', 'Least-privilege IAM guardrails', 'Coralogix · posture <em>↑25%</em>'],
+    ['2023', 'DNS/HTTPS tunnelling and stego detections', 'Bank of America · exfil incidents <em>↓25%</em>'],
+    ['2023', 'Insider-threat playbooks with intel inputs', 'Bank of America · IR time <em>↓30%</em>'],
+    ['2021', 'High-risk domains blocked before access', 'Bank of America · <em>7,000+</em> users'],
+    ['2019', 'EDM and regex DLP policy engineering', 'Detection & Response · policy noise <em>↓</em>'],
+  ];
+  (() => {
+    const feed = document.getElementById('feed'), count = document.getElementById('streamCount'), pause = document.getElementById('pause'); let i = 0, paused = false;
+    const add = anim => { const [y, w, m, c] = RECORD[i++]; const li = document.createElement('li'); if (c) li.classList.add('crit'); if (anim) li.classList.add('enter'); li.innerHTML = `<time>${y}</time><div class="what"><b>${w}</b><span>${m}</span></div>`; feed.appendChild(li); count.textContent = `${i} of ${RECORD.length} entries`; };
+    for (let k = 0; k < (reduce ? RECORD.length : 6); k++) add(false);
+    pause.hidden = reduce; pause.addEventListener('click', () => { paused = !paused; pause.textContent = paused ? 'Resume feed' : 'Pause feed'; });
+    const tm = setInterval(() => { if (paused || document.hidden) return; if (i >= RECORD.length) { clearInterval(tm); pause.hidden = true; return; } add(true); }, 3400);
+  })();
+  (() => {
+    const L = [['Detection gap', 'SWIFT BEC · fintech', '72h → <1h', 1 / 72], ['Manual intel triage', 'Payatu', '↓75%', .25], ['Time to detect', 'Coralogix · cloud', '↓40%', .6], ['Time to contain', 'Payatu · active breaches', '↓35%', .65], ['False positives', 'Coralogix · baselining', '↓30%', .7], ['Exfiltration incidents', 'Bank of America', '↓25%', .75]];
+    const tb = document.getElementById('ledger');
+    tb.innerHTML = L.map(([m, w, d, a]) => `<tr><td><div class="m">${m}</div><div class="where">${w}</div></td><td class="viz"><div class="meter" style="--after:${(a * 100).toFixed(1)}%"><i></i></div></td><td class="delta num">${d}</td></tr>`).join('');
+    new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { tb.querySelectorAll('.meter').forEach((m, k) => setTimeout(() => m.classList.add('in'), 120 + k * 60)); o.disconnect(); } }).observe(tb);
+  })();
+
+
+  /* ── decrypt: ciphertext resolves to plaintext ── */
+  const HEX = '0123456789abcdef', GLY = '█▓▒░<>/\\#$%&01';
+  const decrypt = (el, dur = 900, set = HEX) => new Promise(res => {
+    const final = el.dataset.plain ?? (el.dataset.plain = el.innerText);
+    if (reduce) { el.textContent = final; return res(); }
+    const t0 = performance.now();
+    const f = () => { const k = Math.min(1, (performance.now() - t0) / dur);
+      el.textContent = [...final].map((ch, i) => (ch === '\n' || ch === ' ' || i / final.length < k) ? ch : set[(Math.random() * set.length) | 0]).join('');
+      k < 1 ? requestAnimationFrame(f) : res(); };
+    f();
+  });
+
+  /* ── scroll choreography ── */
+  const choreo = () => {
+    // target lock on every monitor
+    document.querySelectorAll('.mon').forEach(m => {
+      ['tl', 'tr', 'bl', 'br'].forEach(c => { const s = document.createElement('i'); s.className = 'lock ' + c; m.appendChild(s); });
+      ScrollTrigger.create({ trigger: m, start: 'top 88%', once: true, onEnter: () => { m.classList.add('locked'); setTimeout(() => m.classList.add('settled'), 1400); } });
+    });
+    document.querySelectorAll('[data-dec]').forEach(el => { el.dataset.plain = el.innerText; if (el.closest('.view').id !== 'home') return; ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () => decrypt(el, 1000) }); });
+    ScrollTrigger.create({ trigger: '#chain', start: 'top top', end: 'bottom bottom', scrub: true, onUpdate: s => chain.set(s.progress) });
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#esc', start: 'top top', end: 'bottom bottom', scrub: .6 } });
+    tl.fromTo('#escCard', { clipPath: 'inset(38% 36% 20% 36% round 10px)' }, { clipPath: 'inset(0% 0% 0% 0% round 12px)', ease: 'power2.inOut', duration: 1 }, 0)
+      .fromTo('#wA', { x: 0 }, { x: () => -innerWidth * .16, ease: 'power2.inOut', duration: 1 }, 0)
+      .fromTo('#wB', { x: 0 }, { x: () => innerWidth * .16, ease: 'power2.inOut', duration: 1 }, 0)
+      .fromTo('.esc .words', { y: 0 }, { y: () => -innerHeight * .3, ease: 'power2.inOut', duration: 1 }, 0)
+      .to('#escMeta', { opacity: 1, duration: .2 }, .8);
+  };
+
+  /* ── pages: content straight from the portfolio's data files ── */
+  const DATA = JSON.parse(document.getElementById('data').textContent);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const PAGES = [
+    ['home', 'WHOAMI', 'Analyst on shift'], ['timeline', 'TIMELINE', '6 roles'], ['incidents', 'INCIDENT_FILES', '8 cases'], ['attack', 'ATT&CK', 'Kill chain + matrix'],
+    ['capability', 'CAPABILITY', '6 domains'], ['deployed', 'DEPLOYED', '6 projects'], ['credentials', 'CREDENTIALS', '15 held'], ['inprogress', 'IN_PROGRESS', '2 targets'],
+    ['opensource', 'OPEN_SOURCE', '6 repos'], ['comms', 'COMMS', 'Contact'],
+  ];
+  const pageIdx = id => PAGES.findIndex(p => p[0] === id);
+  const label = id => { const i = pageIdx(id); return `${String(i + 1).padStart(2, '0')} / ${PAGES[i][1]}`; };
+
+  // 02 timeline
+  document.getElementById('tlBody').innerHTML = DATA.experience.map(e => {
+    const yr = (e.date.match(/\d{4}/) || [''])[0];
+    return `<div class="tl-row"><div class="when"><b class="num">${yr}</b>${esc(e.date)}${e.location ? '<br>' + esc(e.location) : ''}</div>
+      <div><h3>${esc(e.role)}</h3><div class="co">${esc(e.company)}</div>${e.metrics ? `<div class="mx">${e.metrics.map(m => `<div><b class="num">${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join('')}</div>` : ''}</div>
+      <div><ul>${e.bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul><div class="chips">${e.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div></div></div>`;
+  }).join('');
+
+  // 03 incident files
+  const hl = code => esc(code)
+    .replace(/(\/\/[^\n]*|#[^\n]*)/g, '<span class="cm">$1</span>')
+    .replace(/(&quot;[^&\n]*?&quot;|'[^'\n]*')/g, '<span class="st">$1</span>')
+    .replace(/\b(where|extend|project|summarize|join|let|on|by|kind|and|or|in|has_any|contains|title|detection|condition|selection|logsource|rule|strings|meta|SELECT|FROM|WHERE|AND|OR|count|dynamic|ago|bin|tostring|search|stats|eval|table|index|sourcetype)\b/g, '<span class="kw">$1</span>');
+  const cs = DATA.caseStudies, crit = cs.filter(c => c.severity === 'CRITICAL').length;
+  document.getElementById('cfMeta').innerHTML = `<span><b>${cs.length}</b> engagements</span><span><b>${crit}</b> critical · <b>${cs.length - crit}</b> high</span>`;
+  document.getElementById('cfBody').innerHTML = cs.map((c, i) => `<article class="cf${i === 0 ? ' open' : ''}" id="case-${c.id}">
+      <button class="cf-h" aria-expanded="${i === 0}"><span class="id num">${c.id}</span><span class="sev ${c.severity}">${c.severity}</span><span class="t">${esc(c.title)}</span><span class="pm" aria-hidden="true"></span></button>
+      <div class="cf-b"><div><div class="cf-in">
+        <div class="chips">${c.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div>
+        <div class="cf-3"><div><h4>Scenario</h4><p>${esc(c.scenario)}</p></div><div><h4>Investigation</h4><p>${esc(c.investigation)}</p></div><div><h4>Response</h4><p>${esc(c.response)}</p></div></div>
+        <div class="cf-imp">${c.impact.map(m => `<div><b>${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join('')}</div>
+        ${c.impactSummary ? `<p class="cf-sum">${esc(c.impactSummary)}</p>` : ''}
+        ${c.detectionExample ? `<div class="code"><div class="ch"><b>${esc(c.detectionExample.title)}</b><span>${esc(c.detectionExample.mitre)} · ${esc(c.detectionExample.language)}</span></div><pre>${hl(c.detectionExample.code)}</pre></div>` : ''}
+      </div></div></div></article>`).join('');
+  document.querySelectorAll('.cf-h').forEach(h => h.addEventListener('click', () => { const a = h.parentElement, o = !a.classList.contains('open'); a.classList.toggle('open', o); h.setAttribute('aria-expanded', o); setTimeout(() => ScrollTrigger.refresh(), 520); }));
+
+  // 04 att&ck matrix
+  const MX = DATA.mitreTactics, tcount = MX.reduce((n, t) => n + t.techs.length, 0);
+  document.getElementById('mxMeta').innerHTML = `<span><b>${MX.length}</b> tactics</span><span><b>${tcount}</b> techniques detected</span><span>click a technique to open its case</span>`;
+  document.getElementById('mxGrid').innerHTML = MX.map(t => `<div class="mx-col"><h3>${esc(t.tactic)}<small>${t.techs.length}</small></h3>
+      ${t.techs.map(x => x.case ? `<a class="cell" href="#case-${x.case}" data-go="incidents"><span>${x.id}</span>${esc(x.name)}<em>case ${x.case}</em></a>` : `<a class="cell" href="#" data-go="timeline"><span>${x.id}</span>${esc(x.name)}<em>${esc(x.exp || '')}</em></a>`).join('')}
+      ${t.dim.map(x => `<div class="cell dim"><span>${x.id}</span>${esc(x.name)}</div>`).join('')}</div>`).join('');
+
+  // 05 capability
+  const SG = DATA.skillGroups;
+  document.getElementById('capMeta').innerHTML = `<span><b>${SG.length}</b> domains</span><span><b>${SG.reduce((n, g) => n + g.skills.length, 0)}</b> tools and disciplines</span>`;
+  document.getElementById('capGrid').innerHTML = SG.map(g => `<section class="mon"><h2>${esc(g.title)} <small>${g.skills.length}</small></h2><div class="scr"><div class="chips">${g.skills.map(s => `<span class="chip">${esc(s)}</span>`).join('')}</div></div></section>`).join('');
+
+  // 06 deployed
+  document.getElementById('pjBody').innerHTML = DATA.projects.map(p => `<article class="pj"><h3><span class="num">${p.id}</span>${esc(p.name)}</h3>
+      <div class="cf-3"><div><h4>Problem</h4><p>${esc(p.problem)}</p></div><div><h4>Approach</h4><p>${esc(p.approach)}</p></div><div><h4>Outcome</h4><p>${esc(p.outcome)}</p></div></div>
+      <div class="chips">${p.tools.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div></article>`).join('');
+
+  // 07 credentials + 08 in progress
+  const CR = DATA.certifications, iss = [...new Set(CR.map(c => c.issuer))];
+  document.getElementById('crMeta').innerHTML = `<span><b>${CR.length}</b> certifications</span><span><b>${iss.length}</b> issuers</span><span>${iss.map(esc).join(' · ')}</span>`;
+  document.getElementById('crGrid').innerHTML = CR.map(c => `<div class="cr"><b>${esc(c.name)}</b><p>${esc(c.full)}</p><span>${esc(c.issuer)}</span></div>`).join('');
+  document.getElementById('puGrid').innerHTML = DATA.pursuingCerts.map(c => `<div class="cr next"><span class="tgt">Target ${esc(c.target)}</span><b>${esc(c.name)}</b><p>${esc(c.full)}</p><span>${esc(c.issuer)}</span></div>`).join('');
+
+  // 09 open source + 10 comms
+  const AR = '<span class="ar" aria-hidden="true">↗</span>';
+  document.getElementById('osBody').innerHTML = DATA.repos.map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener"><span class="nm">${esc(r.name)}</span><span class="ds">${esc(r.description)}</span><span class="lg">${esc(r.language || '')}</span>${AR}</a>`).join('');
+  document.getElementById('cmBody').innerHTML = DATA.contacts.map(c => c.href
+    ? `<a href="${esc(c.href)}"${/^http/.test(c.href) ? ' target="_blank" rel="noopener"' : ''}><span class="nm">${esc(c.label)}</span><span class="ds">${esc(c.value)}</span>${AR}</a>`
+    : `<div class="rw"><span class="nm">${esc(c.label)}</span><span class="ds">${esc(c.value)}</span><span></span></div>`).join('');
+
+  // prev / next on every page
+  PAGES.forEach(([id], i) => {
+    const v = document.getElementById(id); if (!v) return;
+    const prev = PAGES[i - 1], next = PAGES[i + 1];
+    const f = document.createElement('nav'); f.className = 'pg-foot'; f.setAttribute('aria-label', 'Previous and next page');
+    f.innerHTML = (prev ? `<a href="#${prev[0]}" data-go="${prev[0]}"><span>← ${String(i).padStart(2, '0')}</span><b>${esc(prev[1])}</b></a>` : '<span></span>')
+      + (next ? `<a class="next" href="#${next[0]}" data-go="${next[0]}"><span>${String(i + 2).padStart(2, '0')} →</span><b>${esc(next[1])}</b></a>` : '');
+    v.appendChild(f);
+  });
+
+
+  // page bar: plain-English names for every page
+  const NAMES = { home: 'About', timeline: 'Experience', incidents: 'Case studies', attack: 'ATT&CK coverage', capability: 'Skills', deployed: 'Projects', credentials: 'Certifications', inprogress: 'In progress', opensource: 'Open source', comms: 'Contact' };
+  const track = document.getElementById('tabTrack'), ind = document.getElementById('tabInd');
+  track.insertAdjacentHTML('beforeend', PAGES.map(([id], i) => `<a href="#${id}" data-go="${id}"><span class="n num">${String(i + 1).padStart(2, '0')}</span>${esc(NAMES[id])}</a>`).join(''));
+  const setTab = (id, instant) => {
+    const a = track.querySelector(`a[data-go="${id}"]`); if (!a) return;
+    track.querySelectorAll('a').forEach(x => x.toggleAttribute('aria-current', x === a));
+    if (a.hasAttribute('aria-current')) a.setAttribute('aria-current', 'page');
+    if (instant) ind.style.transition = 'none';
+    ind.style.transform = `translateX(${a.offsetLeft + 12}px) scaleX(${a.offsetWidth - 24})`;
+    if (instant) { ind.offsetWidth; ind.style.transition = ''; }
+    const l = a.offsetLeft - 40, r = a.offsetLeft + a.offsetWidth + 40;
+    if (l < track.scrollLeft || r > track.scrollLeft + track.clientWidth) track.scrollTo({ left: l, behavior: instant || reduce ? 'auto' : 'smooth' });
+  };
+  addEventListener('resize', () => setTab(current, true));
+  document.fonts && document.fonts.ready.then(() => setTab(current, true));
+
+  // index overlay
+  const index = document.getElementById('index');
+  index.querySelector('ol').innerHTML = PAGES.map(([id, l, d], i) => `<li><a href="#${id}" data-go="${id}"><span class="n num">${String(i + 1).padStart(2, '0')}</span><span class="l">${esc(l)}</span><span class="d">${esc(d)}</span></a></li>`).join('');
+  const openIndex = () => { index.hidden = false; index.querySelectorAll('a').forEach(a => a.toggleAttribute('aria-current', a.dataset.go === current)); if (!reduce) gsap.fromTo(index.querySelectorAll('li'), { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: .45, ease: 'expo.out', stagger: .025 }); index.querySelector('a').focus({ preventScroll: true }); };
+  const closeIndex = () => { index.hidden = true; };
+  document.getElementById('idxBtn').addEventListener('click', () => index.hidden ? openIndex() : closeIndex());
+  addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); index.hidden ? openIndex() : closeIndex(); }
+    else if (e.key === 'Escape') closeIndex();
+    else if (!index.hidden && /^[0-9]$/.test(e.key)) { const p = PAGES[(+e.key + 9) % 10]; closeIndex(); go(p[0]); }
+  });
+
+  /* ── page switch: the page folds into the terminal chevron ── */
+  const veil = document.getElementById('veil'), px = document.getElementById('px'), log = document.getElementById('log');
+  let current = 'home', busy = false;
+  const go = async (to, hash) => {
+    if (busy || pageIdx(to) < 0) return;
+    closeIndex();
+    if (to !== current) setTab(to);
+    const scrollToHash = () => { const el = hash && document.querySelector(hash); if (el) lenis ? lenis.scrollTo(el, { offset: -70 }) : el.scrollIntoView(); };
+    if (to === current) { scrollToHash(); return; }
+    busy = true;
+    const from = document.getElementById(current), next = document.getElementById(to);
+    if (reduce) { from.hidden = true; next.hidden = false; scrollTo(0, 0); current = to; busy = false; ScrollTrigger.refresh(); return; }
+    lenis && lenis.stop();
+    const y = scrollY, W = innerWidth, H = innerHeight, cx = W / 2, cy = y + H / 2, s = Math.min(W, H) * .2;
+    const poly = p => 'polygon(' + p.map(([a, b]) => `${a.toFixed(1)}px ${b.toFixed(1)}px`).join(', ') + ')';
+    Object.assign(from.style, { position: 'fixed', left: 0, right: 0, top: -y + 'px', zIndex: 20, transformOrigin: `50% ${cy}px` });
+    gsap.set(veil, { autoAlpha: 1, zIndex: 10 }); px.textContent = '';
+    await gsap.timeline()
+      .fromTo(from, { clipPath: poly([[0, y], [W, y], [W, y + H / 2], [W, y + H], [0, y + H], [0, y + H / 2]]) },
+                    { clipPath: poly([[cx - s * .7, cy - s], [cx - s * .15, cy - s], [cx + s * .75, cy], [cx - s * .15, cy + s], [cx - s * .7, cy + s], [cx + s * .2, cy]]), duration: .8, ease: 'power3.inOut' }, 0)
+      .to(from, { rotate: -9, scale: .7, duration: .8, ease: 'power3.inOut' }, 0)
+      .to(from, { autoAlpha: 0, duration: .22 }, .7);
+    from.hidden = true; from.removeAttribute('style'); gsap.set(from, { clearProps: 'all' });
+    gsap.set(veil, { zIndex: 60 });
+    px.textContent = 'DECRYPTING ' + PAGES[pageIdx(to)][1];
+    await decrypt(px, 560, GLY);
+    await gsap.to(px, { scale: .06, opacity: 0, duration: .32, ease: 'power3.in' }); gsap.set(px, { clearProps: 'all' });
+    next.hidden = false; scrollTo(0, 0); lenis && lenis.scrollTo(0, { immediate: true }); ScrollTrigger.refresh();
+    gsap.fromTo(next, { clipPath: 'inset(48% 48% 48% 48% round 20px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1, ease: 'expo.inOut', clearProps: 'clipPath' });
+    gsap.to(veil, { autoAlpha: 0, duration: .4, delay: .45 });
+    next.querySelectorAll('[data-dec]').forEach(el => setTimeout(() => decrypt(el, 1000), 500));
+    document.getElementById('where').innerHTML = '<b>' + label(to).replace(' / ', '</b> / '); history.replaceState(null, '', to === 'home' ? location.pathname : '#' + to);
+    current = to; lenis && lenis.start(); busy = false;
+    if (hash) setTimeout(scrollToHash, 900);
+  };
+  document.addEventListener('click', e => { const a = e.target.closest('[data-go]'); if (!a) return; e.preventDefault(); const h = a.hash && a.hash.length > 1 && a.hash.slice(1) !== a.dataset.go ? a.hash : null; go(a.dataset.go, h); });
+
+  /* ── packet trail behind the cursor ── */
+  (() => {
+    if (reduce || matchMedia('(pointer: coarse)').matches) return;
+    const cv = document.getElementById('trail'), ctx = cv.getContext('2d');
+    const rs = () => { cv.width = innerWidth * DPR; cv.height = innerHeight * DPR; }; rs(); addEventListener('resize', rs);
+    const pk = []; let lx = 0, ly = 0;
+    addEventListener('pointermove', e => { const d = Math.hypot(e.clientX - lx, e.clientY - ly); if (d < 14) return; lx = e.clientX; ly = e.clientY; pk.push({ x: e.clientX, y: e.clientY, life: 1 }); });
+    gsap.ticker.add((t, dt) => {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      for (let i = pk.length - 1; i >= 0; i--) { const p = pk[i]; p.life -= dt / 700; if (p.life <= 0) { pk.splice(i, 1); continue; }
+        ctx.fillStyle = `rgba(90,210,230,${p.life * .55})`; const s = (2 + p.life * 3) * DPR; ctx.fillRect(p.x * DPR - s / 2, p.y * DPR - s / 2, s, s); }
+    });
+  })();
+
+  /* ── render loop ── */
+  let last = performance.now();
+  gsap.ticker.add(() => { const now = performance.now(), dt = Math.min(.05, (now - last) / 1000); last = now; spring(dt); const t = now / 1000;
+    scenes.forEach(s => { if (!s.always) { if (s.el.closest('.view')?.hidden) return; if (vis.get(s.el) === false) return; } s.step(t, reduce ? 0 : dt); }); });
+
+  /* ── clock ── */
+  const ck = document.getElementById('clock'); const tick = () => ck.textContent = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false }); tick(); setInterval(tick, 15000);
+
+  /* ── boot: secure handshake ── */
+  const deepLink = () => { const id = location.hash.slice(1); if (pageIdx(id) > 0) { document.getElementById('home').hidden = true; document.getElementById(id).hidden = false; current = id; document.getElementById('where').innerHTML = '<b>' + label(id).replace(' / ', '</b> / '); } };
+  const boot = async () => {
+    deepLink(); setTab(current, true);
+    const ui = document.getElementById('bootui');
+    if (reduce) { ui.hidden = true; gsap.set(veil, { autoAlpha: 0 }); choreo(); return; }
+    const dumpEl = document.getElementById('dump'), hexEl = document.getElementById('hex'), bitsEl = document.getElementById('bits'), art = document.getElementById('art'), fpEl = document.getElementById('fp');
+    // a fresh 32-byte session key every visit
+    const key = new Uint8Array(32); crypto.getRandomValues(key);
+    document.getElementById('sess').textContent = [...key.slice(0, 4)].map(b => b.toString(16).padStart(2, '0')).join('');
+    const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    const fp = btoa(String.fromCharCode(...key)).replace(/=+$/, '');
+    bitsEl.innerHTML = Array.from({ length: 7 }, () => '<i></i>').join('') + '<span class="num" id="dec">000/100</span>';
+    const bitEls = [...bitsEl.querySelectorAll('i')], dec = document.getElementById('dec');
+    // ssh-keygen randomart: the drunken bishop walks the key's bits
+    const FW = 17, FH = 9, SYM = ' .o+=*BOX@%&#/^';
+    const walk = []; { let x = 8, y = 4; for (const byte of key) for (let s = 0; s < 4; s++) { const b = (byte >> (s * 2)) & 3; x = Math.max(0, Math.min(FW - 1, x + (b & 1 ? 1 : -1))); y = Math.max(0, Math.min(FH - 1, y + (b & 2 ? 1 : -1))); walk.push([x, y]); } }
+    const drawArt = k => {
+      const f = Array.from({ length: FH }, () => new Array(FW).fill(0)), n = Math.floor(walk.length * k);
+      for (let i = 0; i < n; i++) f[walk[i][1]][walk[i][0]]++;
+      const end = n ? walk[n - 1] : [8, 4];
+      const rows = f.map((row, y) => '|' + row.map((c, x) => (x === 8 && y === 4) ? '<em>S</em>' : (x === end[0] && y === end[1] && n) ? (k >= 1 ? '<em>E</em>' : '<b>@</b>') : SYM[Math.min(c, SYM.length - 1)]).join('') + '|');
+      art.innerHTML = '+--[ED25519 256]--+\n' + rows.join('\n') + '\n+----[SHA256]-----+';
+    };
+    const LOG = [
+      [.00, 'secure boot · session key generated (32 bytes)', ''],
+      [.08, 'tls1.3 handshake · x25519 · aes-256-gcm', 'ok'],
+      [.20, 'verify dossier signature · ed25519', 'ok'],
+      [.34, 'decrypt casefiles 01..08', 'ok'],
+      [.50, 'load att&ck coverage · 11 tactics · 19 techniques', 'ok'],
+      [.64, 'sync record 2019 → 2026 · 11 entries', 'ok'],
+      [.80, 'arm sensors · radar · kill chain · terrain', 'ok'],
+      [.94, 'integrity 8/8', 'PASS'],
+    ];
+    const t0 = performance.now(), DUR = 2900;
+    let skip = false; const onSkip = e => { skip = true; if (e && e.key === ' ') e.preventDefault(); };
+    addEventListener('keydown', onSkip, { once: true }); ui.addEventListener('pointerdown', onSkip, { once: true });
+    const GL = '0123456789ABCDEF';
+    await new Promise(res => {
+      let shown = -1, lastHex = -1, settle = 0;
+      const frame = () => {
+        const el = performance.now() - t0;
+        let k = skip ? 1 : Math.min(1, el / DUR);
+        k = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;   // ease in-out cubic: slow handshake, fast middle, careful finish
+        const v = Math.round(k * 100);
+        // hex counter: new value scrambles briefly before it settles
+        if (v !== lastHex) { lastHex = v; settle = 2; }
+        const hx = v.toString(16).toUpperCase().padStart(2, '0');
+        const shownHx = settle-- > 0 && !skip ? hx[0] + GL[(Math.random() * 16) | 0] : hx;
+        hexEl.innerHTML = '<span class="px0">0x</span>' + shownHx;
+        bitEls.forEach((b, i) => b.classList.toggle('on', (v >> (6 - i)) & 1));
+        dec.textContent = String(v).padStart(3, '0') + '/100';
+        drawArt(k);
+        const lockB = Math.floor(32 * k);
+        dumpEl.innerHTML = [0, 16].map(o => `<span class="o">${o.toString(16).padStart(4, '0')}</span>  ` + [...key.slice(o, o + 16)].map((b, j) => { const i = o + j; if (i < lockB) return `<span class="k">${b.toString(16).padStart(2, '0')}</span>`; if (i === lockB) return `<span class="hot">${GL[(Math.random() * 16) | 0]}${GL[(Math.random() * 16) | 0]}</span>`.toLowerCase(); return (GL[(Math.random() * 16) | 0] + GL[(Math.random() * 16) | 0]).toLowerCase(); }).join(' ').replace(/^((?:\S+ ){8})/, '$1 ')).join('\n');
+        // fingerprint resolves left to right out of noise
+        const lock = Math.floor(fp.length * k);
+        fpEl.innerHTML = fp.slice(0, lock) + '<span class="u">' + Array.from({ length: fp.length - lock }, () => B64[(Math.random() * 64) | 0]).join('') + '</span>';
+        // log lines with kernel-style timestamps
+        const due = LOG.filter(l => k >= l[0]).length - 1;
+        if (due > shown) {
+          shown = due;
+          log.innerHTML = LOG.slice(0, due + 1).map(([at, msg, st]) => {
+            const ts = '[' + (at * DUR / 1000).toFixed(6).padStart(10, ' ') + ']';
+            const pad = '.'.repeat(Math.max(2, 56 - msg.length));
+            return `<span class="ts">${ts}</span> ${msg} ${st ? pad + ' ' + (st === 'PASS' ? '<span class="pass">PASS</span>' : '<span class="ok">ok</span>') : ''}`;
+          }).join('\n');
+        }
+        k >= 1 ? res() : requestAnimationFrame(frame);
+      };
+      frame();
+    });
+    removeEventListener('keydown', onSkip);
+    await gsap.to(ui, { autoAlpha: 0, duration: .3, delay: skip ? 0 : .25 });
+    ui.hidden = true;
+    px.classList.add('granted'); px.textContent = 'ACCESS GRANTED';
+    await decrypt(px, 520, GLY);
+    await gsap.to(px, { scale: .06, opacity: 0, duration: .32, ease: 'power3.in', delay: .2 });
+    gsap.set(px, { clearProps: 'all' }); px.classList.remove('granted');
+    gsap.fromTo('#' + current, { clipPath: 'inset(48% 48% 48% 48% round 20px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1.1, ease: 'expo.inOut', clearProps: 'clipPath' });
+    gsap.to(veil, { autoAlpha: 0, duration: .4, delay: .5 });
+    gsap.from('.bar', { y: -16, opacity: 0, duration: .9, ease: 'expo.out', delay: .5, clearProps: 'transform,opacity' });
+    gsap.from('#' + current + ' .mon', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: .07, delay: .6 });
+    choreo();
+    document.querySelectorAll('#' + current + ' [data-dec]').forEach(el => setTimeout(() => decrypt(el, 1000), 700));
+  };
+  addEventListener('load', boot);
+})();
+</script>
+</body>
+</html>
