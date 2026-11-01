@@ -3,6 +3,7 @@ import { Project } from '@/types';
 export const projects: Project[] = [
   {
     id: '01',
+    context: 'Independent',
     name: 'Automated Security Scanner',
     problem: 'Security teams burned 6+ hours per sprint on ad-hoc vulnerability scans across web apps and cloud — no consistency, no audit trail, no CI integration.',
     approach: 'A CLI wrapping Nmap, Nuclei, and Trivy behind one interface. Scan profiles (web, cloud, container) are YAML-defined and version-controlled; output normalizes to a common schema and ships to Elasticsearch for trending.',
@@ -11,6 +12,7 @@ export const projects: Project[] = [
   },
   {
     id: '02',
+    context: 'Independent',
     name: 'Threat Intelligence Dashboard',
     problem: 'Analysts context-switched across 8 threat feeds (MISP, VirusTotal, Shodan, AbuseIPDB) with no unified view — IOC correlation was manual and error-prone.',
     approach: 'React + Elasticsearch front-end fed by a Node.js aggregation service. A lightweight correlation engine dedups and scores IOCs by frequency, recency, and source confidence; alerts surface to Slack and the SIEM.',
@@ -19,6 +21,7 @@ export const projects: Project[] = [
   },
   {
     id: '03',
+    context: 'Independent',
     name: 'Detection-as-Code Framework',
     problem: 'Detection rules lived in SIEM UIs — no version control, no peer review, no testing. One bad rule caused a 4-hour alert flood that buried tier-1.',
     approach: 'A Go CLI compiling Sigma rules to platform queries (Splunk, Elasticsearch, Chronicle), running unit tests against log fixtures, and gating deploys via GitLab CI. Rules are reviewed as pull requests.',
@@ -27,6 +30,7 @@ export const projects: Project[] = [
   },
   {
     id: '04',
+    context: 'Independent',
     name: 'Cloud Security Posture Automation',
     problem: 'Monthly manual AWS config audits produced stale findings — remediation lag averaged 45 days and misconfigured S3 buckets kept recurring.',
     approach: 'Continuous assessment with Cloud Custodian policies (IaC) deployed via AWS CDK. Violations trigger Lambda auto-remediation for safe fixes; risky changes open ServiceNow tickets instead.',

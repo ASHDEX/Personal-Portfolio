@@ -192,16 +192,7 @@ export function initSocWall(DATA) {
   })();
 
   /* ── 4. kill chain: a tube drawn by scroll through eight stages ── */
-  const STAGES = [
-    ['Initial access', 'OAuth consent phishing, risky scopes from unknown IPs', 'T1566.002', 'case 01'],
-    ['Persistence', 'Malicious app registration and scheduled-task implants', 'T1098.003', 'case 01'],
-    ['Privilege escalation', 'Federated cloud accounts abused for role assumption', 'T1078.004', 'case 07'],
-    ['Defense evasion', 'Reflective DLL injection into svchost.exe', 'T1055.001', 'case 02'],
-    ['Credential access', 'Password spraying against enterprise identity', 'T1110.003', 'BofA'],
-    ['Lateral movement', 'MSRPC endpoint mapper enumeration from non-servers', 'T1021.003', 'case 06'],
-    ['Command and control', 'High-entropy DGA subdomains over DNS', 'T1568.002', 'case 05'],
-    ['Exfiltration', 'DNS and HTTPS tunnelling out of the estate', 'T1048', 'BofA'],
-  ];
+  const STAGES = DATA.wall.stages;
   const steps = document.getElementById('steps');
   steps.innerHTML = STAGES.map(([n, d, id, src], i) => `<li><span class="n num">${String(i + 1).padStart(2, '0')}</span><span class="t">${n}<small>${d} · ${src}</small></span><span class="id">${id}</span></li>`).join('');
   const chain = (() => {
@@ -360,19 +351,7 @@ export function initSocWall(DATA) {
   })();
 
   /* ── record feed + ledger + timeline ── */
-  const RECORD = [
-    ['2025', 'Threat-intel automation across 50+ sources', 'Payatu · manual triage <em>↓70–80%</em>'],
-    ['2025', 'Led response on active breaches', 'Payatu · MTTC <em>↓35%</em>', true],
-    ['2025', 'Purview DLP: 25+ policies, 10+ custom SITs', 'Payatu · ~400 endpoints · accuracy <em>↑~40%</em>'],
-    ['2025', '30+ ATT&CK-mapped hunts in Sentinel', 'Payatu · coverage <em>↑~30%</em>'],
-    ['2025', 'Defender, Intune and Wazuh rollout', 'Payatu · endpoint compliance <em>95%</em>'],
-    ['2024', 'Cloud-native detections on CloudTrail, IAM, VPC', 'Coralogix · MTTD <em>↓40%</em> · MTTR <em>↓35%</em>'],
-    ['2024', 'Least-privilege IAM guardrails', 'Coralogix · posture <em>↑25%</em>'],
-    ['2023', 'DNS/HTTPS tunnelling and stego detections', 'Bank of America · exfil incidents <em>↓25%</em>'],
-    ['2023', 'Insider-threat playbooks with intel inputs', 'Bank of America · IR time <em>↓30%</em>'],
-    ['2021', 'High-risk domains blocked before access', 'Bank of America · <em>7,000+</em> users'],
-    ['2019', 'EDM and regex DLP policy engineering', 'Detection & Response · policy noise <em>↓</em>'],
-  ];
+  const RECORD = DATA.wall.record;
   (() => {
     const feed = document.getElementById('feed'), count = document.getElementById('streamCount'), pause = document.getElementById('pause'); let i = 0, paused = false;
     const add = anim => { const [y, w, m, c] = RECORD[i++]; const li = document.createElement('li'); if (c) li.classList.add('crit'); if (anim) li.classList.add('enter'); li.innerHTML = `<time>${y}</time><div class="what"><b>${w}</b><span>${m}</span></div>`; feed.appendChild(li); count.textContent = `${i} of ${RECORD.length} entries`; };
@@ -381,7 +360,7 @@ export function initSocWall(DATA) {
     const tm = setInterval(() => { if (paused || document.hidden) return; if (i >= RECORD.length) { clearInterval(tm); pause.hidden = true; return; } add(true); }, 3400);
   })();
   (() => {
-    const L = [['Detection gap', 'SWIFT BEC · fintech', '72h → <1h', 1 / 72], ['Manual intel triage', 'Payatu', '↓75%', .25], ['Time to detect', 'Coralogix · cloud', '↓40%', .6], ['Time to contain', 'Payatu · active breaches', '↓35%', .65], ['False positives', 'Coralogix · baselining', '↓30%', .7], ['Exfiltration incidents', 'Bank of America', '↓25%', .75]];
+    const L = DATA.wall.results;
     const tb = document.getElementById('ledger');
     tb.innerHTML = L.map(([m, w, d, a]) => `<tr><td><div class="m">${m}</div><div class="where">${w}</div></td><td class="viz"><div class="meter" style="--after:${(a * 100).toFixed(1)}%"><i></i></div></td><td class="delta num">${d}</td></tr>`).join('');
     new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { tb.querySelectorAll('.meter').forEach((m, k) => setTimeout(() => m.classList.add('in'), 120 + k * 60)); o.disconnect(); } }).observe(tb);
@@ -421,7 +400,7 @@ export function initSocWall(DATA) {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const PAGES = [
     ['home', 'WHOAMI', 'Analyst on shift'], ['timeline', 'TIMELINE', '6 roles'], ['incidents', 'INCIDENT_FILES', '8 cases'], ['attack', 'ATT&CK', 'Kill chain + matrix'],
-    ['capability', 'CAPABILITY', '6 domains'], ['deployed', 'DEPLOYED', '6 projects'], ['credentials', 'CREDENTIALS', '15 held'], ['inprogress', 'IN_PROGRESS', '2 targets'],
+    ['leadership', 'LEADERSHIP', 'Team, reporting, architecture'], ['capability', 'CAPABILITY', '6 domains'], ['deployed', 'DEPLOYED', '6 projects'], ['credentials', 'CREDENTIALS', '15 held + 2 in progress'],
     ['opensource', 'OPEN_SOURCE', '6 repos'], ['comms', 'COMMS', 'Contact'],
   ];
   const pageIdx = id => PAGES.findIndex(p => p[0] === id);
@@ -431,8 +410,8 @@ export function initSocWall(DATA) {
   document.getElementById('tlBody').innerHTML = DATA.experience.map(e => {
     const yr = (e.date.match(/\d{4}/) || [''])[0];
     return `<div class="tl-row"><div class="when"><b class="num">${yr}</b>${esc(e.date)}${e.location ? '<br>' + esc(e.location) : ''}</div>
-      <div><h3>${esc(e.role)}</h3><div class="co">${esc(e.company)}</div>${e.metrics ? `<div class="mx">${e.metrics.map(m => `<div><b class="num">${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join('')}</div>` : ''}</div>
-      <div><ul>${e.bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul><div class="chips">${e.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div></div></div>`;
+      <div><h3>${esc(e.role)}</h3><div class="co">${esc(e.company)}</div>${e.scope ? `<p class="scope">${esc(e.scope)}</p>` : ''}${e.metrics ? `<div class="mx">${e.metrics.map(m => `<div><b class="num">${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join('')}</div>` : ''}</div>
+      <div>${e.draft ? `<p class="draft">Draft · ${esc(e.draft)}</p>` : ''}${e.bullets.length ? `<ul>${e.bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}<div class="chips">${e.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div></div></div>`;
   }).join('');
 
   // 03 incident files
@@ -445,6 +424,7 @@ export function initSocWall(DATA) {
   document.getElementById('cfBody').innerHTML = cs.map((c, i) => `<article class="cf${i === 0 ? ' open' : ''}" id="case-${c.id}">
       <button class="cf-h" aria-expanded="${i === 0}"><span class="id num">${c.id}</span><span class="sev ${c.severity}">${c.severity}</span><span class="t">${esc(c.title)}</span><span class="pm" aria-hidden="true"></span></button>
       <div class="cf-b"><div><div class="cf-in">
+        ${c.role ? `<p class="myrole"><span>My role</span>${esc(c.role)}</p>` : ''}
         <div class="chips">${c.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div>
         <div class="cf-3"><div><h4>Scenario</h4><p>${esc(c.scenario)}</p></div><div><h4>Investigation</h4><p>${esc(c.investigation)}</p></div><div><h4>Response</h4><p>${esc(c.response)}</p></div></div>
         <div class="cf-imp">${c.impact.map(m => `<div><b>${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join('')}</div>
@@ -466,7 +446,7 @@ export function initSocWall(DATA) {
   document.getElementById('capGrid').innerHTML = SG.map(g => `<section class="mon"><h2>${esc(g.title)} <small>${g.skills.length}</small></h2><div class="scr"><div class="chips">${g.skills.map(s => `<span class="chip">${esc(s)}</span>`).join('')}</div></div></section>`).join('');
 
   // 06 deployed
-  document.getElementById('pjBody').innerHTML = DATA.projects.map(p => `<article class="pj"><h3><span class="num">${p.id}</span>${esc(p.name)}</h3>
+  document.getElementById('pjBody').innerHTML = DATA.projects.map(p => `<article class="pj"><h3><span class="num">${p.id}</span>${esc(p.name)}</h3>${p.context ? `<span class="ctx">${esc(p.context)} project</span>` : ''}
       <div class="cf-3"><div><h4>Problem</h4><p>${esc(p.problem)}</p></div><div><h4>Approach</h4><p>${esc(p.approach)}</p></div><div><h4>Outcome</h4><p>${esc(p.outcome)}</p></div></div>
       <div class="chips">${p.tools.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div></article>`).join('');
 
@@ -494,8 +474,28 @@ export function initSocWall(DATA) {
   });
 
 
+
+  // About wall copy
+  document.getElementById('wallRole').textContent = DATA.wall.role;
+  document.getElementById('wallPitch').innerHTML = DATA.wall.pitch;
+  document.getElementById('wallFacts').innerHTML = DATA.wall.facts.map(f => `<li>${esc(f)}</li>`).join('');
+
+  // 05 leadership
+  const LD = DATA.leadership;
+  document.getElementById('ldHead').textContent = LD.headline;
+  document.getElementById('ldMeta').innerHTML = `<span>Team of <b>${esc(LD.team.size)}</b> at ${esc(LD.team.where)}</span><span><b>3</b> reporting lines</span><span>Architecture owner at <b>${LD.decisions.length}</b> organizations</span>`;
+  document.getElementById('ldBody').innerHTML = `
+    <section class="ld-sec"><h2 class="sub-h">Team</h2><div class="ld-team">
+      <div class="ld-size"><b class="num">${esc(LD.team.size)}</b><span>people led at ${esc(LD.team.where)}</span><div class="chips">${LD.team.makeup.map(x => `<span class="chip">${esc(x)}</span>`).join('')}</div></div>
+      <ul>${LD.team.points.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div></section>
+    <section class="ld-sec"><h2 class="sub-h">Who I answer to</h2><div class="ld-rep">${LD.reporting.map(r => `<div class="mon"><h2>${esc(r.audience)}${r.draft ? ' <small class="dr">draft</small>' : ''}</h2><div class="scr"><p>${esc(r.what)}</p></div></div>`).join('')}</div></section>
+    <section class="ld-sec"><h2 class="sub-h">Architecture I own</h2><div class="ld-dec">${LD.decisions.map(d => `<article><h3>${esc(d.org)}</h3><dl><dt>Context</dt><dd>${esc(d.context)}</dd><dt>Decision</dt><dd>${esc(d.decision)}</dd><dt>Result</dt><dd class="res">${esc(d.result)}</dd></dl></article>`).join('')}</div></section>
+    <section class="ld-sec"><h2 class="sub-h">How I run client programs <small>${esc(LD.engagement.where)}</small></h2>
+      <ol class="ld-steps">${LD.engagement.steps.map((s, i) => `<li><span class="num">${String(i + 1).padStart(2, '0')}</span><b>${esc(s.name)}</b><p>${esc(s.what)}</p></li>`).join('')}</ol>
+      <a class="ld-ex" href="#case-01" data-go="incidents"><span>Worked example · ${esc(LD.engagement.example.title)}</span><b>${esc(LD.engagement.example.outcome)}</b><em>Read case 01 →</em></a></section>`;
+
   // page bar: plain-English names for every page
-  const NAMES = { home: 'About', timeline: 'Experience', incidents: 'Case studies', attack: 'ATT&CK coverage', capability: 'Skills', deployed: 'Projects', credentials: 'Certifications', inprogress: 'In progress', opensource: 'Open source', comms: 'Contact' };
+  const NAMES = { home: 'About', timeline: 'Experience', incidents: 'Case studies', attack: 'ATT&CK coverage', capability: 'Skills', deployed: 'Projects', leadership: 'Leadership', credentials: 'Certifications', opensource: 'Open source', comms: 'Contact' };
   const track = document.getElementById('tabTrack'), ind = document.getElementById('tabInd');
   track.insertAdjacentHTML('beforeend', PAGES.map(([id], i) => `<a href="#${id}" data-go="${id}"><span class="n num">${String(i + 1).padStart(2, '0')}</span>${esc(NAMES[id])}</a>`).join(''));
   const setTab = (id, instant) => {
@@ -526,7 +526,7 @@ export function initSocWall(DATA) {
   /* ── page switch: the page folds into the terminal chevron ── */
   const veil = document.getElementById('veil'), px = document.getElementById('px'), log = document.getElementById('log');
   let current = 'home', busy = false;
-  const go = async (to, hash) => {
+  const go = async (to, hash, fromHistory) => {
     if (busy || pageIdx(to) < 0) return;
     closeIndex();
     if (to !== current) setTab(to);
@@ -554,10 +554,14 @@ export function initSocWall(DATA) {
     gsap.fromTo(next, { clipPath: 'inset(48% 48% 48% 48% round 20px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1, ease: 'expo.inOut', clearProps: 'clipPath' });
     gsap.to(veil, { autoAlpha: 0, duration: .4, delay: .45 });
     next.querySelectorAll('[data-dec]').forEach(el => setTimeout(() => decrypt(el, 1000), 500));
-    document.getElementById('where').innerHTML = '<b>' + label(to).replace(' / ', '</b> / '); history.replaceState(null, '', to === 'home' ? location.pathname : '#' + to);
+    document.getElementById('where').innerHTML = '<b>' + label(to).replace(' / ', '</b> / '); history[fromHistory ? 'replaceState' : 'pushState'](null, '', to === 'home' ? location.pathname : '#' + to);
     current = to; lenis && lenis.start(); busy = false;
     if (hash) setTimeout(scrollToHash, 900);
   };
+  // back/forward and hand-typed #page links switch pages in place
+  const fromUrl = () => { const raw = location.hash.slice(1), id = raw === 'inprogress' ? 'credentials' : (raw || 'home'); if (pageIdx(id) >= 0 && id !== current) go(id, null, true); };
+  addEventListener('popstate', fromUrl);
+  addEventListener('hashchange', fromUrl);
   document.addEventListener('click', e => { const a = e.target.closest('[data-go]'); if (!a) return; e.preventDefault(); const h = a.hash && a.hash.length > 1 && a.hash.slice(1) !== a.dataset.go ? a.hash : null; go(a.dataset.go, h); });
 
   /* ── packet trail behind the cursor ── */
@@ -583,7 +587,7 @@ export function initSocWall(DATA) {
   const ck = document.getElementById('clock'); const tick = () => ck.textContent = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false }); tick(); setInterval(tick, 15000);
 
   /* ── boot: secure handshake ── */
-  const deepLink = () => { const id = location.hash.slice(1); if (pageIdx(id) > 0) { document.getElementById('home').hidden = true; document.getElementById(id).hidden = false; current = id; document.getElementById('where').innerHTML = '<b>' + label(id).replace(' / ', '</b> / '); } };
+  const deepLink = () => { const id = location.hash.slice(1) === 'inprogress' ? 'credentials' : location.hash.slice(1); if (pageIdx(id) > 0) { document.getElementById('home').hidden = true; document.getElementById(id).hidden = false; current = id; document.getElementById('where').innerHTML = '<b>' + label(id).replace(' / ', '</b> / '); } };
   const boot = async () => {
     deepLink(); setTab(current, true);
     const ui = document.getElementById('bootui');
