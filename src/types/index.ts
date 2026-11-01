@@ -6,6 +6,10 @@ export interface ExperienceEntry {
   bullets: string[];
   metrics?: { value: string; label: string }[];
   tags: string[];
+  /** One line on team, reporting line and ownership, for senior readers. */
+  scope?: string;
+  /** Shown as a visible draft note until the owner supplies the real detail. */
+  draft?: string;
 }
 
 export interface SkillGroup {
@@ -20,6 +24,8 @@ export interface Project {
   approach: string;
   outcome: string;
   tools: string[];
+  /** Where it was built, e.g. 'Independent' or an employer. */
+  context?: string;
 }
 
 export interface Certification {
@@ -63,6 +69,8 @@ export interface CaseStudy {
   response: string;
   impact: { value: string; label: string }[];
   impactSummary?: string;
+  /** What I personally owned in this engagement. */
+  role?: string;
   detectionExample?: {
     title: string;
     mitre: string;

@@ -35,8 +35,9 @@ export const MARKUP = String.raw`<canvas id="bg" aria-hidden="true"></canvas>
       <h2>Analyst on shift <small>Lead Security Engineer · Payatu</small></h2>
       <div class="scr">
         <h1 id="who">Jayesh<br>Choudhary</h1>
-        <div class="role">Seven years across the whole defensive stack</div>
-        <p class="pitch">SOC operations, incident response, insider threat, cloud IR and data security. I build security programs end to end: <b>a full SOC and IR program in four weeks</b> after a SWIFT fraud, <b>Purview DLP across ~400 endpoints</b>, and 60+ ATT&amp;CK-mapped detections in production.</p>
+        <div class="role" id="wallRole">Lead Security Engineer · leads teams, owns the architecture</div>
+        <p class="pitch" id="wallPitch">SOC operations, incident response, insider threat, cloud IR and data security. I build security programs end to end: <b>a full SOC and IR program in four weeks</b> after a SWIFT fraud, <b>Purview DLP across ~400 endpoints</b>, and 60+ ATT&amp;CK-mapped detections in production.</p>
+        <ul class="facts" id="wallFacts"></ul>
         <div class="targets">Open to <span>Security Architect</span><span>Principal D&amp;R Engineer</span><span>Security Consultant / vCISO</span></div>
         <div class="ctas">
           <a class="btn p" href="#comms" data-go="comms">Request a briefing <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
@@ -107,6 +108,11 @@ the chain</h2>
   </section>
   <div class="pg-body"><div class="mx-wrap"><div class="mx-grid" id="mxGrid"></div></div></div>
 </main>
+<!-- ═════════ 05 LEADERSHIP ═════════ -->
+<main class="view" id="leadership" hidden>
+  <div class="pg-head"><h1 class="dec" data-dec>Leadership</h1><p id="ldHead"></p><div class="meta" id="ldMeta"></div></div>
+  <div class="pg-body ld" id="ldBody"></div>
+</main>
 <!-- ═════════ 05 CAPABILITY ═════════ -->
 <main class="view" id="capability" hidden>
   <div class="pg-head"><h1 class="dec" data-dec>Capability</h1><p>Frameworks, domains and the tooling I work in day to day.</p><div class="meta" id="capMeta"></div></div>
@@ -120,13 +126,9 @@ the chain</h2>
 <!-- ═════════ 07 CREDENTIALS ═════════ -->
 <main class="view" id="credentials" hidden>
   <div class="pg-head"><h1 class="dec" data-dec>Credentials</h1><p>Management, architecture, offensive and cloud certifications held.</p><div class="meta" id="crMeta"></div></div>
-  <div class="pg-body"><div class="cr-grid" id="crGrid"></div></div>
+  <div class="pg-body"><div class="cr-grid" id="crGrid"></div><h2 class="sub-h">In progress</h2><div class="pursue" id="puGrid"></div></div>
 </main>
-<!-- ═════════ 08 IN PROGRESS ═════════ -->
-<main class="view" id="inprogress" hidden>
-  <div class="pg-head"><h1 class="dec" data-dec>In progress</h1><p>Certifications I am working toward now, in risk governance and AI security management.</p></div>
-  <div class="pg-body"><div class="pursue" id="puGrid"></div></div>
-</main>
+
 <!-- ═════════ 09 OPEN SOURCE ═════════ -->
 <main class="view" id="opensource" hidden>
   <div class="pg-head"><h1 class="dec" data-dec>Open source</h1><p>Public repositories: threat-intel tooling, detection rules and automation.</p><div class="meta"><span><b>6</b> repositories</span><span>github.com/ASHDEX</span></div></div>

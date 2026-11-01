@@ -11,8 +11,10 @@ import { skillGroups } from '@/data/skills';
 import { repos } from '@/data/repos';
 import { contacts } from '@/data/contacts';
 import { mitreTactics } from '@/data/mitre';
+import { leadership } from '@/data/leadership';
+import { wall } from '@/data/wall';
 
-const DATA = { experience, caseStudies, projects, certifications, pursuingCerts, skillGroups, repos, contacts, mitreTactics };
+const DATA = { experience, caseStudies, projects, certifications, pursuingCerts, skillGroups, repos, contacts, mitreTactics, leadership, wall };
 
 export default function SocWall() {
   useEffect(() => {

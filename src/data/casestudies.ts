@@ -5,6 +5,7 @@ export const caseStudies: CaseStudy[] = [
     id: '01',
     title: 'SWIFT Payment Fraud via BEC — Incident Response & Ground-Up SOC Build',
     severity: 'CRITICAL',
+    role: 'Incident lead and SOC architect: ran the forensics, briefed client leadership, then designed and built the SOC and incident response program.',
     tags: ['BEC', 'SWIFT', 'Phishing', 'Forensics', 'Wazuh', 'Defender', 'Intune', 'O365', 'ISO 27001', 'SEBI', 'RBI'],
     scenario:
       'A fintech trading firm reported a significant financial loss after a user was socially engineered via a targeted spear-phishing email. The phishing payload redirected the user through a credential-harvesting proxy that captured the user\'s session token and MFA response. The attacker replayed the session to access the firm\'s SWIFT payment interface, modified beneficiary account details on a pending high-value wire transfer, and routed funds to a mule account. The fraud was discovered only when the legitimate counterparty reported non-receipt — 72 hours after execution.',
@@ -48,6 +49,7 @@ AuditLogs
     id: '02',
     title: 'BreachForums Data Exposure — Multi-Vector Compromise & SilverFox C2',
     severity: 'CRITICAL',
+    role: 'Incident lead: traced the multi-vector compromise to its source, led containment and drove the third-party risk review.',
     tags: ['BreachForums', 'SilverFox C2', 'KMSPico', 'Trojan Dropper', 'CrowdStrike Falcon', 'Memory Forensics', 'Third-Party Risk'],
     scenario:
       'The CTI team identified a threat actor posting a client organization\'s data on BreachForums — including customer PII, transaction amounts, and internal financial records. Investigation revealed the client had received multiple extortion emails over preceding weeks, but these were misclassified as spam. The data sample on BreachForums was validated against production database schemas, confirming authenticity and indicating a deep compromise.',
@@ -91,6 +93,7 @@ AuditLogs
     id: '03',
     title: 'Enterprise CTI Platform & Brand Monitoring — Architecture & Automation',
     severity: 'HIGH',
+    role: 'Architect and builder: designed the CTI platform and the brand-monitoring automation behind it.',
     tags: ['STIX/TAXII', 'OASIS', 'Azure Logic Apps', 'Typosquatting', 'IOC Validation', 'CTI', 'Automation'],
     scenario:
       'Multiple fintech clients lacked centralized threat intelligence capabilities — CTI was ad-hoc, scattered across email subscriptions, vendor portals, and individual analyst bookmarks. Brand abuse (typosquatting domains, impersonation campaigns) was discovered reactively. There was no automated IOC lifecycle — indicators were manually copy-pasted between tools with no enrichment, deduplication, or confidence scoring.',
@@ -143,6 +146,7 @@ def generate_typosquat_candidates(domain: str) -> set[str]:
     id: '04',
     title: 'Multi-SIEM Detection Engineering Program — Sigma/YARA + Automated SOAR Response',
     severity: 'HIGH',
+    role: 'Program owner: designed the detection engineering program and its automated SOAR response across SIEM platforms.',
     tags: ['Sentinel', 'CrowdStrike', 'Splunk', 'OpenSearch', 'Sigma', 'YARA', 'SOAR', 'MITRE ATT&CK', 'Detection-as-Code'],
     scenario:
       'Client portfolio spanning fintech, healthcare, and SaaS required unified detection engineering across heterogeneous SIEMs — Sentinel, CrowdStrike LogScale, Splunk Enterprise, and OpenSearch. Detection content was siloed per platform with no portability, no version control, no testing framework. False positive rates averaged 60-70%, creating alert fatigue.',
@@ -190,6 +194,7 @@ tags:
     id: '05',
     title: 'Advanced Malware Forensics — Custom Implant Reverse Engineering & C2 Takedown',
     severity: 'CRITICAL',
+    role: 'Lead analyst: reverse-engineered the custom implant and drove the C2 takedown.',
     tags: ['Ghidra', 'IDA Pro', 'Volatility3', 'WinDbg', 'YARA', 'CAPA', 'Maltego', 'DNS Sinkhole', 'Memory Forensics'],
     scenario:
       'CrowdStrike Falcon flagged anomalous behavior on a domain controller — intermittent DNS queries to algorithmically generated domains (DGA) and a svchost.exe instance with abnormally large private working set (450MB vs. typical 20-40MB). EDR telemetry showed an unsigned DLL loaded from temp directory — but the file had been deleted post-injection.',
@@ -225,6 +230,7 @@ tags:
     id: '06',
     title: 'Active Exploitation of Financial API — MSRPC Abuse & Compensating Controls',
     severity: 'CRITICAL',
+    role: 'Incident lead: investigated the MSRPC abuse and designed the compensating controls.',
     tags: ['MSRPC', 'API Security', 'Wireshark', 'tcpdump', 'Sigma', 'Sentinel KQL', 'Compensating Controls'],
     scenario:
       'Custom MSRPC-specific alerts flagged unauthorized RPC endpoint mapper queries targeting internal financial transaction processing servers. Simultaneously, API gateway logs showed malformed requests with SQL injection payloads. Both originated from a user workstation with no legitimate business need to interact with MSRPC services.',
@@ -263,6 +269,7 @@ SecurityEvent
     id: '07',
     title: 'Cross-Cloud Lateral Movement — Federated Identity Abuse (Azure AD → AWS)',
     severity: 'CRITICAL',
+    role: 'Incident lead: traced the Azure AD to AWS pivot and hardened the federation trust.',
     tags: ['SAML', 'Azure AD', 'AWS STS', 'Federation', 'CloudTrail', 'Conditional Access', 'Identity Architecture'],
     scenario:
       'Azure AD Sign-In logs showed a Global Administrator authenticating from a TOR exit node — but Conditional Access policies were not triggering MFA because attacker was replaying a stolen Primary Refresh Token (PRT). Within minutes, AWS CloudTrail recorded AssumeRoleWithSAML calls to 4 production AWS accounts using SAML assertions — federated trust being abused as lateral movement pivot from Azure to AWS.',
@@ -301,6 +308,7 @@ azureRiskySignIns
     id: '08',
     title: 'Security Program Architecture for Regulated Fintech — Board-Level Strategy & Execution',
     severity: 'HIGH',
+    role: 'Program architect: set the security strategy, reported it to the board and led execution.',
     tags: ['CISM', 'CISA', 'ISO 27001', 'SEBI CSCRF', 'RBI IT Risk', 'NIST CSF', 'FIRST', 'Risk Quantification', 'Board Reporting'],
     scenario:
       'Series-B fintech operating in Indian regulated market (SEBI-registered, RBI-supervised) scaling rapidly with 400+ endpoints and 15+ SaaS applications. Zero formal security program: no CISO, no security policies, no risk register, no incident response procedures, no compliance mapping to SEBI or RBI. Recent regulatory audit flagged 23 observations with 90-day remediation deadline.',
