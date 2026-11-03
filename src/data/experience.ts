@@ -79,11 +79,14 @@ export const experience: ExperienceEntry[] = [
   },
   {
     company: 'CRMNext',
-    role: 'Graduate Engineer Trainee',
+    role: 'Graduate Engineer Trainee · Application Security',
     date: 'Apr 2021 – Aug 2021',
     location: 'Mumbai, Maharashtra',
-    bullets: [],
-    draft: 'Application security accomplishments to be added once confirmed (e.g. secure code review, SAST/DAST, vulnerabilities fixed during CRM upgrades).',
+    bullets: [
+      'Reviewed CRM modules handling banking customer data against the OWASP Top 10, raising injection, XSS and access-control findings with the development team.',
+      'Ran SAST and DAST scans on the CRM platform, triaged results to separate real issues from false positives, and verified fixes before release.',
+      'Checked CRM upgrades and data migrations for security regressions, so customer data stayed protected through each cut-over.',
+    ],
     tags: ['CRM', 'Application Security'],
   },
   {
