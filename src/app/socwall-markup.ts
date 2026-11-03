@@ -1,5 +1,6 @@
 // Static markup for the SOC Wall. Content lists are filled from src/data by the engine.
-export const MARKUP = String.raw`<canvas id="bg" aria-hidden="true"></canvas>
+export const MARKUP = String.raw`<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="bg" aria-hidden="true"></canvas>
 <canvas id="trail" aria-hidden="true"></canvas>
 <div id="veil" aria-hidden="true">
   <div class="px" id="px"></div>
@@ -34,16 +35,16 @@ export const MARKUP = String.raw`<canvas id="bg" aria-hidden="true"></canvas>
     <section class="mon dossier" aria-labelledby="who">
       <h2>Analyst on shift <small>Lead Security Engineer · Payatu</small></h2>
       <div class="scr">
-        <h1 id="who">Jayesh<br>Choudhary</h1>
+        <h1 id="who"><span class="ln">Jayesh</span> <span class="ln">Choudhary</span></h1>
         <div class="role" id="wallRole">Lead Security Engineer · leads teams, owns the architecture</div>
         <p class="pitch" id="wallPitch">SOC operations, incident response, insider threat, cloud IR and data security. I build security programs end to end: <b>a full SOC and IR program in four weeks</b> after a SWIFT fraud, <b>Purview DLP across ~400 endpoints</b>, and 60+ ATT&amp;CK-mapped detections in production.</p>
         <ul class="facts" id="wallFacts"></ul>
         <div class="targets">Open to <span>Security Architect</span><span>Principal D&amp;R Engineer</span><span>Security Consultant / vCISO</span></div>
         <div class="ctas">
           <a class="btn p" href="#comms" data-go="comms">Request a briefing <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
-          <a class="btn" href="#">Download CV <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
+          <a class="btn" id="cvBtn" href="/cv.pdf" download="Jayesh-Choudhary-CV.pdf">Download CV <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
         </div>
-        <div class="creds"><b>CISSP · CISM · CISA · SC-100 · CCSK · AZ-500</b> and 10 more · CRISC and AAISM in progress</div>
+        <div class="creds" id="wallCreds"><b>CISSP · CISM · CISA · SC-100 · CCSK · AZ-500</b> and 9 more · CRISC and AAISM in progress</div>
       </div>
     </section>
     <section class="mon radar" aria-labelledby="rt">
@@ -74,7 +75,8 @@ export const MARKUP = String.raw`<canvas id="bg" aria-hidden="true"></canvas>
   </section>
 
   <section class="contact" id="contact">
-    <div class="sh" style="padding:0"><h2 class="dec" data-dec>Brief me on<br>your SOC</h2></div>
+    <div class="sh" style="padding:0"><h2 class="dec" data-dec>Brief me on
+your SOC</h2></div>
     <div class="row"><a class="btn p" href="#comms" data-go="comms">Open comms <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a><span>LinkedIn · GitHub · FreeIntelhub</span><span>CISSP · CISM · CISA · SC-100</span></div>
   </section>
 </main>

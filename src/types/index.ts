@@ -26,12 +26,16 @@ export interface Project {
   tools: string[];
   /** Where it was built, e.g. 'Independent' or an employer. */
   context?: string;
+  /** Public code for this project. */
+  repo?: { label: string; url: string };
 }
 
 export interface Certification {
   name: string;
   full: string;
   issuer: string;
+  /** Credly badge or issuer verification page. */
+  verify?: string;
 }
 
 export interface PursuingCert {

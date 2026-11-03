@@ -429,7 +429,7 @@ export function initSocWall(DATA) {
         <div class="cf-3"><div><h4>Scenario</h4><p>${esc(c.scenario)}</p></div><div><h4>Investigation</h4><p>${esc(c.investigation)}</p></div><div><h4>Response</h4><p>${esc(c.response)}</p></div></div>
         <div class="cf-imp">${c.impact.map(m => `<div><b>${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join('')}</div>
         ${c.impactSummary ? `<p class="cf-sum">${esc(c.impactSummary)}</p>` : ''}
-        ${c.detectionExample ? `<div class="code"><div class="ch"><b>${esc(c.detectionExample.title)}</b><span>${esc(c.detectionExample.mitre)} · ${esc(c.detectionExample.language)}</span></div><pre>${hl(c.detectionExample.code)}</pre></div>` : ''}
+        ${c.detectionExample ? `<div class="code"><div class="ch"><b>${esc(c.detectionExample.title)}</b><span>${esc(c.detectionExample.mitre)} · ${esc(c.detectionExample.language)}<button class="copy" type="button" data-copy-code>Copy</button></span></div><pre>${hl(c.detectionExample.code)}</pre></div>` : ''}
       </div></div></div></article>`).join('');
   document.querySelectorAll('.cf-h').forEach(h => h.addEventListener('click', () => { const a = h.parentElement, o = !a.classList.contains('open'); a.classList.toggle('open', o); h.setAttribute('aria-expanded', o); setTimeout(() => ScrollTrigger.refresh(), 520); }));
 
@@ -448,18 +448,22 @@ export function initSocWall(DATA) {
   // 06 deployed
   document.getElementById('pjBody').innerHTML = DATA.projects.map(p => `<article class="pj"><h3><span class="num">${p.id}</span>${esc(p.name)}</h3>${p.context ? `<span class="ctx">${esc(p.context)} project</span>` : ''}
       <div class="cf-3"><div><h4>Problem</h4><p>${esc(p.problem)}</p></div><div><h4>Approach</h4><p>${esc(p.approach)}</p></div><div><h4>Outcome</h4><p>${esc(p.outcome)}</p></div></div>
-      <div class="chips">${p.tools.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div></article>`).join('');
+      <div class="chips">${p.tools.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div>${p.repo ? `<a class="repo" href="${esc(p.repo.url)}" target="_blank" rel="noopener">View ${esc(p.repo.label)} on GitHub <span aria-hidden="true">↗</span></a>` : ''}</article>`).join('');
 
   // 07 credentials + 08 in progress
   const CR = DATA.certifications, iss = [...new Set(CR.map(c => c.issuer))];
   document.getElementById('crMeta').innerHTML = `<span><b>${CR.length}</b> certifications</span><span><b>${iss.length}</b> issuers</span><span>${iss.map(esc).join(' · ')}</span>`;
-  document.getElementById('crGrid').innerHTML = CR.map(c => `<div class="cr"><b>${esc(c.name)}</b><p>${esc(c.full)}</p><span>${esc(c.issuer)}</span></div>`).join('');
+  document.getElementById('crGrid').innerHTML = CR.map(c => c.verify
+    ? `<a class="cr verify" href="${esc(c.verify)}" target="_blank" rel="noopener"><b>${esc(c.name)}</b><p>${esc(c.full)}</p><span>${esc(c.issuer)}<em>Verify ↗</em></span></a>`
+    : `<div class="cr"><b>${esc(c.name)}</b><p>${esc(c.full)}</p><span>${esc(c.issuer)}</span></div>`).join('');
   document.getElementById('puGrid').innerHTML = DATA.pursuingCerts.map(c => `<div class="cr next"><span class="tgt">Target ${esc(c.target)}</span><b>${esc(c.name)}</b><p>${esc(c.full)}</p><span>${esc(c.issuer)}</span></div>`).join('');
 
   // 09 open source + 10 comms
   const AR = '<span class="ar" aria-hidden="true">↗</span>';
   document.getElementById('osBody').innerHTML = DATA.repos.map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener"><span class="nm">${esc(r.name)}</span><span class="ds">${esc(r.description)}</span><span class="lg">${esc(r.language || '')}</span>${AR}</a>`).join('');
-  document.getElementById('cmBody').innerHTML = DATA.contacts.map(c => c.href
+  document.getElementById('cmBody').innerHTML = DATA.contacts.map(c => /^mailto:/.test(c.href || '')
+    ? `<div class="rw"><span class="nm">${esc(c.label)}</span><a class="ds" href="${esc(c.href)}">${esc(c.value)}</a><button class="copy" type="button" data-copy="${esc(c.value)}" aria-label="Copy email address">Copy</button></div>`
+    : c.href
     ? `<a href="${esc(c.href)}"${/^http/.test(c.href) ? ' target="_blank" rel="noopener"' : ''}><span class="nm">${esc(c.label)}</span><span class="ds">${esc(c.value)}</span>${AR}</a>`
     : `<div class="rw"><span class="nm">${esc(c.label)}</span><span class="ds">${esc(c.value)}</span><span></span></div>`).join('');
 
@@ -493,6 +497,30 @@ export function initSocWall(DATA) {
     <section class="ld-sec"><h2 class="sub-h">How I run client programs <small>${esc(LD.engagement.where)}</small></h2>
       <ol class="ld-steps">${LD.engagement.steps.map((s, i) => `<li><span class="num">${String(i + 1).padStart(2, '0')}</span><b>${esc(s.name)}</b><p>${esc(s.what)}</p></li>`).join('')}</ol>
       <a class="ld-ex" href="#case-01" data-go="incidents"><span>Worked example · ${esc(LD.engagement.example.title)}</span><b>${esc(LD.engagement.example.outcome)}</b><em>Read case 01 →</em></a></section>`;
+
+
+  // credentials line on the wall, counted from the data so it can't drift
+  const TOP = ['CISSP', 'CISM', 'CISA', 'SC-100', 'CCSK', 'AZ-500'];
+  const shown = TOP.filter(n => DATA.certifications.some(c => c.name.startsWith(n)));
+  document.getElementById('wallCreds').innerHTML = `<b>${shown.join(' · ')}</b> and ${DATA.certifications.length - shown.length} more · ${DATA.pursuingCerts.map(c => esc(c.name)).join(' and ')} in progress`;
+
+  // CV: until public/cv.pdf exists, offer it by email instead of a dead link
+  const cv = document.getElementById('cvBtn');
+  fetch(cv.getAttribute('href'), { method: 'HEAD' }).then(r => { if (!r.ok) throw 0; }).catch(() => {
+    cv.removeAttribute('download'); cv.href = 'mailto:primeash1@gmail.com?subject=CV%20request';
+    cv.firstChild.textContent = 'CV on request ';
+  });
+
+  // copy to clipboard with a toast
+  const toastEl = document.getElementById('toast'); let toastT;
+  const toast = msg => { toastEl.textContent = msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), 1800); };
+  document.addEventListener('click', async ev => {
+    const b = ev.target.closest('[data-copy], [data-copy-code]'); if (!b) return;
+    ev.preventDefault();
+    const text = b.hasAttribute('data-copy') ? b.dataset.copy : b.closest('.code').querySelector('pre').textContent;
+    try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 1500); toast(b.hasAttribute('data-copy') ? 'Email copied to clipboard' : 'Detection copied to clipboard'); }
+    catch { toast('Copy failed. Select the text and copy it manually.'); }
+  });
 
   // page bar: plain-English names for every page
   const NAMES = { home: 'About', timeline: 'Experience', incidents: 'Case studies', attack: 'ATT&CK coverage', capability: 'Skills', deployed: 'Projects', leadership: 'Leadership', credentials: 'Certifications', opensource: 'Open source', comms: 'Contact' };
