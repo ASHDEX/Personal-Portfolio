@@ -8,13 +8,20 @@ ErrorDocument 404 /404.html
   # Force HTTPS
   RewriteCond %{HTTPS} !=on
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # Common guesses for the CV
+  RewriteRule ^(resume|cv)/?$ /cv.pdf [L,R=301]
+  RewriteRule ^resume\.pdf$ /cv.pdf [L,R=301]
 </IfModule>
 
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
-  Header always set X-Frame-Options "SAMEORIGIN"
-  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set X-Frame-Options "DENY"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  # Next's static export inlines its bootstrap scripts, hence 'unsafe-inline'
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
   # Hashed build assets never change; HTML must revalidate
   <FilesMatch "\.(js|css|woff2?|png|jpe?g|svg|webp|ico)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
