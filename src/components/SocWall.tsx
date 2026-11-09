@@ -25,5 +25,5 @@ export default function SocWall() {
     import('@/lib/socwall/engine').then(m => m.initSocWall(DATA));
   }, []);
 
-  return <div id="socwall" dangerouslySetInnerHTML={{ __html: MARKUP }} />;
+  return <div id="socwall" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: MARKUP }} />;
 }

@@ -24,11 +24,13 @@ export const metadata: Metadata = {
     title,
     description,
     siteName: 'Ashdex · Jayesh Choudhary',
+    images: [{ url: '/og-banner.png', width: 1200, height: 630, alt: 'Jayesh Choudhary, Lead Security Engineer · ashdex.com' }],
   },
   twitter: {
     card: 'summary_large_image',
     title,
     description,
+    images: ['/og-banner.png'],
   },
   robots: {
     index: true,

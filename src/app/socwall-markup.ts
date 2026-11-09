@@ -42,7 +42,7 @@ export const MARKUP = String.raw`<div class="toast" id="toast" role="status" ari
         <div class="targets">Open to <span>Security Architect</span><span>Principal D&amp;R Engineer</span><span>Security Consultant / vCISO</span></div>
         <div class="ctas">
           <a class="btn p" href="#comms" data-go="comms">Request a briefing <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
-          <a class="btn" id="cvBtn" href="/cv.pdf" download="Jayesh-Choudhary-CV.pdf">Download CV <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
+          <a class="btn" id="cvBtn" href="/cv.pdf" target="_blank" rel="noopener">View CV (PDF) <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
         </div>
         <div class="creds" id="wallCreds"><b>CISSP · CISM · CISA · SC-100 · CCSK · AZ-500</b> and 9 more · CRISC and AAISM in progress</div>
       </div>

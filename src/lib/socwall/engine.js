@@ -507,7 +507,7 @@ export function initSocWall(DATA) {
   // CV: until public/cv.pdf exists, offer it by email instead of a dead link
   const cv = document.getElementById('cvBtn');
   fetch(cv.getAttribute('href'), { method: 'HEAD' }).then(r => { if (!r.ok) throw 0; }).catch(() => {
-    cv.removeAttribute('download'); cv.href = 'mailto:primeash1@gmail.com?subject=CV%20request';
+    cv.removeAttribute('target'); cv.href = 'mailto:primeash1@gmail.com?subject=CV%20request';
     cv.firstChild.textContent = 'CV on request ';
   });
 
